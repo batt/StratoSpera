@@ -117,10 +117,9 @@
   (GlobalState
     (FileView
       (Path "Design Resources")
-      (Path "Design Resources" "S:\BSM-2\SCHEMATICS\bsm-2.dsn")
-      (Path "Design Resources" "S:\BSM-2\SCHEMATICS\bsm-2.dsn" "BSM-2")
-      (Select "Design Resources" "S:\BSM-2\SCHEMATICS\bsm-2.dsn" "BSM-2"
-         "Sensors"))
+      (Path "Design Resources" ".\bsm-2.dsn")
+      (Path "Design Resources" ".\bsm-2.dsn" "BSM-2")
+      (Select "Design Resources" ".\bsm-2.dsn" "BSM-2" "Sensors"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
