@@ -22,6 +22,12 @@
   (Folder "Referenced Projects")
   (LastUsedLibraryBrowseDirectory "S:\devtools\cadlib\orcad")
   (PartMRUSelector
+    (0
+      (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    ("GND_FIELD SIGNAL"
+      (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
     (CON3
       (FullPartName "CON3.Normal")
       (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
@@ -95,9 +101,6 @@
       (FullPartName "MOSFET N.Normal")
       (LibraryName "S:\DEVTOOLS\CADLIB\ORCAD\DEVELER.OLB")
       (DeviceIndex "0"))
-    ("GND_FIELD SIGNAL"
-      (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
-      (DeviceIndex "0"))
     (4N25
       (FullPartName "4N25.Normal")
       (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
@@ -109,10 +112,6 @@
     (ULN2803
       (FullPartName "ULN2803.Normal")
       (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\TRANSISTOR.OLB")
-      (DeviceIndex "0"))
-    (CON10
-      (FullPartName "CON10.Normal")
-      (LibraryName "C:\ORCAD\ORCAD_16.0\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
       (DeviceIndex "0")))
   (GlobalState
     (FileView
@@ -129,7 +128,7 @@
     (Doc
       (Type "COrSchematicDoc")
       (Frame
-        (Placement "44 2 3 -1 -1 -4 -23 154 1810 154 727")
+        (Placement "44 2 3 -1 -1 -4 -23 0 1656 0 573")
         (Scroll "0 0")
         (Zoom "100")
         (Occurrence "/"))
