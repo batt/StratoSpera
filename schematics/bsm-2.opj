@@ -123,6 +123,16 @@
     (Doc
       (Type "COrCapturePMDoc")
       (Frame
-        (Placement "44 2 3 -1 -1 -4 -23 0 230 0 485"))
-      (Tab 0)))
+        (Placement "44 0 1 -1 -1 -4 -23 0 230 0 485"))
+      (Tab 0))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 2 3 -1 -1 -4 -23 88 1744 88 661")
+        (Scroll "0 0")
+        (Zoom "100")
+        (Occurrence "/"))
+      (Path "S:\BSM-2\SCHEMATICS\BSM-2.DSN")
+      (Schematic "BSM-2")
+      (Page "Connectors")))
   (MPSSessionName "Administrator"))
