@@ -3,12 +3,13 @@ import os
 import time
 import pickle
 import subprocess
+import urllib
 
 
 #Settings
 logfile = 'bsm.log'
 sender = 'IZ1DYB-9'
-server =  'batt@develer.com'
+server =  'http://www.develer.com/~batt/stratospera/bsm-2/add.cgi'
 unsentfile = 'unsent.pic'
 keyfile = '/tmp/bsm-key'
 key = """-----BEGIN RSA PRIVATE KEY-----
@@ -42,11 +43,15 @@ wD9s+BD31bWv1RclkNtmpqPXTL2DsaI2cgMC/mWZpFd1H+xbKkEucZE=
 #end of settings
 
 def send_server(msg):
+	msg = urllib.quote_plus(msg)
+	urllib.urlopen(server + "?" + msg)
+	'''
 	return (subprocess.call(["ssh",
 			"-o ConnectTimeout=3",
 			"-o CheckHostIP=no",
 			"-o Compression=yes",
 			"-i", keyfile, server, msg]) == 0)
+	'''
 
 def update_unsent(msg, file):
 	file.seek(0)
@@ -80,7 +85,7 @@ def parse_loop():
 		messages = []
 
 	#Move to the logfile end
-	file.seek(0, os.SEEK_END);
+	#file.seek(0, os.SEEK_END);
 
 	wait_start = True
 	try:
