@@ -4,17 +4,23 @@ import os
 import time
 import pickle
 import urllib
+import hmac
 
 #Settings
 logfile = "bsm.log"
 sender = "IZ1DYB-9"
 url = "http://www.develer.com/~batt/stratospera/bsm-2/add.cgi"
 unsentfile = "unsent.pic"
+password = "stsp2"
 #end of settings
 
 def send_server(msg):
 	try:
-		f = urllib.urlopen(url + "?m=" + urllib.quote_plus(msg))
+		m = hmac.new(password, msg)
+		sign = m.hexdigest()
+		u = url + "?m=" + urllib.quote_plus(msg)
+		u = u + "&s=" + urllib.quote_plus(sign)
+		f = urllib.urlopen(u)
 		if f.read(2) != "OK":
 			raise IOError
 	except IOError:
@@ -77,6 +83,12 @@ def parse_loop():
 	finally:
 		os.system("killall script")
 		picfile.close()
+
+def auth_test(start):
+	min = start
+	for i in range(60):
+		send_server(">%04d00zTest %d" % (min, i))
+		min += 1
 
 if __name__ == "__main__":
 	parse_loop()
