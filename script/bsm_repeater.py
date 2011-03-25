@@ -5,30 +5,62 @@ import time
 import pickle
 import urllib
 import hmac
+import socket
 import sys
 
 #Settings
 logfile = "bsm.log"
 sender = "IZ1DYB-9"
-url = "http://www.develer.com/~batt/stratospera/bsm-2/add.cgi"
+#url = "http://www.develer.com/~batt/stratospera/bsm-2/add.cgi"
+server = "www.develer.com"
+cgi = "/~batt/stratospera/bsm-2/add.cgi"
+url = "http://" + server + cgi
 unsentfile = "unsent.pic"
 password = "stsp2"
 #end of settings
+ip_address = None
+use_socket = False
 
-def send_server(msg):
+def post(data):
+	global ip_address
 	try:
-		m = hmac.new(password, msg)
-		sign = m.hexdigest()
-		d = {}
-		d['m'] = msg
-		d['s'] = sign
-		f = urllib.urlopen(url, urllib.urlencode(d))
-		if f.read(2) != "OK":
-			raise IOError
+		if ip_address == None:
+			ip_address = socket.gethostbyname(server)
+
+		if use_socket:
+			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.settimeout(5)
+			s.connect((ip_address, 80))
+			s.sendall("POST " + cgi + " HTTP/1.0\r\n")
+			s.sendall("Content-Length: %d\r\n" % len(data))
+			s.sendall("Content-Type: application/x-www-form-urlencoded\r\n")
+			s.sendall("\r\n")
+			s.sendall(data)
+			res = s.recv(32)
+			s.close()
+
+			if not res.startswith("HTTP/1.1 200 OK"):
+				raise IOError
+		else:
+			#avoid calling gethostbyname which may be blocking!
+			f = urllib.urlopen("http://" + ip_address + cgi, data)
+			if f.read(2) != "OK":
+				raise IOError
+
 	except IOError:
 		return False
 
 	return True
+
+
+def send_server(msg):
+	m = hmac.new(password, msg)
+	sign = m.hexdigest()
+	d = {}
+	d['m'] = msg
+	d['s'] = sign
+	data = urllib.urlencode(d)
+	post(data)
 
 def update_unsent(msg, file):
 	file.seek(0)
