@@ -5,6 +5,7 @@ import time
 import pickle
 import urllib
 import hmac
+import sys
 
 #Settings
 logfile = "bsm.log"
@@ -18,9 +19,10 @@ def send_server(msg):
 	try:
 		m = hmac.new(password, msg)
 		sign = m.hexdigest()
-		u = url + "?m=" + urllib.quote_plus(msg)
-		u = u + "&s=" + urllib.quote_plus(sign)
-		f = urllib.urlopen(u)
+		d = {}
+		d['m'] = msg
+		d['s'] = sign
+		f = urllib.urlopen(url, urllib.urlencode(d))
 		if f.read(2) != "OK":
 			raise IOError
 	except IOError:
@@ -91,5 +93,8 @@ def auth_test(start):
 		min += 1
 
 if __name__ == "__main__":
-	parse_loop()
+	if len(sys.argv) > 1 and sys.argv[1].isdigit():
+		auth_test(int(sys.argv[1]))
+	else:
+		parse_loop()
 
