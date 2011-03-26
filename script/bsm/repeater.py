@@ -20,6 +20,7 @@ def updater_thread():
 def parse_loop():
 	logfile = config.logdir + "/multimon.log"
 	os.system("mkdir -p " + config.logdir)
+	os.system("touch " + logfile)
 	#start multimon
 	os.system("script -afc \"padsp multimon -a afsk1200\" %s&" % logfile)
 
