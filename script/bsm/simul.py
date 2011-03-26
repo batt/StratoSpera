@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import bsm_repeater
+import updater
 import time
 
 delay = 10
@@ -17,7 +17,10 @@ for l in log:
 	h, m, s = tim[0:2], tim[3:5], tim[6:8]
 	seconds = int(h) * 3600 + int(m) * 60 + int(s)
 	if seconds >= start + delay:
-		start = seconds
+		if start == 0:
+			start = seconds
+		else:
+			start += delay
 		lat = float(lat)
 		dlat = int(lat)
 		mlat = (lat - dlat) * 60
@@ -28,6 +31,5 @@ for l in log:
 		ew = 'E' if lon > 0 else 'W'
 		msg =  "/%sh%02d%02.2f%c/%03d%02.2f%c>" % (h+m+s, dlat, mlat, ns, dlon, mlon, ew)
 		msg = msg + alt + ';' + t_ext + ';' + press + ';0;' + t_int + ';' + vsupply + ';0;0'
-		print msg
-		bsm_repeater.send_server(msg)
+		updater.send_server(msg)
 		time.sleep(real_delay)
