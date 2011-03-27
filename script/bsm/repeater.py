@@ -8,6 +8,7 @@ import time
 import sys
 import thread
 import glob
+from datetime import datetime
 
 def updater_thread():
 	try:
@@ -43,12 +44,16 @@ def parse_loop():
 						wait_start = False
 				else:
 					wait_start = True
-					allowed_types = "/>"
-					if d[0] not in allowed_types:
-						print "Unhandled message type:", d.strip()
+					if d[1:7].isdigit() and d[7] == 'h':
+						name = d[1:7]
+					elif config.log_all_messages:
+						now = datetime.utcnow()
+						name = "%02d%02d%02d" % (now.hour, now.minute, now.second)
+					else:
+						print "Unhandled message:", d.strip()
 						continue
 
-					msg_name = config.logdir + "/" + d[1:7]
+					msg_name = config.logdir + "/" + name
 
 					found = False
 					for msg in glob.glob(config.logdir + "/" + "[0-9]" * 6 + "*"):
