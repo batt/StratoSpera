@@ -16,7 +16,7 @@ def send_thread(addr, data, reply):
 	f = urllib.urlopen(addr, data)
 	reply.append(f.read())
 
-def send_server(msg):
+def send_server(msg, name):
 	print "Sending:", msg
 
 	m = hmac.new(config.password, msg)
@@ -24,6 +24,7 @@ def send_server(msg):
 	d = {}
 	d['m'] = msg
 	d['s'] = sign
+	d['n'] = name
 	data = urllib.urlencode(d)
 
 	reply = []
@@ -38,7 +39,8 @@ def send_server(msg):
 	return reply[0]
 
 def timeout_handler(signum, frame):
-	raise IOError("Network timeout")
+	print "Network timeout"
+	exit(-1)
 
 #Gracefully handle network timeouts
 signal.signal(signal.SIGALRM, timeout_handler)
@@ -47,9 +49,9 @@ if __name__ == "__main__":
 	for unsent in glob.glob(config.logdir + "/*.unsent"):
 		u = open(unsent, "r+")
 		msg = u.read().strip()
-		reply = send_server(msg)
-
 		new_name = unsent.rstrip('.unsent')
+		reply = send_server(msg, os.path.basename(new_name))
+
 		sent = True
 
 		if reply.startswith("OK"):
