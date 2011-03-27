@@ -5,50 +5,58 @@ import config
 import os
 import glob
 import time
-import signal
-import thread
-import urllib
+import utils
+import hmac
 
-def get_thread(url, reply):
-	reply.append(urllib.urlopen(url).read())
+def send_server(msg, name):
+	print "Sending:", msg
+	m = hmac.new(config.password, msg)
+	sign = m.hexdigest()
+	d = {}
+	d['m'] = msg
+	d['s'] = sign
+	d['n'] = name
+	return utils.http_get(config.add_url, d)
 
+def web_index():
+	return utils.http_get(config.msg_index_url).split()
 
-def get(url):
-	reply = []
-	signal.alarm(config.net_timeout)
-
-	thread.start_new_thread(get_thread, ("http://www.develer.com/~batt/stratospera/bsm-2/" + url, reply))
-	while len(reply) == 0:
-		time.sleep(0.1)
-
-	signal.alarm(0)
-
-	return reply[0]
-
-def get_webidx():
+def parse_index(index):
 	s = set()
-	w = get("msg_index").split()
-	for f in w:
+	for f in index:
 		s.add(f.strip())
 
 	return s
 
 if __name__ == "__main__":
-	local = set()
-
 	try:
-		msg_index = open(config.logdir + "/msg_index")
-		for f in msg_index:
-			local.add(f.strip())
+		l = open(config.logdir + "/" + config.msg_index)
+		local = parse_index(l)
 	except IOError:
-		pass
+		local = set()
 
-	web = get_webidx()
-	diff = web - local
-	for d in diff:
+	web = parse_index(web_index())
+	diff_web = web - local
+	for d in diff_web:
 		print "Getting", d
-		msg = get(d)
-		f_msg = open(config.logdir + "/webmsg.tmp", "w")
-		f_msg.write(msg)
-		f_msg.close()
-		os.system("mv %s %s" % (config.logdir + "/webmsg.tmp", config.logdir + "/" + d))
+		msg = utils.http_get(config.base_url + d)
+		utils.write_file(config.logdir + "/" + d, msg)
+
+	diff_local = local - web
+	for d in diff_local:
+		unsent = open(config.logdir + "/" + d, "r+")
+		msg = unsent.read().strip()
+		reply = send_server(msg, d)
+		if reply.startswith("OK"):
+			print "OK"
+		elif reply.startswith("ERR"):
+			#todo test this branch
+			unsent.write(reply)
+			unsent.close()
+			shutil.move(config.logdir + "/" + d, config.logdir + "/" + d + ".err")
+			print "Message not accepted by server, see", d + ".err"
+		else:
+			print "Unknown error, will retry next time"
+
+	if diff_web:
+		utils.update_index(config.logdir)

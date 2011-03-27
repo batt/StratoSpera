@@ -9,12 +9,13 @@ import sys
 import thread
 import glob
 from datetime import datetime
+import utils
 
 def updater_thread():
 	try:
 		while True:
 			time.sleep(0.1)
-			os.system("python updater.py")
+			os.system("python websync.py")
 	except:
 		thread.interrupt_main()
 
@@ -62,10 +63,8 @@ def parse_loop():
 							break
 
 					if not found:
-						tmp_msg = open(config.logdir + "/msg.tmp", "w")
-						tmp_msg.write(d)
-						tmp_msg.close()
-						os.system("mv %s %s" % (tmp_msg.name, msg_name + ".unsent"))
+						utils.write_file(config.logdir + "/" + name, d)
+						utils.update_index(config.logdir)
 
 	except KeyboardInterrupt:
 		print "\nCTRL-C pressed, exit"
