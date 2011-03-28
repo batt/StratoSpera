@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
 	web = parse_index(web_index())
 	diff_web = web - local
-	for d in diff_web:
+	for d in reversed(sorted(diff_web)):
 		print "Getting", d
 		msg = utils.http_get(config.base_url + d)
 		utils.write_file(config.logdir + "/" + d, msg)
