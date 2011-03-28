@@ -5,6 +5,7 @@ import config
 import os
 import glob
 import utils
+import shutil
 
 if __name__ == "__main__":
 	files = glob.glob(config.logdir + "/" + "[0-9]" * 6 + ".unsent")
@@ -21,6 +22,7 @@ if __name__ == "__main__":
 			#todo test this branch
 			unsent.write(reply)
 			unsent.close()
+
 			shutil.move(msg_file, config.logdir + "/" + name + ".err")
 			print "Message not accepted by server, see", name + ".err"
 		else:
