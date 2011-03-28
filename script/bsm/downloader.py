@@ -2,11 +2,7 @@
 
 import config
 
-import os
-import glob
-import time
 import utils
-import hmac
 
 def web_index():
 	return utils.http_get(config.msg_index_url).split()
