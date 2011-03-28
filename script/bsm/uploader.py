@@ -4,7 +4,6 @@ import config
 
 import os
 import glob
-import time
 import utils
 
 if __name__ == "__main__":

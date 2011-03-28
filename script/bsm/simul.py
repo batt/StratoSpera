@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from websync import send_server
+from utils import send_server
 import time
 
 delay = 10
