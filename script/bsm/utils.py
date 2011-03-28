@@ -9,6 +9,7 @@ import signal
 import thread
 import time
 import glob
+import hmac
 
 
 def write_file(name, data):
@@ -27,6 +28,16 @@ def http_get(url, data=None):
 	signal.alarm(0)
 
 	return reply
+
+def send_server(msg, name):
+	print "Sending:", msg
+	m = hmac.new(config.password, msg)
+	sign = m.hexdigest()
+	d = {}
+	d['m'] = msg
+	d['s'] = sign
+	d['n'] = name
+	return http_get(config.add_url, d)
 
 def update_index(directory):
 	msg_index = []
