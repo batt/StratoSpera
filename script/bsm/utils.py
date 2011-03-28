@@ -30,7 +30,7 @@ def http_get(url, data=None):
 	return reply
 
 def send_server(msg, name):
-	print "Sending:", msg
+	print "Sending msg %s\n%s" % (name, msg)
 	m = hmac.new(config.password, msg)
 	sign = m.hexdigest()
 	d = {}
