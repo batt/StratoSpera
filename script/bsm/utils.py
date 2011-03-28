@@ -17,36 +17,16 @@ def write_file(name, data):
 	os.close(fd)
 	shutil.move(tmp_name, name)
 
-#This separated thread is needed because networks has looooong timeouts
-#and some underlaying function also blocks all signals, even ctrl+c!
-def send_thread(addr, data, reply):
-	try:
-		f = urllib.urlopen(addr, data)
-		reply.append(f.read())
-	except:
-		thread.interrupt_main()
-
 def http_get(url, data=None):
 	if data:
 		data = urllib.urlencode(data)
 
-	def timeout_handler(signum, frame):
-		print "Network timeout"
-		exit(-1)
-
-	#Gracefully handle network timeouts
-	signal.signal(signal.SIGALRM, timeout_handler)
-
-	reply = []
 	signal.alarm(config.net_timeout)
-
-	thread.start_new_thread(send_thread, (url, data, reply))
-	while len(reply) == 0:
-		time.sleep(0.1)
-
+	f = urllib.urlopen(url, data)
+	reply = f.read()
 	signal.alarm(0)
 
-	return reply[0]
+	return reply
 
 def update_index(directory):
 	msg_index = []
