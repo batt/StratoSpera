@@ -1,21 +1,31 @@
 #!/usr/bin/env python
 
 import config
-import updater
 
 import os
 import time
 import sys
 import thread
 import glob
+from datetime import datetime
+import utils
 
-def updater_thread():
+def uploader_thread():
 	try:
 		while True:
 			time.sleep(0.1)
-			os.system("python updater.py")
+			os.system("python uploader.py")
 	except:
 		thread.interrupt_main()
+
+def downloader_thread():
+	try:
+		while True:
+			time.sleep(30)
+			os.system("python downloader.py")
+	except:
+		thread.interrupt_main()
+
 
 def parse_loop():
 	logfile = config.logdir + "/multimon.log"
@@ -25,8 +35,9 @@ def parse_loop():
 	os.system("script -afc \"padsp multimon -a afsk1200\" %s&" % logfile)
 
 	try:
-		#start web updater
-		thread.start_new_thread(updater_thread, ())
+		#start web updaters
+		thread.start_new_thread(uploader_thread, ())
+		thread.start_new_thread(downloader_thread, ())
 
 		#open multimon logging file
 		file = open(logfile,'r')
@@ -43,12 +54,16 @@ def parse_loop():
 						wait_start = False
 				else:
 					wait_start = True
-					allowed_types = "/>"
-					if d[0] not in allowed_types:
-						print "Unhandled message type:", d.strip()
+					if d[1:7].isdigit() and d[7] == 'h':
+						name = d[1:7]
+					elif config.log_all_messages:
+						now = datetime.utcnow()
+						name = "%02d%02d%02d" % (now.hour, now.minute, now.second)
+					else:
+						print "Unhandled message:", d.strip()
 						continue
 
-					msg_name = config.logdir + "/" + d[1:7]
+					msg_name = config.logdir + "/" + name
 
 					found = False
 					for msg in glob.glob(config.logdir + "/" + "[0-9]" * 6 + "*"):
@@ -57,10 +72,9 @@ def parse_loop():
 							break
 
 					if not found:
-						tmp_msg = open(config.logdir + "/msg.tmp", "w")
-						tmp_msg.write(d)
-						tmp_msg.close()
-						os.system("mv %s %s" % (tmp_msg.name, msg_name + ".unsent"))
+						utils.write_file(config.logdir + "/" + name, d)
+						utils.write_file(config.logdir + "/" + name + ".unsent", d)
+						utils.update_index(config.logdir)
 
 	except KeyboardInterrupt:
 		print "\nCTRL-C pressed, exit"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import updater
+from utils import send_server
 import time
 
 delay = 10
@@ -31,5 +31,5 @@ for l in log:
 		ew = 'E' if lon > 0 else 'W'
 		msg =  "/%sh%02d%02.2f%c/%03d%02.2f%c>" % (h+m+s, dlat, mlat, ns, dlon, mlon, ew)
 		msg = msg + alt + ';' + t_ext + ';' + press + ';0;' + t_int + ';' + vsupply + ';0;0'
-		updater.send_server(msg)
+		send_server(msg, h+m+s)
 		time.sleep(real_delay)

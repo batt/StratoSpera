@@ -1,12 +1,19 @@
 #Settings
 
 #Sender callsign, leave empty in order to log everything
-sender = "IZ1DYB"
+sender = ""
 #Directory where messages will be logged, do not add / at the end!
 logdir = "msg"
-#CGI url
-url = "http://www.develer.com/~batt/stratospera/bsm-2/add.cgi"
+#Base url for remote logging
+base_url = "http://www.develer.com/~batt/stratospera/bsm-2/"
+add_cgi = "add.cgi"
+msg_index = "msg_index"
 #password used to sign messages sent to server
 password = "stsp2"
 #Timeout while sending message to server, if set to 0 will use system timeouts (looongs!)
 net_timeout = 10
+#Set to true in order to log even messages without timestamp; dangerous!
+log_all_messages = True
+
+add_url = base_url + add_cgi
+msg_index_url = base_url + msg_index
