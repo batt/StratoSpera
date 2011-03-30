@@ -44,9 +44,11 @@ def parse_loop():
 
 		wait_start = True
 		while 1:
+			where = file.tell()
 			d = file.readline()
 			if not d:
 					time.sleep(0.1)
+					file.seek(where)
 			else:
 				if wait_start:
 					#Check for correct config.sender address
@@ -68,6 +70,7 @@ def parse_loop():
 					found = False
 					for msg in glob.glob(config.logdir + "/" + "[0-9]" * 6 + "*"):
 						if msg.startswith(msg_name):
+							print "Message", msg, "already present"
 							found = True
 							break
 
