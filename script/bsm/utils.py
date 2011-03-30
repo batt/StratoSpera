@@ -23,9 +23,13 @@ def http_get(url, data=None):
 		data = urllib.urlencode(data)
 
 	signal.alarm(config.net_timeout)
-	f = urllib.urlopen(url, data)
-	reply = f.read()
-	signal.alarm(0)
+	try:
+		f = urllib.urlopen(url, data)
+		reply = f.read()
+	except:
+		exit(-1)
+	finally:
+		signal.alarm(0)
 
 	return reply
 
