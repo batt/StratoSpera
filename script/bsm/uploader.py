@@ -19,7 +19,6 @@ if __name__ == "__main__":
 			os.remove(msg_file)
 			print "OK"
 		elif reply.startswith("ERR"):
-			#todo test this branch
 			unsent.write(reply)
 			unsent.close()
 
