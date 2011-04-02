@@ -28,10 +28,10 @@ def downloader_thread():
 
 
 def parse_loop():
-	logfile = config.logdir + "/multimon.log"
+	logfile = config.logdir + "/aprs.log"
 	os.system("mkdir -p " + config.logdir)
 	os.system("touch " + logfile)
-	#start multimon
+	#start aprs_decoder
 	os.system("./aprs_decoder >%s&" % logfile)
 
 	try:
@@ -39,16 +39,17 @@ def parse_loop():
 		thread.start_new_thread(uploader_thread, ())
 		thread.start_new_thread(downloader_thread, ())
 
-		#open multimon logging file
-		file = open(logfile,'r')
 
 		wait_start = True
+		where = 0
 		while 1:
-			where = file.tell()
+			file = open(logfile,'r')
+			file.seek(where)
 			d = file.readline()
+			where = file.tell()
+			file.close()
 			if not d:
-					time.sleep(0.1)
-					file.seek(where)
+				time.sleep(0.1)
 			else:
 				if wait_start:
 					#Check for correct config.sender address
