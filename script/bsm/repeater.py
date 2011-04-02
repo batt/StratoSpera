@@ -32,7 +32,7 @@ def parse_loop():
 	os.system("mkdir -p " + config.logdir)
 	os.system("touch " + logfile)
 	#start multimon
-	os.system("script -afc \"padsp multimon -a afsk1200\" %s&" % logfile)
+	os.system("./aprs_decoder >%s&" % logfile)
 
 	try:
 		#start web updaters
@@ -82,7 +82,7 @@ def parse_loop():
 	except KeyboardInterrupt:
 		print "\nCTRL-C pressed, exit"
 	finally:
-		os.system("killall script")
+		os.system("killall aprs_decoder")
 
 def auth_test(start):
 	min = start
