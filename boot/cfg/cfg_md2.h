@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for MD2 module.
  *
- * \version $Id: cfg_md2.h 2582 2009-04-20 12:33:48Z batt $
  *
  * \author Daniele Basile <asterix@develer.com>
  */

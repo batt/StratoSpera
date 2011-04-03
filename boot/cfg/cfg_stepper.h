@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for stepper motor module.
  *
- * \version $Id: cfg_stepper.h 2582 2009-04-20 12:33:48Z batt $
  * \author Daniele Basile <asterix@develer.com>
  */
 

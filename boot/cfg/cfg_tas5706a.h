@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for the TAS5706A module.
  *
- * \version $Id: cfg_tas5706a.h 2740 2009-07-06 08:16:22Z lottaviano $
  * \author Luca Ottaviano <lottaviano@develer.com>
  */
 

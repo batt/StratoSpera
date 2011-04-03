@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for heap module.
  *
- * \version $Id: cfg_heap.h 3256 2010-03-22 16:29:37Z batt $
  *
  * \author Daniele Basile <asterix@develer.com>
  */

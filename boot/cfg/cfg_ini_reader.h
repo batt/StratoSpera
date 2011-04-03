@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for ini reader module.
  *
- * \version $Id: cfg_ini_reader.h 2710 2009-06-08 13:54:43Z batt $
  *
  * \author Luca Ottaviano <lottaviano@develer.com>
  */

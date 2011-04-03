@@ -26,45 +26,42 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2008 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 2010 Develer S.r.l. (http://www.develer.com/)
  * All Rights Reserved.
  * -->
  *
- * \brief Configuration file for Debug module.
- *
+ * \brief Configuration file for Menu module.
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#ifndef CFG_DEBUG_H
-#define CFG_DEBUG_H
+#ifndef CFG_MENU_H
+#define CFG_MENU_H
 
 /**
- * Debug console port.
- * $WIZ$ type = "int"; min = 0
+ * Enable button bar behind menus
+ * $WIZ$ type = "boolean"
  */
-#define CONFIG_KDEBUG_PORT 0
+#define CONFIG_MENU_MENUBAR        0
 
 /**
- * Baudrate for the debug console.
- * $WIZ$ type = "int"; min = 300
+ * Level Edit Timeout
+ * $WIZ$ type = "boolean"
  */
-#define CONFIG_KDEBUG_BAUDRATE  115200UL
+#define CONFIG_LEVELEDIT_TIMEOUT   0
 
 /**
- * Clock source for the UART module. You need to write the code to reprogram the respective clock at the required frequency in your project before calling kdbg_init().
- *
- * $WIZ$ type = "enum"
- * $WIZ$ value_list = "kdbg_clk_src"
- * $WIZ$ supports = "msp430"
+ * Menu timeout
+ * $WIZ$ type = "boolean"
  */
-#define CONFIG_KDEBUG_CLOCK_SOURCE  KDBG_UART_SMCLK
+#define CONFIG_MENU_TIMEOUT        0
 
 /**
- * Clock frequency. (Only if different from MCLK's frequency, otherwise leave it zero)
- * $WIZ$ type = "int"; min = 0
- * $WIZ$ supports = "msp430"
+ * Enable smooth scrolling in menus
+ * $WIZ$ type = "boolean"
  */
-#define CONFIG_KDEBUG_CLOCK_FREQ 0UL
+#define CONFIG_MENU_SMOOTH         1
 
-#endif /* CFG_DEBUG_H */
+
+#endif /* CFG_MENU_H */
+

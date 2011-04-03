@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for I2S module.
  *
- * \version $Id: cfg_i2s.h 2743 2009-07-06 15:17:09Z lottaviano $
  *
  * \author Luca Ottaviano <lottaviano@develer.com>
  */

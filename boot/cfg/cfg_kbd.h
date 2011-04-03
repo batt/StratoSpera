@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for keyboard module.
  *
- * \version $Id: cfg_kbd.h 2936 2009-09-14 16:19:13Z asterix $
  *
  * \author Daniele Basile <asterix@develer.com>
  */

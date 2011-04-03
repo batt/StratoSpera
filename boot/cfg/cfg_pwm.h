@@ -31,7 +31,6 @@
  *
  * \brief Configuration file for PWM module.
  *
- * \version $Id: cfg_pwm.h 2348 2009-02-16 13:43:44Z duplo $
  * \author Daniele Basile <asterix@develer.com>
  */
 
@@ -53,5 +52,13 @@
  * $WIZ$ value_list = "log_format"
  */
 #define PWM_LOG_FORMAT     LOG_FMT_VERBOSE
+
+/**
+ * Enable the OLD pwm API.
+ * Not recommended for new projects.
+ *
+ * $WIZ$ type = "boolean"
+ */
+#define CFG_PWM_ENABLE_OLD_API	0
 
 #endif /* CFG_PWM_H */

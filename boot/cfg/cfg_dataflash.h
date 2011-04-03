@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for data flash memory module.
  *
- * \version $Id: cfg_dataflash.h 2348 2009-02-16 13:43:44Z duplo $
  * \author Daniele Basile <asterix@develer.com>
  */
 

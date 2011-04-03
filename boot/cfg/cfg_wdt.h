@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for watchdog module.
  *
- * \version $Id: cfg_wdt.h 2576 2009-04-20 11:03:51Z batt $
  *
  * \author Daniele Basile <asterix@develer.com>
  */

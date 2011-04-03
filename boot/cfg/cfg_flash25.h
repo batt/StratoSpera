@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for flash25 module.
  *
- * \version $Id: cfg_flash25.h 2362 2009-02-19 14:35:07Z duplo $
  *
  * \author Daniele Basile <asterix@develer.com>
  */

@@ -26,45 +26,29 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2008 Develer S.r.l. (http://www.develer.com/)
- * All Rights Reserved.
+ * Copyright 2001, 2004 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 1999, 2000, 2001, 2008 Bernie Innocenti <bernie@codewiz.org>
  * -->
  *
- * \brief Configuration file for Debug module.
+ * \brief Kernel configuration parameters (deprecated)
  *
- *
- * \author Daniele Basile <asterix@develer.com>
+ * \author Bernie Innocenti <bernie@codewiz.org>
  */
 
-#ifndef CFG_DEBUG_H
-#define CFG_DEBUG_H
+#ifndef CFG_KERN_H
+#define CFG_KERN_H
+
+#warning This file is deprecated, you should use the correct combination of cfg_proc.h, cfg_sem.h, cfg_signal.h and cfg_monitor.h
+#include "cfg_proc.h"
+#include "cfg_sem.h"
+#include "cfg_signal.h"
+#include "cfg_monitor.h"
+
 
 /**
- * Debug console port.
- * $WIZ$ type = "int"; min = 0
+ * Left for backwards compatibility.
+ * Do not use this anymore, will be deprecated soon.
  */
-#define CONFIG_KDEBUG_PORT 0
+#define CONFIG_KERN_SCHED CONFIG_KERN
 
-/**
- * Baudrate for the debug console.
- * $WIZ$ type = "int"; min = 300
- */
-#define CONFIG_KDEBUG_BAUDRATE  115200UL
-
-/**
- * Clock source for the UART module. You need to write the code to reprogram the respective clock at the required frequency in your project before calling kdbg_init().
- *
- * $WIZ$ type = "enum"
- * $WIZ$ value_list = "kdbg_clk_src"
- * $WIZ$ supports = "msp430"
- */
-#define CONFIG_KDEBUG_CLOCK_SOURCE  KDBG_UART_SMCLK
-
-/**
- * Clock frequency. (Only if different from MCLK's frequency, otherwise leave it zero)
- * $WIZ$ type = "int"; min = 0
- * $WIZ$ supports = "msp430"
- */
-#define CONFIG_KDEBUG_CLOCK_FREQ 0UL
-
-#endif /* CFG_DEBUG_H */
+#endif /*  CFG_KERN_H */

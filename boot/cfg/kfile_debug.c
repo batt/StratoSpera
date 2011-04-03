@@ -26,45 +26,38 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2008 Develer S.r.l. (http://www.develer.com/)
- * All Rights Reserved.
+ * Copyright 2010 Develer S.r.l. (http://www.develer.com/)
+ *
  * -->
  *
- * \brief Configuration file for Debug module.
+ * \brief KFile interface over debug.
  *
- *
- * \author Daniele Basile <asterix@develer.com>
+ * \author Francesco Sacchi <batt@develer.com>
  */
 
-#ifndef CFG_DEBUG_H
-#define CFG_DEBUG_H
+#include "kfile_debug.h"
 
-/**
- * Debug console port.
- * $WIZ$ type = "int"; min = 0
- */
-#define CONFIG_KDEBUG_PORT 0
+#include <io/kfile.h>
 
-/**
- * Baudrate for the debug console.
- * $WIZ$ type = "int"; min = 300
- */
-#define CONFIG_KDEBUG_BAUDRATE  115200UL
+#include <string.h>
 
-/**
- * Clock source for the UART module. You need to write the code to reprogram the respective clock at the required frequency in your project before calling kdbg_init().
- *
- * $WIZ$ type = "enum"
- * $WIZ$ value_list = "kdbg_clk_src"
- * $WIZ$ supports = "msp430"
- */
-#define CONFIG_KDEBUG_CLOCK_SOURCE  KDBG_UART_SMCLK
 
-/**
- * Clock frequency. (Only if different from MCLK's frequency, otherwise leave it zero)
- * $WIZ$ type = "int"; min = 0
- * $WIZ$ supports = "msp430"
- */
-#define CONFIG_KDEBUG_CLOCK_FREQ 0UL
+static size_t kfiledebug_write(struct KFile *_fd, const void *buf, size_t size)
+{
+	KFILEDEBUG_CAST(_fd);
 
-#endif /* CFG_DEBUG_H */
+	kprintf("%.*s", (int)size, (const char *)buf);
+
+	return size;
+}
+
+void kfiledebug_init(KFileDebug *kd)
+{
+	ASSERT(kd);
+
+	memset(kd, 0, sizeof(*kd));
+
+	kfile_init(&kd->fd);
+	kd->fd.write = kfiledebug_write;
+	DB(kd->fd._type = KFT_KFILEDEBUG);
+}

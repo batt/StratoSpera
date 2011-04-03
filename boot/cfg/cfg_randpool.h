@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for randpool module.
  *
- * \version $Id: cfg_randpool.h 2950 2009-09-16 10:08:31Z asterix $
  *
  * \author Daniele Basile <asterix@develer.com>
  */

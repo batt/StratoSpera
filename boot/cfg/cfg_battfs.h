@@ -32,7 +32,6 @@
  *
  * \brief Configuration file for BattFS module.
  *
- * \version $Id: cfg_battfs.h 2665 2009-04-24 16:39:09Z batt $
  * \author Daniele Basile <asterix@develer.com>
  */
 

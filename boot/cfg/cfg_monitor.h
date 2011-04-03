@@ -32,7 +32,6 @@
  *
  * \brief Kernel monitor configuration parameters
  *
- * \version $Id: cfg_monitor.h 2418 2009-03-25 15:57:34Z batt $
  * \author Bernie Innocenti <bernie@codewiz.org>
  */
 
