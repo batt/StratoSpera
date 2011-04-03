@@ -26,45 +26,24 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2008 Develer S.r.l. (http://www.develer.com/)
- * All Rights Reserved.
+ * Copyright 2010 Develer S.r.l. (http://www.develer.com/)
+ *
  * -->
  *
- * \brief Configuration file for Debug module.
+ * \brief Depend module.
  *
+ * \author Bernie Innocenti <bernie@codewiz.org>
  *
- * \author Daniele Basile <asterix@develer.com>
  */
 
-#ifndef CFG_DEBUG_H
-#define CFG_DEBUG_H
+#ifndef CFG_DEPEND_H
+#define CFG_DEPEND_H
+
+#include <cfg/compiler.h> // STATIC_ASSERT()
 
 /**
- * Debug console port.
- * $WIZ$ type = "int"; min = 0
+ * Compile-time enforcement of dependencies between configuration options
  */
-#define CONFIG_KDEBUG_PORT 0
+#define CONFIG_DEPEND(FEATURE, DEPS)  STATIC_ASSERT(!(FEATURE) || !!(DEPS))
 
-/**
- * Baudrate for the debug console.
- * $WIZ$ type = "int"; min = 300
- */
-#define CONFIG_KDEBUG_BAUDRATE  115200UL
-
-/**
- * Clock source for the UART module. You need to write the code to reprogram the respective clock at the required frequency in your project before calling kdbg_init().
- *
- * $WIZ$ type = "enum"
- * $WIZ$ value_list = "kdbg_clk_src"
- * $WIZ$ supports = "msp430"
- */
-#define CONFIG_KDEBUG_CLOCK_SOURCE  KDBG_UART_SMCLK
-
-/**
- * Clock frequency. (Only if different from MCLK's frequency, otherwise leave it zero)
- * $WIZ$ type = "int"; min = 0
- * $WIZ$ supports = "msp430"
- */
-#define CONFIG_KDEBUG_CLOCK_FREQ 0UL
-
-#endif /* CFG_DEBUG_H */
+#endif // CFG_DEPEND_H

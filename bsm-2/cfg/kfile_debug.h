@@ -26,45 +26,51 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2008 Develer S.r.l. (http://www.develer.com/)
- * All Rights Reserved.
+ * Copyright 2010 Develer S.r.l. (http://www.develer.com/)
+ *
  * -->
  *
- * \brief Configuration file for Debug module.
+ * \brief KFile interface over a debug console.
  *
  *
- * \author Daniele Basile <asterix@develer.com>
- */
-
-#ifndef CFG_DEBUG_H
-#define CFG_DEBUG_H
-
-/**
- * Debug console port.
- * $WIZ$ type = "int"; min = 0
- */
-#define CONFIG_KDEBUG_PORT 0
-
-/**
- * Baudrate for the debug console.
- * $WIZ$ type = "int"; min = 300
- */
-#define CONFIG_KDEBUG_BAUDRATE  115200UL
-
-/**
- * Clock source for the UART module. You need to write the code to reprogram the respective clock at the required frequency in your project before calling kdbg_init().
+ * \author Francesco Sacchi <batt@develer.com>
  *
- * $WIZ$ type = "enum"
- * $WIZ$ value_list = "kdbg_clk_src"
- * $WIZ$ supports = "msp430"
+ * $WIZ$ module_name = "kfiledebug"
+ * $WIZ$ module_depends = "kfile"
  */
-#define CONFIG_KDEBUG_CLOCK_SOURCE  KDBG_UART_SMCLK
+
+#ifndef CFG_KFILE_DEBUG
+#define CFG_KFILE_DEBUG
+
+#include <io/kfile.h>
 
 /**
- * Clock frequency. (Only if different from MCLK's frequency, otherwise leave it zero)
- * $WIZ$ type = "int"; min = 0
- * $WIZ$ supports = "msp430"
+ * Context for KFile over debug console.
  */
-#define CONFIG_KDEBUG_CLOCK_FREQ 0UL
+typedef struct KFileDebug
+{
+	KFile fd;  ///< KFile base class
+} KFileDebug;
 
-#endif /* CFG_DEBUG_H */
+/**
+ * ID for KFileDebug.
+ */
+#define KFT_KFILEDEBUG MAKE_ID('K', 'D', 'B', 'G')
+
+/**
+ * Convert + ASSERT from generic KFile to KFileDebug.
+ */
+INLINE KFileDebug * KFILEDEBUG_CAST(KFile *fd)
+{
+	ASSERT(fd->_type == KFT_KFILEDEBUG);
+	return (KFileDebug *)fd;
+}
+
+/**
+ * Initialize KFileMem struct.
+ *
+ * \param km Interface to initialize.
+ */
+void kfiledebug_init(KFileDebug *km);
+
+#endif /* CFG_KFILE_DEBUG */
