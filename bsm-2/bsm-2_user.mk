@@ -43,6 +43,7 @@ bsm-2_USER_ASRC = \
 
 # Flags included by the user.
 bsm-2_USER_LDFLAGS = \
+	-T bsm-2/at91sam7_256_rom.ld \
 	#
 
 # Flags included by the user.
