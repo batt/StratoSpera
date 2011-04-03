@@ -1,3 +1,6 @@
 buildrev.h
 images
 obj
+*.pyc
+*.OPJ
+*.DBK
