@@ -4,3 +4,5 @@ obj
 *.pyc
 *.OPJ
 *.DBK
+*.tags
+*.session
