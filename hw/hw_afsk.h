@@ -39,7 +39,7 @@
 #define HW_AFSK_H
 
 #include <cfg/compiler.h>
-#include <bsm-1/adc_mgr.h>
+#include <bsm-2/adc_mgr.h>
 
 /**
  * Initialize the specified channel of the ADC for AFSK needs.

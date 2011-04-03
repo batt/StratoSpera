@@ -4,18 +4,18 @@
 #
 
 # Programmer interface configuration, see http://dev.bertos.org/wiki/ProgrammerInterface for help
-bsm-1_PROGRAMMER_TYPE = jtag-tiny
-bsm-1_PROGRAMMER_PORT = none
+bsm-2_PROGRAMMER_TYPE = jtag-tiny
+bsm-2_PROGRAMMER_PORT = none
 
 # Files included by the user.
-bsm-1_USER_CSRC = \
-	$(bsm-1_SRC_PATH)/main.c \
-	$(bsm-1_SRC_PATH)/gps.c \
-	$(bsm-1_SRC_PATH)/adc_mgr.c \
-	$(bsm-1_SRC_PATH)/sensors.c \
-	$(bsm-1_SRC_PATH)/cutoff.c \
-	$(bsm-1_SRC_PATH)/landing.c \
-	$(bsm-1_SRC_PATH)/logging.c \
+bsm-2_USER_CSRC = \
+	$(bsm-2_SRC_PATH)/main.c \
+	$(bsm-2_SRC_PATH)/gps.c \
+	$(bsm-2_SRC_PATH)/adc_mgr.c \
+	$(bsm-2_SRC_PATH)/sensors.c \
+	$(bsm-2_SRC_PATH)/cutoff.c \
+	$(bsm-2_SRC_PATH)/landing.c \
+	$(bsm-2_SRC_PATH)/logging.c \
 	bertos/mware/ini_reader.c \
 	bertos/drv/kbd.c \
 	bertos/kern/signal.c \
@@ -26,31 +26,31 @@ bsm-1_USER_CSRC = \
 	#
 
 # Files included by the user.
-bsm-1_USER_PCSRC = \
+bsm-2_USER_PCSRC = \
 	#
 
 # Files included by the user.
-bsm-1_USER_CPPASRC = \
+bsm-2_USER_CPPASRC = \
 	#
 
 # Files included by the user.
-bsm-1_USER_CXXSRC = \
+bsm-2_USER_CXXSRC = \
 	#
 
 # Files included by the user.
-bsm-1_USER_ASRC = \
+bsm-2_USER_ASRC = \
 	#
 
 # Flags included by the user.
-bsm-1_USER_LDFLAGS = \
+bsm-2_USER_LDFLAGS = \
 	#
 
 # Flags included by the user.
-bsm-1_USER_CPPAFLAGS = \
+bsm-2_USER_CPPAFLAGS = \
 	#
 
 # Flags included by the user.
-bsm-1_USER_CPPFLAGS = \
+bsm-2_USER_CPPFLAGS = \
 	-O1 \
 	-fno-strict-aliasing \
 	-fwrapv \
