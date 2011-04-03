@@ -1,0 +1,8 @@
+buildrev.h
+images
+obj
+*.pyc
+*.OPJ
+*.DBK
+*.tags
+*.session

@@ -1,0 +1,214 @@
+Debug: 10 4 configuration.c:83 find_file(): found openocd.tmp
+Debug: 12 5 command.c:68 script_debug(): command - telnet_port
+Debug: 13 5 command.c:77 script_debug(): telnet_port - argv[0]=ocd_telnet_port
+Debug: 14 5 command.c:77 script_debug(): telnet_port - argv[1]=4444
+Debug: 16 5 command.c:68 script_debug(): command - tcl_port
+Debug: 17 5 command.c:77 script_debug(): tcl_port - argv[0]=ocd_tcl_port
+Debug: 18 5 command.c:77 script_debug(): tcl_port - argv[1]=6666
+Debug: 20 5 command.c:68 script_debug(): command - gdb_port
+Debug: 21 5 command.c:77 script_debug(): gdb_port - argv[0]=ocd_gdb_port
+Debug: 22 5 command.c:77 script_debug(): gdb_port - argv[1]=3333
+Debug: 23 6 configuration.c:83 find_file(): found ./openocd/jtag-tiny.cfg
+Debug: 25 7 command.c:68 script_debug(): command - interface
+Debug: 26 7 command.c:77 script_debug(): interface - argv[0]=ocd_interface
+Debug: 27 7 command.c:77 script_debug(): interface - argv[1]=ft2232
+Debug: 29 7 command.c:68 script_debug(): command - ft2232_device_desc
+Debug: 30 7 command.c:77 script_debug(): ft2232_device_desc - argv[0]=ocd_ft2232_device_desc
+Debug: 31 7 command.c:77 script_debug(): ft2232_device_desc - argv[1]=Amontec JTAGkey
+Debug: 33 7 command.c:68 script_debug(): command - ft2232_layout
+Debug: 34 7 command.c:77 script_debug(): ft2232_layout - argv[0]=ocd_ft2232_layout
+Debug: 35 7 command.c:77 script_debug(): ft2232_layout - argv[1]=jtagkey
+Debug: 37 7 command.c:68 script_debug(): command - ft2232_vid_pid
+Debug: 38 7 command.c:77 script_debug(): ft2232_vid_pid - argv[0]=ocd_ft2232_vid_pid
+Debug: 39 7 command.c:77 script_debug(): ft2232_vid_pid - argv[1]=0x0403
+Debug: 40 7 command.c:77 script_debug(): ft2232_vid_pid - argv[2]=0xcff8
+Debug: 41 8 configuration.c:83 find_file(): found ./openocd/lpc2378.cfg
+Debug: 43 9 command.c:68 script_debug(): command - jtag_nsrst_delay
+Debug: 44 9 command.c:77 script_debug(): jtag_nsrst_delay - argv[0]=ocd_jtag_nsrst_delay
+Debug: 45 9 command.c:77 script_debug(): jtag_nsrst_delay - argv[1]=200
+User : 46 9 command.c:396 command_print(): jtag_nsrst_delay: 200
+Debug: 48 9 command.c:68 script_debug(): command - jtag_ntrst_delay
+Debug: 49 9 command.c:77 script_debug(): jtag_ntrst_delay - argv[0]=ocd_jtag_ntrst_delay
+Debug: 50 9 command.c:77 script_debug(): jtag_ntrst_delay - argv[1]=200
+User : 51 9 command.c:396 command_print(): jtag_ntrst_delay: 200
+Debug: 53 9 command.c:68 script_debug(): command - reset_config
+Debug: 54 9 command.c:77 script_debug(): reset_config - argv[0]=ocd_reset_config
+Debug: 55 9 command.c:77 script_debug(): reset_config - argv[1]=trst_and_srst
+Debug: 56 9 command.c:77 script_debug(): reset_config - argv[2]=srst_pulls_trst
+Debug: 57 9 tcl.c:360 jim_newtap_cmd(): Creating New Tap, Chip: lpc2378, Tap: cpu, Dotted: lpc2378.cpu, 8 params
+Debug: 58 9 tcl.c:376 jim_newtap_cmd(): Processing option: -irlen
+Debug: 59 9 tcl.c:376 jim_newtap_cmd(): Processing option: -ircapture
+Debug: 60 9 tcl.c:376 jim_newtap_cmd(): Processing option: -irmask
+Debug: 61 9 tcl.c:376 jim_newtap_cmd(): Processing option: -expected-id
+Debug: 62 9 core.c:1106 jtag_tap_init(): Created Tap: lpc2378.cpu @ abs position 0, irlen 4, capture: 0x1 mask: 0xf
+Debug: 63 9 target.c:4281 jim_target(): Target command params:
+Debug: 64 9 target.c:4282 jim_target(): target create lpc2378.cpu arm7tdmi -endian little -chain-position lpc2378.cpu -variant arm7tdmi-s_r4 
+Debug: 66 9 command.c:68 script_debug(): command - bank
+Debug: 67 9 command.c:77 script_debug(): bank - argv[0]=ocd_flash_bank
+Debug: 68 9 command.c:77 script_debug(): bank - argv[1]=lpc2000
+Debug: 69 9 command.c:77 script_debug(): bank - argv[2]=0x0
+Debug: 70 9 command.c:77 script_debug(): bank - argv[3]=0x0007D000
+Debug: 71 9 command.c:77 script_debug(): bank - argv[4]=0
+Debug: 72 9 command.c:77 script_debug(): bank - argv[5]=0
+Debug: 73 9 command.c:77 script_debug(): bank - argv[6]=0
+Debug: 74 9 command.c:77 script_debug(): bank - argv[7]=lpc2000_v2
+Debug: 75 9 command.c:77 script_debug(): bank - argv[8]=20000
+Debug: 76 9 command.c:77 script_debug(): bank - argv[9]=calc_checksum
+Debug: 78 10 command.c:68 script_debug(): command - jtag_khz
+Debug: 79 10 command.c:77 script_debug(): jtag_khz - argv[0]=ocd_jtag_khz
+Debug: 80 10 command.c:77 script_debug(): jtag_khz - argv[1]=500
+Debug: 81 10 core.c:1258 jtag_config_khz(): handle jtag khz
+User : 82 10 command.c:396 command_print(): 500 kHz
+Debug: 84 10 command.c:68 script_debug(): command - init
+Debug: 85 10 command.c:77 script_debug(): init - argv[0]=ocd_init
+Debug: 86 10 openocd.c:129 handle_init_command(): target init complete
+Debug: 87 10 ft2232.c:2058 ft2232_init(): ft2232 interface using shortest path jtag state transitions
+Debug: 88 10 ft2232.c:1977 ft2232_init_libftdi(): 'ft2232' interface using libftdi with 'jtagkey' layout (0403:cff8)
+Debug: 89 152 ft2232.c:2021 ft2232_init_libftdi(): current latency timer: 2
+Debug: 90 153 ft2232.c:2294 jtagkey_init(): 80 08 1b
+Debug: 91 154 ft2232.c:2353 jtagkey_init(): 82 09 0f
+Debug: 92 155 ft2232.c:476 ft2232_speed(): 86 0b 00
+Debug: 93 159 openocd.c:136 handle_init_command(): jtag interface init complete
+Debug: 94 159 core.c:1151 jtag_init_inner(): Init JTAG chain
+Debug: 95 159 core.c:281 jtag_call_event_callbacks(): jtag event: JTAG controller reset (RESET or TRST)
+Debug: 96 159 core.c:797 jtag_reset_callback(): -
+Info : 97 163 core.c:864 jtag_examine_chain_display(): JTAG tap: lpc2378.cpu tap/device found: 0x4f1f0f0f (mfg: 0x787, part: 0xf1f0, ver: 0x4)
+Info : 98 163 core.c:923 jtag_examine_chain_match_tap(): JTAG Tap/device matched
+Debug: 99 165 openocd.c:142 handle_init_command(): jtag init complete
+Warn : 100 167 embeddedice.c:176 embeddedice_build_reg_cache(): EmbeddedICE version 7 detected, EmbeddedICE handling might be broken
+Debug: 101 169 embeddedice.c:370 embeddedice_write_reg(): 0: 0x00000000
+Debug: 102 170 embeddedice.c:370 embeddedice_write_reg(): 12: 0x00000000
+Debug: 103 170 embeddedice.c:370 embeddedice_write_reg(): 20: 0x00000000
+Debug: 104 171 openocd.c:145 handle_init_command(): jtag examine complete
+Debug: 105 171 openocd.c:151 handle_init_command(): flash init complete
+Debug: 106 171 openocd.c:155 handle_init_command(): mflash init complete
+Debug: 107 171 openocd.c:159 handle_init_command(): NAND init complete
+Debug: 108 172 openocd.c:163 handle_init_command(): pld init complete
+Debug: 109 172 gdb_server.c:2228 gdb_init(): gdb service for target arm7tdmi at port 3333
+Debug: 111 174 command.c:68 script_debug(): command - reset
+Debug: 112 174 command.c:77 script_debug(): reset - argv[0]=ocd_reset
+Debug: 113 174 command.c:77 script_debug(): reset - argv[1]=run
+Debug: 114 174 target.c:4281 jim_target(): Target command params:
+Debug: 115 174 target.c:4282 jim_target(): target names 
+Debug: 116 175 target.c:3390 target_handle_event(): target: (0) lpc2378.cpu (arm7tdmi) event: 11 (reset-start) action: 
+	cpu_setup
+	# this will work only with (intel) hex files, which have ROM address information
+	flash write_image erase ../../lpc-2378stk/main.hex
+
+
+Debug: 118 175 command.c:68 script_debug(): command - halt
+Debug: 119 175 command.c:77 script_debug(): halt - argv[0]=ocd_halt
+Debug: 120 175 target.c:1945 handle_halt_command(): -
+Debug: 121 175 arm7_9_common.c:1260 arm7_9_halt(): target->state: running
+Debug: 122 175 embeddedice.c:370 embeddedice_write_reg(): 9: 0xffffffff
+Debug: 123 175 embeddedice.c:370 embeddedice_write_reg(): 11: 0xffffffff
+Debug: 124 175 embeddedice.c:370 embeddedice_write_reg(): 12: 0x00000100
+Debug: 125 175 embeddedice.c:370 embeddedice_write_reg(): 13: 0x000000f7
+Debug: 126 177 embeddedice.c:370 embeddedice_write_reg(): 0: 0x00000005
+Debug: 127 177 embeddedice.c:370 embeddedice_write_reg(): 12: 0x00000000
+Debug: 128 178 arm7_9_common.c:1370 arm7_9_debug_entry(): target entered debug from ARM state
+Debug: 129 183 arm7_9_common.c:1402 arm7_9_debug_entry(): target entered debug state in System mode
+Debug: 130 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r0: 0x00000000
+Debug: 131 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r1: 0x40000200
+Debug: 132 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r2: 0x0017ce30
+Debug: 133 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r3: 0x001e847f
+Debug: 134 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r4: 0x00000000
+Debug: 135 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r5: 0xe01fc040
+Debug: 136 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r6: 0x12345678
+Debug: 137 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r7: 0x42ea0878
+Debug: 138 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r8: 0x4acc9df8
+Debug: 139 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r9: 0xcde6dff4
+Debug: 140 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r10: 0x40a50b07
+Debug: 141 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r11: 0x400018e8
+Debug: 142 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r12: 0x00000000
+Debug: 143 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r13: 0x400018dc
+Debug: 144 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r14: 0x5fdcbd26
+Debug: 145 183 arm7_9_common.c:1433 arm7_9_debug_entry(): r15: 0x000009b0
+Debug: 146 183 arm7_9_common.c:1439 arm7_9_debug_entry(): entered debug state at PC 0x9b0
+Debug: 147 183 target.c:826 target_call_event_callbacks(): target event 4 (early-halted)
+Debug: 148 183 target.c:3401 target_handle_event(): event: 4 early-halted - no action
+Debug: 149 183 target.c:826 target_call_event_callbacks(): target event 5 (halted)
+Debug: 150 183 target.c:3401 target_handle_event(): event: 5 halted - no action
+User : 151 183 target.c:1089 target_arch_state(): target state: halted
+User : 152 183 armv4_5.c:305 armv4_5_arch_state(): target halted in ARM state due to debug-request, current mode: System
+cpsr: 0x800000df pc: 0x000009b0
+Debug: 154 184 command.c:68 script_debug(): command - dcc_downloads
+Debug: 155 184 command.c:77 script_debug(): dcc_downloads - argv[0]=ocd_arm7_9_dcc_downloads
+Debug: 156 184 command.c:77 script_debug(): dcc_downloads - argv[1]=enable
+User : 157 184 command.c:396 command_print(): dcc downloads are enabled
+Debug: 159 184 command.c:68 script_debug(): command - core_state
+Debug: 160 184 command.c:77 script_debug(): core_state - argv[0]=ocd_armv4_5_core_state
+Debug: 161 184 command.c:77 script_debug(): core_state - argv[1]=arm
+User : 162 184 command.c:396 command_print(): core state: ARM
+Debug: 164 184 command.c:68 script_debug(): command - mwb
+Debug: 165 184 command.c:77 script_debug(): mwb - argv[0]=ocd_mwb
+Debug: 166 184 command.c:77 script_debug(): mwb - argv[1]=0xE01FC040
+Debug: 167 184 command.c:77 script_debug(): mwb - argv[2]=0x01
+Debug: 168 184 embeddedice.c:370 embeddedice_write_reg(): 0: 0x00000004
+Debug: 169 188 embeddedice.c:370 embeddedice_write_reg(): 0: 0x00000005
+Debug: 171 191 command.c:68 script_debug(): command - probe
+Debug: 172 191 command.c:77 script_debug(): probe - argv[0]=ocd_flash_probe
+Debug: 173 191 command.c:77 script_debug(): probe - argv[1]=0
+User : 174 191 command.c:396 command_print(): flash 'lpc2000' found at 0x00000000
+Debug: 176 191 command.c:68 script_debug(): command - write_image
+Debug: 177 191 command.c:77 script_debug(): write_image - argv[0]=ocd_flash_write_image
+Debug: 178 191 command.c:77 script_debug(): write_image - argv[1]=erase
+Debug: 179 191 command.c:77 script_debug(): write_image - argv[2]=../../lpc-2378stk/main.hex
+User : 180 191 command.c:396 command_print(): auto erase enabled
+Error: 181 192 fileio.c:70 fileio_open_local(): couldn't open ../../lpc-2378stk/main.hex
+Debug: 182 192 command.c:440 run_command(): Command failed with error code -1202
+User : 183 192 command.c:642 openocd_jim_vfprintf(): 
+User : 185 192 command.c:642 openocd_jim_vfprintf(): 
+User : 187 192 command.c:642 openocd_jim_vfprintf(): 
+User : 189 192 command.c:642 openocd_jim_vfprintf(): 
+User : 191 192 command.c:642 openocd_jim_vfprintf(): 
+Debug: 192 192 core.c:1198 jtag_init_reset(): Trying to bring the JTAG controller to life by asserting TRST / RESET
+Debug: 193 192 ft2232.c:1283 jtagkey_reset(): trst: 1, srst: 0, high_output: 0x08, high_direction: 0x0f
+Debug: 194 193 core.c:643 jtag_add_reset(): SRST line released
+Debug: 195 193 core.c:661 jtag_add_reset(): TRST line asserted
+Debug: 196 193 core.c:281 jtag_call_event_callbacks(): jtag event: JTAG controller reset (RESET or TRST)
+Debug: 197 193 core.c:797 jtag_reset_callback(): -
+Debug: 198 394 ft2232.c:1283 jtagkey_reset(): trst: 1, srst: 1, high_output: 0x00, high_direction: 0x0f
+Debug: 199 396 core.c:639 jtag_add_reset(): SRST line asserted
+Debug: 200 396 core.c:661 jtag_add_reset(): TRST line asserted
+Debug: 201 396 core.c:281 jtag_call_event_callbacks(): jtag event: JTAG controller reset (RESET or TRST)
+Debug: 202 396 core.c:797 jtag_reset_callback(): -
+Debug: 203 396 ft2232.c:1283 jtagkey_reset(): trst: 0, srst: 0, high_output: 0x09, high_direction: 0x0f
+Debug: 204 397 core.c:643 jtag_add_reset(): SRST line released
+Debug: 206 799 core.c:1151 jtag_init_inner(): Init JTAG chain
+Debug: 207 799 core.c:281 jtag_call_event_callbacks(): jtag event: JTAG controller reset (RESET or TRST)
+Debug: 208 799 core.c:797 jtag_reset_callback(): -
+Info : 209 804 core.c:864 jtag_examine_chain_display(): JTAG tap: lpc2378.cpu tap/device found: 0x4f1f0f0f (mfg: 0x787, part: 0xf1f0, ver: 0x4)
+Info : 210 804 core.c:923 jtag_examine_chain_match_tap(): JTAG Tap/device matched
+Debug: 211 806 target.c:4281 jim_target(): Target command params:
+Debug: 212 806 target.c:4282 jim_target(): target names 
+Debug: 213 808 embeddedice.c:370 embeddedice_write_reg(): 0: 0x00000000
+Debug: 214 809 embeddedice.c:370 embeddedice_write_reg(): 12: 0x00000000
+Debug: 215 809 embeddedice.c:370 embeddedice_write_reg(): 20: 0x00000000
+Debug: 216 810 target.c:4281 jim_target(): Target command params:
+Debug: 217 810 target.c:4282 jim_target(): target names 
+Debug: 218 810 target.c:3401 target_handle_event(): event: 12 reset-assert-pre - no action
+Debug: 219 810 arm7_9_common.c:977 arm7_9_assert_reset(): target->state: halted
+Debug: 220 810 ft2232.c:1283 jtagkey_reset(): trst: 1, srst: 1, high_output: 0x00, high_direction: 0x0f
+Debug: 221 811 core.c:639 jtag_add_reset(): SRST line asserted
+Debug: 222 811 core.c:661 jtag_add_reset(): TRST line asserted
+Debug: 223 811 core.c:281 jtag_call_event_callbacks(): jtag event: JTAG controller reset (RESET or TRST)
+Debug: 224 811 core.c:797 jtag_reset_callback(): -
+Debug: 225 811 target.c:3401 target_handle_event(): event: 13 reset-assert-post - no action
+Debug: 226 811 target.c:4281 jim_target(): Target command params:
+Debug: 227 811 target.c:4282 jim_target(): target names 
+Debug: 228 811 target.c:3401 target_handle_event(): event: 14 reset-deassert-pre - no action
+Debug: 229 811 arm7_9_common.c:1047 arm7_9_deassert_reset(): target->state: reset
+Debug: 230 862 ft2232.c:1283 jtagkey_reset(): trst: 0, srst: 0, high_output: 0x09, high_direction: 0x0f
+Debug: 231 863 core.c:643 jtag_add_reset(): SRST line released
+Debug: 232 863 target.c:3401 target_handle_event(): event: 15 reset-deassert-post - no action
+Debug: 233 863 target.c:4281 jim_target(): Target command params:
+Debug: 234 863 target.c:4282 jim_target(): target names 
+Debug: 235 863 target.c:3390 target_handle_event(): target: (0) lpc2378.cpu (arm7tdmi) event: 21 (reset-end) action: shutdown
+
+Debug: 237 863 command.c:68 script_debug(): command - shutdown
+Debug: 238 863 command.c:77 script_debug(): shutdown - argv[0]=ocd_shutdown
+User : 239 863 command.c:642 openocd_jim_vfprintf(): Runtime error, file "openocd.tmp", line 1:
+    User : 240 863 command.c:642 openocd_jim_vfprintf(): 
+Debug: 243 1273 command.c:68 script_debug(): command - init
+Debug: 244 1273 command.c:77 script_debug(): init - argv[0]=ocd_init

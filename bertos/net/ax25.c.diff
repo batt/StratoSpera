@@ -1,0 +1,45 @@
+--- ax25.c.2.6	2010-12-03 13:31:58.792208884 -0500
++++ ax25.c	2010-12-03 14:11:28.831693952 -0500
+@@ -39,6 +39,8 @@
+  */
+ 
+ #include "ax25.h"
++#include "ax25symbols.h"
++
+ #include "cfg/cfg_ax25.h"
+ 
+ #include <algo/crc_ccitt.h>
+@@ -76,7 +78,11 @@ static void ax25_decode(AX25Ctx *ctx)
+ 		{
+ 			DECODE_CALL(buf, msg.rpt_lst[msg.rpt_cnt].call);
+ 			msg.rpt_lst[msg.rpt_cnt].ssid = (*buf >> 1) & 0x0F;
+-			LOG_INFO("RPT%d[%.6s-%d]\n", msg.rpt_cnt, msg.rpt_lst[msg.rpt_cnt].call, msg.rpt_lst[msg.rpt_cnt].ssid);
++			msg.rpt_used[msg.rpt_cnt] = ((*buf & 0x80) == 0x80) ? true : false ;
++			LOG_INFO("RPT%d[%.6s-%d]%c\n", msg.rpt_cnt, 
++				msg.rpt_lst[msg.rpt_cnt].call, 
++				msg.rpt_lst[msg.rpt_cnt].ssid,
++				( msg.rpt_used[msg.rpt_cnt] ? '*' : ' ') );
+ 		}
+ 	#else
+ 		while (!(*buf++ & 0x01))
+@@ -210,8 +216,8 @@ static void ax25_sendCall(AX25Ctx *ctx, 
+ 		for (unsigned i = 0; i < sizeof(addr->call) - len; i++)
+ 			ax25_putchar(ctx, ' ' << 1);
+ 
+-	/* The bit0 of last call SSID should be set to 1 */
+-	uint8_t ssid = addr->ssid << 1 | (last ? 0x01 : 0);
++/* The bit0 of last call SSID should be set to 1 */
++	uint8_t ssid = 0x60 + (addr->ssid << 1) | (last ? 0x01 : 0);
+ 	ax25_putchar(ctx, ssid);
+ }
+ 
+@@ -281,7 +287,8 @@ void ax25_print(KFile *ch, const AX25Msg
+ 	{
+ 		kfile_putc(',', ch);
+ 		print_call(ch, &msg->rpt_lst[i]);
+-		// TODO: add * to the trasmitting digi
++		if (&msg->rpt_used[i])
++			kfile_putc('*', ch) ;
+ 	}
+ 	#endif
+ 
