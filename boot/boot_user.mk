@@ -36,7 +36,6 @@ boot_USER_ASRC = \
 
 # Flags included by the user.
 boot_USER_LDFLAGS = \
-	-T bertos/cpu/arm/scripts/at91sam7_256_rom_boot.ld
 	#
 
 # Flags included by the user.

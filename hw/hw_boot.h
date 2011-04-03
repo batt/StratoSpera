@@ -45,6 +45,6 @@
  * to size defined in linker script, otherwise you
  * could not find the main program application.
  */
-#define FLASH_BOOT_SIZE 0x8000 // 8kbyte
+#define FLASH_BOOT_SIZE 0x8000 // 32kbyte
 
 #endif /*  HW_BOOT_H */

@@ -8,7 +8,6 @@
 #define LOG_FORMAT   CONFIG_BOOT_LOG_FORMAT
 #include <cfg/log.h>
 
-
 #include "hw/hw_boot.h"
 #include "hw/hw_pin.h"
 #include "hw/hw_sd.h"
@@ -17,7 +16,7 @@
 #include <cpu/irq.h>
 #include <cpu/power.h>
 
-#include <drv/flash_at91.h>
+#include <drv/flash.h>
 #include <drv/spi_dma_at91.h>
 #include <drv/timer.h>
 #include <drv/sd.h>
@@ -36,11 +35,12 @@ void (*rom_start)(void) NORETURN = (void *)(FLASH_BOOT_SIZE + FLASH_BASE);
 
 #define START_APP() rom_start()
 
-static FlashAt91 flash;
+static Flash flash;
+static KFileBlock kflash;
 static SpiDmaAt91 spi_dma;
 
-static uint8_t fw_buf[4096];
-static uint8_t fw_buf1[4096];
+static uint8_t fw_buf[FLASH_PAGE_SIZE_BYTES * 16];
+static uint8_t fw_buf1[FLASH_PAGE_SIZE_BYTES * 16];
 
 static FATFS fs;
 static FatFile fw_file;
@@ -53,12 +53,15 @@ int main(void)
 	PIOA_CODR = LEDR | LEDG | BUZZER_BIT | CUTOFF_PIN | LAND_PIN;
 	PIOA_OER = LEDR | LEDG | BUZZER_BIT | CUTOFF_PIN | LAND_PIN;
 
-	kprintf("BSM-1 bootloader, ver %s\n", vers_tag);
+	kprintf("BSM-2 bootloader, ver %s\n", vers_tag);
 	timer_init();
 	spi_dma_init(&spi_dma);
 	spi_dma_setclock(20000000L);
 	SD_PIN_INIT();
-	flash_at91_init(&flash);
+	flash_init(&flash, 0);
+	kblock_trim(&flash.blk, 0, DIV_ROUNDUP(FLASH_BOOT_SIZE, flash.blk.blk_size));
+	kfileblock_init(&kflash, &flash.blk);
+
 	if (!SD_CARD_PRESENT() || !sd_init(&sd, &spi_dma.fd, false))
 		goto end;
 
@@ -95,7 +98,7 @@ int main(void)
 			goto end;
 		}
 
-		if (kfile_read(&flash.fd, fw_buf1, len) != len)
+		if (kfile_read(&kflash.fd, fw_buf1, len) != len)
 		{
 			LOG_ERR("Error reading from flash\n");
 			goto end;
@@ -115,7 +118,7 @@ int main(void)
 	LOG_INFO("Firmware file differs from memory, reprogramming...\n");
 	fw_len = fw_file.fat_file.fsize;
 	kfile_seek(&fw_file.fd, 0, KSM_SEEK_SET);
-	kfile_seek(&flash.fd, 0, KSM_SEEK_SET);
+	kfile_seek(&kflash.fd, 0, KSM_SEEK_SET);
 
 	while (fw_len)
 	{
@@ -126,7 +129,7 @@ int main(void)
 			LOG_ERR("Error reading fw file\n");
 			goto end;
 		}
-		if (kfile_write(&flash.fd, fw_buf, len) != len)
+		if (kfile_write(&kflash.fd, fw_buf, len) != len)
 		{
 			LOG_ERR("Error writing flash!\n");
 			goto end;
@@ -139,7 +142,7 @@ int main(void)
 	LOG_INFO("Done!\n");
 
 end:
-	kfile_close(&flash.fd);
+	kfile_close(&kflash.fd);
 	IRQ_DISABLE;
 
 	LOG_INFO("Jump to main application.\n");

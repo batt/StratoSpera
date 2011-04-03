@@ -68,6 +68,6 @@
  *
  * $WIZ$ type = "boolean"
  */
-#define CONFIG_FLASH_DISABLE_OLD_API       0
+#define CONFIG_FLASH_DISABLE_OLD_API       1
 
 #endif /* CFG_FLASH_AT91_H */
