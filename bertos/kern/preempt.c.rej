@@ -1,0 +1,83 @@
+***************
+*** 27,47 ****
+   * the GNU General Public License.
+   *
+   * Copyright 2008 Bernie Innocenti <bernie@codewiz.org>
+   * -->
+   *
+   * \brief Simple preemptive multitasking scheduler.
+   *
+-  * All voluntary and preemptive context switching happens on exit from
+-  * a common interrupt (signal) dispatcher.  Preemption on quantum timeout
+-  * is regulated by a soft-timer.  Other kinds of preemption could happen
+-  * if an interrupt sends a signal to a higher priority process (but this
+-  * is still unimplemented).
+   *
+-  * In the POSIX implementaiton, context switching is done by the portable
+-  * SVR4 swapcontext() facility.
+   *
+-  * \version $Id$
+   * \author Bernie Innocenti <bernie@codewiz.org>
+   */
+  
+  #include "cfg/cfg_proc.h"
+--- 27,85 ----
+   * the GNU General Public License.
+   *
+   * Copyright 2008 Bernie Innocenti <bernie@codewiz.org>
++  * Copyright 2009 Andrea Righi <arighi@develer.com>
+   * -->
+   *
+   * \brief Simple preemptive multitasking scheduler.
+   *
++  * Preemption is explicitly regulated inside the timer interrupt service
++  * routine. Each task obtains a time quantum when scheduled on the CPU and its
++  * quantum is decremented at each clock tick. The frequency of the timer
++  * determines the system tick granularity and CONFIG_KERN_QUANTUM the time
++  * sharing interval.
+   *
++  * When the quantum expires the handler proc_preempt() checks if the preemption
++  * is enabled and in this case proc_schedule() is called, that possibly
++  * replaces the current running thread with a different one.
++  *
++  * The preemption can be disabled or enabled via proc_forbid() and
++  * proc_permit() primitives. This is implemented using a global atomic counter.
++  * When the counter is greater than 0 the task cannot be preempted; only when
++  * the counter reaches 0 the task can be preempted again.
++  *
++  * Preemption-disabled sections may be nested. The preemption will be
++  * re-enabled when the outermost preemption-disabled section completes.
++  *
++  * The voluntary preemption still happens via proc_switch() or proc_yield().
++  * The first one assumes the current process has been already added to a
++  * private wait queue (e.g., on a semaphore or a signal), while the second one
++  * takes care of adding the process into the ready queue.
++  *
++  * Context switch is done by CPU-dependent support routines. In case of a
++  * voluntary preemption the context switch routine must take care of
++  * saving/restoring the callee-save registers (the voluntary-preemption case is
++  * actually a function call). The kernel-preemption always happens on a
++  * signal/interrupt context and so it must take care of saving all registers
++  * (minus the caller-save registers) in a common interrupt entry point, then
++  * switch to user-context and call the voluntary context switch on a interrupt
++  * exit point. On resume from the switch, the interrupt exit point must move
++  * back in interrupt mode, resume the caller-save registers (saved in the entry
++  * point) and return from the interrupt context.
++  *
++  * \note Thread priority defines the order in the \p ProcReadyList and the
++  * capability to deschedule a running process. A low-priority thread can't
++  * preempt a high-priority thread.
++  *
++  * A high-priority process can preempt a low-priority process immediately (it
++  * will be descheduled and replaced in the interrupt exit point). Processes
++  * running at the same priority can be descheduled when they expire the time
++  * quantum.
++  *
++  * \note Sleeping while preemption is disabled fallbacks to a busy-wait sleep.
++  * Voluntary preemption when preemption is disabled raises a kernel bug.
+   *
+   * \author Bernie Innocenti <bernie@codewiz.org>
++  * \author Andrea Righi <arighi@develer.com>
+   */
+  
+  #include "cfg/cfg_proc.h"
