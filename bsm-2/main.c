@@ -97,7 +97,7 @@ static void init(void)
 	uint32_t max_meters = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
 	uint32_t maxdist_timeout = atoi(inibuf);
-	
+
 	cutoff_init(max_seconds, delta_press, delta_timeout, base_lat, base_lon, max_meters, maxdist_timeout);
 
 	ini_getString(&conf.fd, "landing", "landing_alt", "3600", inibuf, sizeof(inibuf));
@@ -179,12 +179,13 @@ int main(void)
 
 		tim = gps_time();
 		t = gmtime(&tim);
-
+/*
 		snprintf(buf, sizeof(buf), "%02d:%02d:%02d;%s;%02ld.%.06ld;%03ld.%.06ld;%ld;%.1f;%.1f;%.0f;%.2f\n",
 		t->tm_hour, t->tm_min, t->tm_sec,
 		fix ? "FIX" : "NOFIX",
 		lat/1000000, ABS(lat)%1000000, lon/1000000, ABS(lon)%1000000, altitude,
 		sensor_temp(INT_TEMP), sensor_temp(EXT_TEMP), sensor_press(), sensor_supply());
+		 */
 		kprintf("%s", buf);
 		logging_data("%s", buf);
 	}

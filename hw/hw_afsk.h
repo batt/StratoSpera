@@ -57,9 +57,9 @@
 #define AFSK_STROBE_ON()   do { PIOA_SODR = BV(0); } while (0)
 #define AFSK_STROBE_OFF()  do { PIOA_CODR = BV(0); } while (0)
 
-#define DAC_PIN_MASK    (BV(19) | BV(20) | BV(21) | BV(22))
-#define PTT_PIN         16
-#define TX_LED_PIN       2
+#define DAC_PIN_START   28
+#define DAC_PIN_MASK    (BV(DAC_PIN_START) | BV(DAC_PIN_START+1) | BV(DAC_PIN_START+2) | BV(DAC_PIN_START+3))
+#define PTT_PIN         15
 
 
 /**
@@ -76,15 +76,14 @@
 	do { \
 		(void)ch, (void)ctx; \
 		/* Disable pullups */ \
-		PIOA_PUDR = DAC_PIN_MASK | BV(PTT_PIN) | BV(TX_LED_PIN); \
+		PIOA_PUDR = DAC_PIN_MASK | BV(PTT_PIN); \
 		/* Set PIO to pin */ \
-		PIOA_PER  = DAC_PIN_MASK | BV(PTT_PIN) | BV(TX_LED_PIN); \
-		/* Disable multidrive on pin */ \
-		PIOA_MDDR = DAC_PIN_MASK | BV(PTT_PIN) | BV(TX_LED_PIN); \
+		PIOA_PER  = DAC_PIN_MASK | BV(PTT_PIN); \
+		/* Enable block writing */ \
+		PIOA_OWER = DAC_PIN_MASK; \
 		/* Enanble as autput */ \
-		PIOA_OER = DAC_PIN_MASK | BV(PTT_PIN) | BV(TX_LED_PIN); \
+		PIOA_OER = DAC_PIN_MASK | BV(PTT_PIN); \
 		PIOA_CODR = BV(PTT_PIN); \
-		PIOA_SODR = BV(TX_LED_PIN); \
 	} while (0)
 
 /**
@@ -96,7 +95,6 @@
 		(void)ch; \
 		extern bool hw_afsk_dac_isr; \
 		PIOA_SODR = BV(PTT_PIN); \
-		PIOA_CODR = BV(TX_LED_PIN); \
 		hw_afsk_dac_isr = true; \
 	} while (0)
 
@@ -109,7 +107,6 @@
 	(void)ch; \
 	extern bool hw_afsk_dac_isr; \
 	PIOA_CODR = BV(PTT_PIN); \
-	PIOA_SODR = BV(TX_LED_PIN); \
 	hw_afsk_dac_isr = false; \
 	} while (0)
 

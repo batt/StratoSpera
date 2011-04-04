@@ -57,7 +57,9 @@ float sensor_temp(unsigned idx)
 
 float sensor_press(void)
 {
-	return mpxx6115a_press(adc_mgr_read(PRES_CH), 775);
+	 //mpxx6115a_press(adc_mgr_read(PRES_CH), 775);
+	 #warning fixme
+	return 0;
 }
 
 float sensor_altitude(void)
@@ -68,6 +70,9 @@ float sensor_altitude(void)
 
 float sensor_supply(void)
 {
-	uint16_t val = adc_mgr_read(SUPPLY_CH);
+	/*uint16_t val = adc_mgr_read(SUPPLY_CH);
 	return (val * 3.3 * (1390.0 / 390.0)) / 1023;
+	 */
+	#warning fixme
+	return 0;
 }

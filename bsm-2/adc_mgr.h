@@ -41,11 +41,20 @@
 
 struct Afsk;
 void adc_mgr_init(int ch, struct Afsk * ctx);
-uint16_t adc_mgr_read(unsigned ch);
 
-#define INT_TEMP_CH 0
-#define EXT_TEMP_CH 1
-#define PRES_CH 2
-#define SUPPLY_CH 3
+typedef enum AdcChannels
+{
+	ADC_VIN,
+	ADC_5V,
+	ADC_3V3,
+	ADC_CURR,
+	ADC_PRESS,
+	ADC_T1,
+	ADC_T2,
+	ADC_HUMIDITY,
+	ADC_CHANNELS,
+} AdcChannels;
+
+uint16_t adc_mgr_read(AdcChannels ch);
 
 #endif

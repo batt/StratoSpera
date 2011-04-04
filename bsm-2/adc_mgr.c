@@ -41,34 +41,91 @@
 #include <cpu/irq.h>
 
 #include <net/afsk.h>
-#include <drv/pwm.h>
+
+#define LOG_LEVEL LOG_LVL_INFO
+#include <cfg/log.h>
 
 #include <io/arm.h>
 #include <cfg/compiler.h>
 #include <cfg/macros.h>
-#include <cfg/module.h>
 
 
-#define CONFIG_ADC_CLOCK        4800000UL
+#define SAMPLE_RATE             CONFIG_AFSK_DAC_SAMPLERATE
+#define CONFIG_ADC_CLOCK        (SAMPLE_RATE * 520)
 #define CONFIG_ADC_STARTUP_TIME 20
-#define CONFIG_ADC_SHTIME       834
+#define CONFIG_ADC_SHTIME       1600
 
-#define ADC_COMPUTED_PRESCALER    ((CPU_FREQ/(2 * CONFIG_ADC_CLOCK)) - 1)
-#define ADC_COMPUTED_STARTUPTIME  (((CONFIG_ADC_STARTUP_TIME * CONFIG_ADC_CLOCK)/ 8000000UL) - 1)
-#define ADC_COMPUTED_SHTIME       (((CONFIG_ADC_SHTIME * CONFIG_ADC_CLOCK)/1000000000UL) - 1)
+#define ADC_COMPUTED_PRESCALER    ((CPU_FREQ / (2 * CONFIG_ADC_CLOCK)) - 1)
+#define ADC_COMPUTED_STARTUPTIME  (((CONFIG_ADC_STARTUP_TIME * CONFIG_ADC_CLOCK) / 8000000UL) - 1)
+#define ADC_COMPUTED_SHTIME       (uint32_t)((((uint64_t)CONFIG_ADC_SHTIME * CONFIG_ADC_CLOCK + 500000000UL) / 1000000000UL) - 1)
+
+// Set ADC_MGR_STROBE to 1 in order to enable debugging of adc isr duration.
+#define ADC_MGR_STROBE 1
+#if ADC_MGR_STROBE
+	#warning "ADC_MGR_STROBE active"
+	#define STROBE_PIN BV(20)
+	#define ADC_MGR_STROBE_LOW()  (PIOA_CODR = STROBE_PIN)
+	#define ADC_MGR_STROBE_HIGH() (PIOA_SODR = STROBE_PIN)
+	#define ADC_MGR_STROBE_INIT() \
+	do { \
+			PIOA_OER = STROBE_PIN; \
+			PIOA_SODR = STROBE_PIN; \
+			PIOA_PER = STROBE_PIN; \
+	} while (0)
+#else
+	#define ADC_MGR_STROBE_LOW()
+	#define ADC_MGR_STROBE_HIGH()
+	#define ADC_MGR_STROBE_INIT()
+#endif
+
 
 static Afsk *afsk_ctx;
 bool hw_afsk_dac_isr;
 
-static int adc_ch[] =
-{
-	6, //int. ntc
-	7, //ext. ntc
-	5, //pressure
-	1, //supply voltage
-};
+#define ADC_CHANNELS  8
 
-#define ADC_CHANNELS  countof(adc_ch)
+#define ADC_MUX_CH 4 // The external mux is connected here
+
+#define EXT_MUX_START 24 // PA24
+
+INLINE void adc_mux_init(void)
+{
+	/* PA24, PA25, PA26 */
+	uint32_t mask = BV(EXT_MUX_START) | BV(EXT_MUX_START+1) | BV(EXT_MUX_START+2);
+
+	PIOA_OER = mask;
+	PIOA_PER = mask;
+	/* Enable block writing */
+	PIOA_OWER = mask;
+	/* Select ch0 */
+	PIOA_ODSR = 0;
+}
+
+INLINE void adc_mux_sel(unsigned ch)
+{
+	ASSERT(ch < ADC_CHANNELS);
+	PIOA_ODSR = ((uint32_t)ch << EXT_MUX_START);
+}
+
+static unsigned curr_ch;
+static unsigned afsk_ch;
+
+static void adc_selectChannel(unsigned ch)
+{
+	//Disable all channels
+	ADC_CHDR = ADC_CH_MASK;
+	adc_mux_sel(ch);
+
+	ADC_CHER = BV(ADC_MUX_CH) | BV(afsk_ch);
+}
+
+static void adc_selectNextCh(void)
+{
+	if (++curr_ch >= ADC_CHANNELS)
+		curr_ch = 0;
+
+	adc_selectChannel(curr_ch);
+}
 
 typedef struct Iir
 {
@@ -76,85 +133,96 @@ typedef struct Iir
 	int32_t y[2];
 } Iir;
 
-static unsigned curr_ch;
 static Iir filters[ADC_CHANNELS];
 
-static int afsk_ch;
+#define FILTER_ENABLE 0
+#define IIR_FREQ 8
+#if (IIR_FREQ == 8)
+	#define GAIN 4.873950141e+01
+	#define IIR_SHIFT 9
+	#define IIR_CONST 0.9589655220
 
-uint16_t adc_mgr_read(unsigned ch)
+	#define IIR_GAIN  ((int)((BV(IIR_SHIFT) / GAIN)))
+#else
+	#error "Filter constants for this frequency not defined"
+#endif
+
+uint16_t adc_mgr_read(AdcChannels ch)
 {
 	ASSERT(ch < ADC_CHANNELS);
 
-	/*
-	 * The shift (>> 7) is needed in order to get the integer part
-	 * (filter state uses 8 bit fixed point arithmetic).
-	 */
-	return filters[ch].y[1] >> 7;
+	#if FILTER_ENABLE
+		/*
+		 * The shift (>> IIR_SHIFT) is needed in order to get the integer part
+		 * (filter state uses IIR_SHIFT bits fixed point arithmetic).
+		 */
+		return filters[ch].y[1] >> IIR_SHIFT;
+	#else
+		#warning "ADC filter disabled"
+		return filters[ch].y[1];
+	#endif
 }
+
 
 INLINE void afsk_handler(int8_t val)
 {
 	afsk_adc_isr(afsk_ctx, val);
 
-	/* Enable block writing */
-	PIOA_OWER = DAC_PIN_MASK;
-
 	if (hw_afsk_dac_isr)
-		PIOA_ODSR = (afsk_dac_isr(afsk_ctx) << 15) & DAC_PIN_MASK;
+		PIOA_ODSR = (afsk_dac_isr(afsk_ctx) << (DAC_PIN_START - 4)) & DAC_PIN_MASK;
 	else
-		/* Vdac/2 = 128 */
-		PIOA_ODSR = 0x4000000;
-
-	PIOA_OWDR = DAC_PIN_MASK;
+		/* Vdac / 2 */
+		PIOA_ODSR = BV(DAC_PIN_START + 3);
 }
 
 static DECLARE_ISR(adc_mgr_isr)
 {
-	// Disable all interrupts
-	ADC_IDR = 0xFFFFFFFF;
+	ADC_MGR_STROBE_LOW();
+	unsigned old_ch = curr_ch;
 
-	//Disable all channels;
-	ADC_CHDR = ADC_CH_MASK;
+	adc_selectNextCh();
 
-	unsigned old_ch = curr_ch++;
-
-	// Prepare for the next channel
-	if (curr_ch >= ADC_CHANNELS)
-		curr_ch = 0;
-
-	// Enable next channels
-	ADC_CHER = BV(afsk_ch) | BV(adc_ch[curr_ch]);
-
-	// This ensure IRQ will be triggered when all channels are done
-	ADC_IER = BV(MAX(afsk_ch, adc_ch[curr_ch]));
+	// Ack hw interrupt
+	(void)ADC_LCDR;
 
 	reg32_t *adc_res = &ADC_CDR0;
 	afsk_handler((adc_res[afsk_ch] >> 2) - 128);
 
-	/*
-	 * This filter is designed to work at 3200Hz,
-	 * update the coefficients if the number of channels
-	 * is modified.
-	 */
-	STATIC_ASSERT(ADC_CHANNELS == 4);
+	uint16_t adc_val = adc_res[ADC_MUX_CH];
+	#if FILTER_ENABLE
+		/*
+		 * This filter is designed to work at 1200Hz,
+		 * update the coefficients if the number of channels
+		 * is modified.
+		 */
+		STATIC_ASSERT(SAMPLE_RATE / ADC_CHANNELS == 1200);
 
-	/*
-	 * Read channel and apply a low pass filter, butterworth approximation, at about 10Hz.
-	 * Filter state uses 7 bit fixed point arithmetic in order to
-	 * be fast but retain sufficient precision and stability.
-	 */
-	filters[old_ch].x[0] = filters[old_ch].x[1];
-	filters[old_ch].x[1] = adc_res[adc_ch[old_ch]];
-	filters[old_ch].x[1] = filters[old_ch].x[1] + (filters[old_ch].x[1] >> 2);
-	filters[old_ch].y[0] = filters[old_ch].y[1];
-	filters[old_ch].y[1] = filters[old_ch].x[0] + filters[old_ch].x[1] + filters[old_ch].y[0] - (filters[old_ch].y[0] >> 8) - (filters[old_ch].y[0] >> 6);
+		/*
+		 * Read channel and apply a low pass filter, butterworth approximation,
+		 * at about IIR_FREQ Hz.
+		 * Filter state uses IIR_SHIFT bits fixed point arithmetic in order to
+		 * be fast but retain sufficient precision and stability.
+		 */
+		filters[old_ch].x[0] = filters[old_ch].x[1];
+		filters[old_ch].x[1] = adc_val * IIR_GAIN;
+		filters[old_ch].y[0] = filters[old_ch].y[1];
+		filters[old_ch].y[1] = filters[old_ch].x[0] + filters[old_ch].x[1] +
+								INT_MULT(filters[old_ch].y[0], IIR_CONST, 8);
+	#else
+		filters[old_ch].y[1] = adc_val;
+	#endif
 
-	(void)ADC_LCDR;
 	AIC_EOICR = 0;
+	ADC_MGR_STROBE_HIGH();
 }
 
 void adc_mgr_init(int ch, struct Afsk * ctx)
 {
+	ADC_MGR_STROBE_INIT();
+
+	LOG_INFO("prescaler[%ld], stup[%ld], shtim[%ld]\n", ADC_COMPUTED_PRESCALER,
+								ADC_COMPUTED_STARTUPTIME, ADC_COMPUTED_SHTIME);
+
 	ADC_MR = 0;
 
 	afsk_ctx = ctx;
@@ -181,25 +249,30 @@ void adc_mgr_init(int ch, struct Afsk * ctx)
 	AIC_SMR(ADC_ID) = AIC_SRCTYPE_INT_EDGE_TRIGGERED;
 	AIC_IECR = BV(ADC_ID);
 
-	///////
+	/*
+	 * Set convertion rate to SAMPLE_RATE (9600 Hz).
+	 * Since we have 8 channels, each of them will be sampled at 1200Hz.
+	 */
 	PMC_PCER = BV(TC0_ID);
 	TC_BMR = TC_NONEXC0;
 	TC0_CCR = BV(TC_SWTRG) | BV(TC_CLKEN);
-
 	TC0_CMR = BV(TC_WAVE);
 	TC0_CMR |= (TC_WAVSEL_UP_RC_TRG | TC_ACPC_CLEAR_OUTPUT | TC_ACPA_SET_OUTPUT);
-	TC0_RC = (CPU_FREQ / 2) / 9600;
+	TC0_RC = (CPU_FREQ / 2) / SAMPLE_RATE;
 	TC0_RA = TC0_RC / 2;
-	///////
+
+	adc_mux_init();
 
 	// Auto trigger enabled on TIOA channel 0
 	ADC_MR |= BV(ADC_TRGEN);
 
 	//Disable all channels
 	ADC_CHDR = ADC_CH_MASK;
-	//Enable channels
-	ADC_CHER = BV(ch) | BV(adc_ch[curr_ch]);
+
+	// Start from ch0
+	curr_ch = 0;
+	adc_selectChannel(curr_ch);
 
 	// This ensure IRQ will be triggered when all channels are done
-	ADC_IER = BV(MAX(ch, adc_ch[curr_ch]));
+	ADC_IER = BV(MAX(afsk_ch, (unsigned)ADC_MUX_CH));
 }
