@@ -41,24 +41,40 @@
 
 #define USE_FIXED_PLL 1
 
-#define XTAL_FREQ 18432000UL
+#ifdef DEMO_BOARD
+	#define XTAL_FREQ 12000000UL
+#else
+	#define XTAL_FREQ 18432000UL
+#endif
 
 #if USE_FIXED_PLL
-	#if CPU_FREQ != 48054857L
-		/* Avoid errors on nightly test */
-		#if !defined(ARCH_NIGHTTEST) || !(ARCH & ARCH_NIGHTTEST)
-			#warning Clock registers set for 48.055MHz operation, revise following code if you want a different clock.
+	#ifdef DEMO_BOARD
+		#if CPU_FREQ != 48000000L
+			#warning Clock registers set for 48MHz operation, revise following code if you want a different clock.
 		#endif
+
+		/*
+		 * With a 12MHz cristal, master clock is:
+		 * (((12 * (PLL_MUL_VAL + 1)) / PLL_DIV_VAL) / AT91MCK_PRES) = 48MHz
+		 */
+		#define PLL_MUL_VAL  7  /**< Real multiplier value is PLL_MUL_VAL + 1! */
+		#define PLL_DIV_VAL  1
+		#define AT91MCK_PRES PMC_PRES_CLK_2
+	#else
+		#if CPU_FREQ != 48054857L
+			/* Avoid errors on nightly test */
+			#if !defined(ARCH_NIGHTTEST) || !(ARCH & ARCH_NIGHTTEST)
+				#warning Clock registers set for 48.055MHz operation, revise following code if you want a different clock.
+			#endif
+		#endif
+		/*
+		 * With a 18.432MHz cristal, master clock is:
+		 * (((18.432 * (PLL_MUL_VAL + 1)) / PLL_DIV_VAL) / AT91MCK_PRES) = 48.055MHz
+		 */
+		#define PLL_MUL_VAL  72  /**< Real multiplier value is PLL_MUL_VAL + 1! */
+		#define PLL_DIV_VAL  14
+		#define AT91MCK_PRES PMC_PRES_CLK_2
 	#endif
-
-	/*
-	 * With a 18.432MHz cristal, master clock is:
-	 * (((18.432 * (PLL_MUL_VAL + 1)) / PLL_DIV_VAL) / AT91MCK_PRES) = 48.055MHz
-	 */
-	#define PLL_MUL_VAL  72  /**< Real multiplier value is PLL_MUL_VAL + 1! */
-	#define PLL_DIV_VAL  14
-	#define AT91MCK_PRES PMC_PRES_CLK_2
-
 #else /* !USE_FIXED_PLL*/
 
 	#define PLL_IN_MIN  1000000UL

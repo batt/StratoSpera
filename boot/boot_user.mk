@@ -44,6 +44,7 @@ boot_USER_CPPAFLAGS = \
 
 # Flags included by the user.
 boot_USER_CPPFLAGS = \
+	-DDEMO_BOARD \
 	-Os \
 	-fno-strict-aliasing \
 	-fwrapv \

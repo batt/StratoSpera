@@ -56,6 +56,10 @@ INLINE void ledg(bool val)
 		PIOA_CODR = LEDG;
 }
 
+#ifdef DEMO_BOARD
+	#warning "Compiling for demoboard!"
+#endif
+
 static void init(void)
 {
 	IRQ_ENABLE;

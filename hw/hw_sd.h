@@ -40,13 +40,23 @@
 #ifndef HW_SD_H
 #define HW_SD_H
 
+#ifdef DEMO_BOARD
+	#define SD_CS_INIT() do { PIOA_PER = BV(11); PIOA_OER = BV(11); SD_CS_OFF(); } while(0)
+	#define SD_CS_ON()   do { PIOA_CODR = BV(11); } while(0)
+	#define SD_CS_OFF()  do { PIOA_SODR = BV(11); } while(0)
 
-#define SD_CS_INIT() do { PIOA_PER = BV(11); PIOA_OER = BV(11); SD_CS_OFF(); } while(0)
-#define SD_CS_ON()   do { PIOA_CODR = BV(11); } while(0)
-#define SD_CS_OFF()  do { PIOA_SODR = BV(11); } while(0)
+	#define SD_PIN_INIT()      do { PIOA_PER = BV(0) | BV(1); PIOA_PUER = BV(0) | BV(1); } while(0)
+	#define SD_CARD_PRESENT()  (!(PIOA_PDSR & BV(1)))
+	#define SD_WRITE_PROTECT() ((PIOA_PDSR & BV(0)))
+#else
+	#warning fixme
+	#define SD_CS_INIT() do { PIOA_PER = BV(11); PIOA_OER = BV(11); SD_CS_OFF(); } while(0)
+	#define SD_CS_ON()   do { PIOA_CODR = BV(11); } while(0)
+	#define SD_CS_OFF()  do { PIOA_SODR = BV(11); } while(0)
 
-#define SD_PIN_INIT()      do { PIOA_PER = BV(0) | BV(1); PIOA_PUER = BV(0) | BV(1); } while(0)
-#define SD_CARD_PRESENT()  (!(PIOA_PDSR & BV(1)))
-#define SD_WRITE_PROTECT() ((PIOA_PDSR & BV(0)))
+	#define SD_PIN_INIT()      do { PIOA_PER = BV(0) | BV(1); PIOA_PUER = BV(0) | BV(1); } while(0)
+	#define SD_CARD_PRESENT()  (!(PIOA_PDSR & BV(1)))
+	#define SD_WRITE_PROTECT() ((PIOA_PDSR & BV(0)))
+#endif
 
 #endif /* HW_SD_H */
