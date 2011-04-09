@@ -62,7 +62,7 @@
 // Set ADC_MGR_STROBE to 1 in order to enable debugging of adc isr duration.
 #define ADC_MGR_STROBE 1
 #if ADC_MGR_STROBE
-	#warning "ADC_MGR_STROBE active"
+	#warning "ADC_MGR_STROBE active on PA20"
 	#define STROBE_PIN BV(20)
 	#define ADC_MGR_STROBE_LOW()  (PIOA_CODR = STROBE_PIN)
 	#define ADC_MGR_STROBE_HIGH() (PIOA_SODR = STROBE_PIN)
@@ -220,7 +220,7 @@ void adc_mgr_init(int ch, struct Afsk * ctx)
 {
 	ADC_MGR_STROBE_INIT();
 
-	LOG_INFO("prescaler[%ld], stup[%ld], shtim[%ld]\n", ADC_COMPUTED_PRESCALER,
+	LOG_INFO("prescaler[%d], stup[%ld], shtim[%ld]\n", ADC_COMPUTED_PRESCALER,
 								ADC_COMPUTED_STARTUPTIME, ADC_COMPUTED_SHTIME);
 
 	ADC_MR = 0;
