@@ -40,13 +40,24 @@
 #ifndef HW_PIN_H
 #define HW_PIN_H
 
-#define LAND_PIN     BV(3)
-#define CUTOFF_PIN   BV(4)
+#ifdef DEMO_BOARD
+	#define LAND_PIN     BV(3)
+	#define CUTOFF_PIN   BV(4)
 
-#define LEDR         BV(6)
-#define LEDG         BV(7)
-#define BUZZER_BIT   BV(8)
+	#define LEDR         BV(6)
+	#define LEDG         BV(7)
+	#define BUZZER_BIT   BV(8)
 
-#define START_BTN    BV(15)
+	#define START_BTN    BV(15)
+#else
+	#define LAND_PIN     BV(0)
+	#define CUTOFF_PIN   BV(1)
+
+	#define LEDR         BV(19)
+	#define LEDG         BV(18)
+	#define BUZZER_BIT   BV(7)
+
+	#define START_BTN    BV(16)
+#endif
 
 #endif /* HW_BUZZER_H */
