@@ -162,13 +162,13 @@
     <File Name="bsm-2/cutoff.c"/>
     <File Name="bsm-2/landing.c"/>
     <File Name="bsm-2/logging.c"/>
-    <File Name="bsm-2/bsm-1_user.mk"/>
     <File Name="bsm-2/main_test.c"/>
     <File Name="bsm-2/cutoff.h"/>
-    <File Name="bsm-2/bsm-1.mk"/>
     <File Name="buildrev.h"/>
-    <File Name="../../data/src/bsm-2/bsm-2/bsm-2.mk"/>
-    <File Name="../../data/src/bsm-2/bsm-2/bsm-2_user.mk"/>
+    <File Name="bsm-2/at91sam7_256_rom.ld"/>
+    <File Name="bsm-2/bsm-2.mk"/>
+    <File Name="bsm-2/bsm-2_user.mk"/>
+    <File Name="Makefile"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
