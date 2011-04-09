@@ -28,6 +28,12 @@
 #include <string.h>
 
 #include <verstag.h>
+
+#ifdef DEMO_BOARD
+	#warning "Compiling for demoboard!"
+#endif
+
+
 /*
  * Define pointer function to main program.
  */
@@ -59,7 +65,8 @@ int main(void)
 	spi_dma_setclock(20000000L);
 	SD_PIN_INIT();
 	flash_init(&flash, 0);
-	kblock_trim(&flash.blk, 0, DIV_ROUNDUP(FLASH_BOOT_SIZE, flash.blk.blk_size));
+	block_idx_t boot_size = DIV_ROUNDUP(FLASH_BOOT_SIZE, flash.blk.blk_size);
+	kblock_trim(&flash.blk, boot_size, flash.blk.blk_cnt - boot_size);
 	kfileblock_init(&kflash, &flash.blk);
 
 	if (!SD_CARD_PRESENT() || !sd_init(&sd, &spi_dma.fd, false))
@@ -72,14 +79,15 @@ int main(void)
 	}
 
 	timer_delay(500);
-	if (fatfile_open(&fw_file, "firmware.bin", FA_READ))
+	if (fatfile_open(&fw_file, "bsm-2.bin", FA_READ))
 	{
 		LOG_INFO("firmware file not found\n");
 		goto end;
 	}
 
-	LOG_INFO("Firmware file found, checking for update...\n");
 	kfile_off_t fw_len = fw_file.fat_file.fsize;
+	LOG_INFO("Firmware file found, size %ld, checking for update...\n", fw_len);
+
 	if (fw_len > (kfile_off_t)(FLASH_MEM_SIZE - FLASH_BOOT_SIZE))
 	{
 		LOG_ERR("Fw file too large\n");
@@ -142,7 +150,7 @@ int main(void)
 	LOG_INFO("Done!\n");
 
 end:
-	kfile_close(&kflash.fd);
+	kfile_flush(&kflash.fd);
 	IRQ_DISABLE;
 
 	LOG_INFO("Jump to main application.\n");
