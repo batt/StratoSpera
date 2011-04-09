@@ -53,13 +53,27 @@
  */
 #define AFSK_ADC_INIT(ch, ctx) adc_mgr_init(ch, ctx)
 
-#define AFSK_STROBE_INIT() do { PIOA_PER  = BV(0); PIOA_OER = BV(0); PIOA_CODR = BV(0); } while (0)
-#define AFSK_STROBE_ON()   do { PIOA_SODR = BV(0); } while (0)
-#define AFSK_STROBE_OFF()  do { PIOA_CODR = BV(0); } while (0)
+#ifdef DEMO_BOARD
+	#define AFSK_STROBE_PIN 2
+	#define DAC_PIN_START   19
+	#define PTT_PIN         16
+#else
+	#define AFSK_STROBE_PIN 27
+	#define DAC_PIN_START   28
+	#define PTT_PIN         15
+#endif
 
-#define DAC_PIN_START   28
-#define DAC_PIN_MASK    (BV(DAC_PIN_START) | BV(DAC_PIN_START+1) | BV(DAC_PIN_START+2) | BV(DAC_PIN_START+3))
-#define PTT_PIN         15
+#define DAC_PIN_MASK (BV(DAC_PIN_START) | BV(DAC_PIN_START+1) | BV(DAC_PIN_START+2) | BV(DAC_PIN_START+3))
+
+#define AFSK_STROBE_INIT() \
+	do { \
+			PIOA_PER  = BV(AFSK_STROBE_PIN); \
+			PIOA_OER = BV(AFSK_STROBE_PIN); \
+			PIOA_CODR = BV(AFSK_STROBE_PIN); \
+	} while (0)
+
+#define AFSK_STROBE_ON()   do { PIOA_SODR = BV(AFSK_STROBE_PIN); } while (0)
+#define AFSK_STROBE_OFF()  do { PIOA_CODR = BV(AFSK_STROBE_PIN); } while (0)
 
 
 /**
