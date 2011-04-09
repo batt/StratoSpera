@@ -40,13 +40,20 @@
 
 #include "adc_mgr.h"
 
-#define INT_TEMP INT_TEMP_CH
-#define EXT_TEMP EXT_TEMP_CH
+typedef struct SensorCalibrationPoint
+{
+	int x;
+	float y;
+} SensorCalibrationPoint;
 
-float sensor_temp(unsigned idx);
-float sensor_press(void);
-float sensor_altitude(void);
-float sensor_supply(void);
+typedef struct SensorCalibrationSet
+{
+	SensorCalibrationPoint p1, p2;
+} SensorCalibrationSet;
 
+float sensor_read(AdcChannels channel);
+void sensor_setCalibration(AdcChannels channel, SensorCalibrationSet set);
+
+#define sensor_press()  sensor_read(ADC_PRESS)
 
 #endif
