@@ -23,6 +23,7 @@ bsm-2_USER_CSRC = \
 	bertos/cpu/arm/drv/spi_dma_at91.c \
 	bertos/io/kblock.c \
 	bertos/fs/fatfs/diskio.c \
+	bertos/verstag.c \
 	#
 
 # Files included by the user.

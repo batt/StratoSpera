@@ -29,6 +29,8 @@
 
 #include <net/nmea.h>
 
+#include <verstag.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -64,6 +66,7 @@ static void init(void)
 {
 	IRQ_ENABLE;
 	kdbg_init();
+	kprintf("BSM-2, ver %s\n", vers_tag);
 	timer_init();
 	buz_init();
 	proc_init();
@@ -189,9 +192,11 @@ int main(void)
 		fix ? "FIX" : "NOFIX",
 		lat/1000000, ABS(lat)%1000000, lon/1000000, ABS(lon)%1000000, altitude,
 		sensor_temp(INT_TEMP), sensor_temp(EXT_TEMP), sensor_press(), sensor_supply());
-		 */
+
 		kprintf("%s", buf);
 		logging_data("%s", buf);
+		 */
+		TRACE;
 	}
 
 	return 0;
