@@ -38,41 +38,71 @@
 #include "sensors.h"
 #include "adc_mgr.h"
 
-#include <drv/mpxx6115a.h>
-#include <math.h>
+#define LOG_LEVEL LOG_LVL_INFO
+#include <cfg/log.h>
 
-#define NTC_A 1.129241E-3
-#define NTC_B 2.341077E-4
-#define NTC_C 8.775468E-8
-
-
-float sensor_temp(unsigned idx)
+/**
+ * Default calibration for all analog channels
+ */
+static SensorCalibrationSet sensor_calib[ADC_CHANNELS] =
 {
-	uint16_t val = adc_mgr_read(idx);
+	//ADC_VIN V
+	{
+		.p1 = { .x = 0, .y = 0 },
+		.p2 = { .x = 1023, .y = 12.64 },
+	},
+	//ADC_5V V
+	{
+		.p1 = { .x = 0, .y = 0 },
+		.p2 = { .x = 1023, .y = 6.3 },
+	},
+	//ADC_3V3 V
+	{
+		.p1 = { .x = 0, .y = 0 },
+		.p2 = { .x = 1023, .y = 3.523 },
+	},
+	//ADC_CURR mA
+	{
+		.p1 = { .x = 0, .y = 0 },
+		.p2 = { .x = 1023, .y = 2000.0 },
+	},
+	//ADC_PRESS mBar
+	{
+		.p1 = { .x = 0, .y = 0 },
+		.p2 = { .x = 1023, .y = 1126.0 },
+	},
+	//ADC_T1 °C
+	{
+		.p1 = { .x = 0, .y = -105.13 },
+		.p2 = { .x = 1023, .y = +49.27 },
+	},
+	//ADC_T2 °C
+	{
+		.p1 = { .x = 0, .y = -105.13 },
+		.p2 = { .x = 1023, .y = +49.27 },
+	},
+	//ADC_HUMIDITY %
+	{
+		.p1 = { .x = 0, .y = 0 },
+		.p2 = { .x = 1023, .y = 100 },
+	},
+};
 
-	float rntc = (val * 10000.0) / (1023.0 - val);
-	float y = NTC_A + NTC_B * logf(rntc) + NTC_C * powf(logf(rntc), 3);
-	return 1 / y - 273.15;
+float sensor_read(AdcChannels ch)
+{
+	int x = adc_mgr_read(ch);
+
+	int   x1 = sensor_calib[ch].p1.x;
+	int   x2 = sensor_calib[ch].p2.x;
+	float y1 = sensor_calib[ch].p1.y;
+	float y2 = sensor_calib[ch].p2.y;
+	float y = (((x - x1) * (y2 - y1)) / (x2 - x1)) + y1;
+	LOG_INFO("Reading ch%d, x %d, x1 %d, x2 %d, y1 %f, y2 %f, y=%f", ch, x, x1, x2, y1, y2, y);
+	return y;
 }
 
-float sensor_press(void)
+void sensor_setCalibration(AdcChannels channel, SensorCalibrationSet set)
 {
-	 //mpxx6115a_press(adc_mgr_read(PRES_CH), 775);
-	 #warning fixme
-	return 0;
-}
-
-float sensor_altitude(void)
-{
-	float p = sensor_press();
-	return 44330.8 - 4946.54 * powf(p * 100, 0.190263);
-}
-
-float sensor_supply(void)
-{
-	/*uint16_t val = adc_mgr_read(SUPPLY_CH);
-	return (val * 3.3 * (1390.0 / 390.0)) / 1023;
-	 */
-	#warning fixme
-	return 0;
+	ASSERT(channel < ADC_CHANNELS);
+	sensor_calib[channel] = set;
 }

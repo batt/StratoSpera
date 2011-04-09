@@ -36,6 +36,9 @@
 #include <time.h>
 #include <stdlib.h>
 
+#define LOG_LEVEL LOG_LVL_INFO
+#include <cfg/log.h>
+
 static Afsk afsk;
 static Serial ser;
 static SpiDmaAt91 spi_dma;
@@ -115,6 +118,36 @@ static void init(void)
 	uint32_t buz_timeout_seconds = atoi(inibuf);
 
 	landing_init(landing_meters, count_limit, buz_timeout_seconds);
+
+	/* Set ADC sensor calibration */
+	for (int i = 0; i < ADC_CHANNELS; i++)
+	{
+		char calib[16];
+		SensorCalibrationSet set;
+
+		snprintf(calib, sizeof(calib), "calib%02d", i);
+		calib[sizeof(calib) - 1] = '\0';
+
+		if (ini_getString(&conf.fd, calib, "p1x", "0", inibuf, sizeof(inibuf)) != 0)
+			continue;
+		set.p1.x = atoi(inibuf);
+
+		if (ini_getString(&conf.fd, calib, "p1y", "0", inibuf, sizeof(inibuf)) != 0)
+			continue;
+		set.p1.y = atof(inibuf);
+
+		if (ini_getString(&conf.fd, calib, "p2x", "1023", inibuf, sizeof(inibuf)) != 0)
+			continue;
+		set.p2.x = atoi(inibuf);
+
+		if (ini_getString(&conf.fd, calib, "p2y", "1023", inibuf, sizeof(inibuf)) != 0)
+			continue;
+		set.p2.y = atof(inibuf);
+
+		LOG_INFO("Calibration loaded for channel %d", i);
+		sensor_setCalibration(i, set);
+	}
+
 	kfile_close(&conf.fd);
 
 	logging_init();
