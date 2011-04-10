@@ -27,11 +27,11 @@ const char *measures_format(void)
 	tim = gps_time();
 	t = gmtime(&tim);
 
-	snprintf(workbuf, sizeof(workbuf), "/%02d%02d%02dh%s/%s>%ld;%s",
+	snprintf(workbuf, sizeof(workbuf), "/%02d%02d%02dh%s/%s>%05ld;%s",
 	t->tm_hour, t->tm_min, t->tm_sec,
 	lat, lon,
 	gps_info()->altitude,
-	"other measures");
+	"-43.1;1011;100;-21.1;10.1;-48.1;01234");
 
 	return workbuf;
 }
