@@ -77,6 +77,8 @@ static ticks_t aprs_interval;
 static ticks_t log_interval;
 static char send_call[7];
 
+#define AFSK_IN_CH 4
+
 static void init(void)
 {
 	IRQ_ENABLE;
@@ -85,7 +87,7 @@ static void init(void)
 	timer_init();
 	buz_init();
 	proc_init();
-	afsk_init(&afsk, 4, 2);
+	afsk_init(&afsk, AFSK_IN_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
 	ser_init(&ser, SER_UART0);
 	ser_setbaudrate(&ser, 4800);
@@ -161,7 +163,7 @@ static void init(void)
 
 	landing_init(landing_meters, count_limit, buz_timeout_seconds);
 
-	ini_getString(&conf.fd, "logging", "aprs_interval", "3", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
 	aprs_interval = ms_to_ticks(atoi(inibuf) * 1000);
 
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
