@@ -97,7 +97,7 @@ float sensor_read(AdcChannels ch)
 	float y1 = sensor_calib[ch].p1.y;
 	float y2 = sensor_calib[ch].p2.y;
 	float y = (((x - x1) * (y2 - y1)) / (x2 - x1)) + y1;
-	LOG_INFO("Reading ch%d, x %d, x1 %d, x2 %d, y1 %f, y2 %f, y=%f", ch, x, x1, x2, y1, y2, y);
+	LOG_INFO("Reading ch%d, x %d, x1 %d, x2 %d, y1 %f, y2 %f, y=%f\n", ch, x, x1, x2, y1, y2, y);
 	return y;
 }
 

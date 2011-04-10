@@ -71,11 +71,44 @@ INLINE void ledg(bool val)
 static void ax25_log(struct AX25Msg *msg)
 {
 	logging_msg("%.*s\n", msg->len, msg->info);
+	kprintf("%.*s\n", msg->len, msg->info);
 }
 
-static ticks_t aprs_interval;
+static mtime_t aprs_interval;
 static ticks_t log_interval;
 static char send_call[7];
+
+static void NORETURN radio_process(void)
+{
+	char msg[100];
+	AX25Call path[2]=
+	{
+		AX25_CALL("APZBRT", 0),
+	};
+	memcpy(path[1].call, send_call, sizeof(path[1].call));
+	path[1].ssid = 0;
+
+	ticks_t start;
+	while (1)
+	{
+		start = timer_clock();
+		measures_format(msg, sizeof(msg));
+
+		for (int i = 0; i < 3; i++)
+		{
+			ax25_sendVia(&ax25, path, countof(path), msg, strlen(msg));
+			timer_delay((i+1) * 2000);
+		}
+
+		/*
+		 * We have already waited for some time here,
+		 * take into account this difference.
+		 * Also limit the minimum delay to 3 seconds, resulting in a new message
+		 * about every 15 seconds.
+		 */
+		timer_delay(MAX((mtime_t)3000, aprs_interval - ticks_to_ms(timer_clock() - start)));
+	}
+}
 
 #define AFSK_IN_CH 4
 
@@ -164,7 +197,7 @@ static void init(void)
 	landing_init(landing_meters, count_limit, buz_timeout_seconds);
 
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
-	aprs_interval = ms_to_ticks(atoi(inibuf) * 1000);
+	aprs_interval = atoi(inibuf) * 1000;
 
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
 	log_interval = ms_to_ticks(atoi(inibuf) * 1000);
@@ -176,6 +209,7 @@ static void init(void)
 	kfile_close(&conf.fd);
 
 	logging_init();
+	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 	ledr(false);
 }
 
@@ -184,11 +218,11 @@ int main(void)
 	init();
 	bool led_on = true;
 
-	ticks_t aprs_start = timer_clock();
 	ticks_t log_start = timer_clock();
 	while (1)
 	{
 		timer_delay(500);
+		ax25_poll(&ax25);
 
 		bool fix = gps_fixed();
 
@@ -215,27 +249,13 @@ int main(void)
 
 		if (timer_clock() - log_start > log_interval)
 		{
+			char msg[100];
 			log_start = timer_clock();
+			monitor_report();
 
-			const char *msg = measures_format();
-			kprintf("%s", msg);
-			logging_data("%s", msg);
-		}
-
-		if (timer_clock() - aprs_start > aprs_interval)
-		{
-			aprs_start = timer_clock();
-
-			const char *msg = measures_format();
-
-			AX25Call path[2]=
-			{
-				AX25_CALL("APZBRT", 0),
-			};
-			memcpy(path[1].call, send_call, sizeof(path[1].call));
-			path[1].ssid = 0;
-
-			ax25_sendVia(&ax25, path, countof(path), msg, strlen(msg));
+			measures_format(msg, sizeof(msg));
+			kprintf("%s\n", msg);
+			logging_data("%s\n", msg);
 		}
 	}
 	return 0;

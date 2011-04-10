@@ -308,5 +308,5 @@ void cutoff_init(uint32_t max_seconds, float _delta_press, uint32_t _delta_timeo
 	LOG_INFO(" max distance timeout: %ld seconds\n", _maxdist_timeout);
 	cutoff_reset();
 	//start process
-	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
 }

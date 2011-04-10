@@ -6,3 +6,4 @@ obj
 *.DBK
 *.tags
 *.session
+msg/

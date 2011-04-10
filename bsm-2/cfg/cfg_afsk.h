@@ -91,7 +91,7 @@
  * $WIZ$ type = "int"
  * $WIZ$ min = -1
  */
-#define CONFIG_AFSK_RXTIMEOUT -1
+#define CONFIG_AFSK_RXTIMEOUT 50
 
 
 /**
