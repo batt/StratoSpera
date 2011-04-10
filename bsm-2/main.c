@@ -134,7 +134,7 @@ static void init(void)
 
 		if (ini_getString(&conf.fd, calib, "p1y", "0", inibuf, sizeof(inibuf)) != 0)
 			continue;
-		set.p1.y = atof(inibuf);
+		set.p1.y = atoi(inibuf) / 1000.0;
 
 		if (ini_getString(&conf.fd, calib, "p2x", "1023", inibuf, sizeof(inibuf)) != 0)
 			continue;
@@ -142,7 +142,7 @@ static void init(void)
 
 		if (ini_getString(&conf.fd, calib, "p2y", "1023", inibuf, sizeof(inibuf)) != 0)
 			continue;
-		set.p2.y = atof(inibuf);
+		set.p2.y = atoi(inibuf) / 1000.0;
 
 		LOG_INFO("Calibration loaded for channel %d", i);
 		sensor_setCalibration(i, set);
