@@ -78,10 +78,9 @@ static mtime_t aprs_interval;
 static ticks_t log_interval;
 static char send_call[7];
 
-PROC_DEFINE_STACK(radio_stack, KERN_MINSTACKSIZE * 3)
 static void NORETURN radio_process(void)
 {
-	char msg[256];
+	char msg[100];
 	AX25Call path[2]=
 	{
 		AX25_CALL("APZBRT", 0),
@@ -93,8 +92,7 @@ static void NORETURN radio_process(void)
 	while (1)
 	{
 		start = timer_clock();
-		strncpy(msg, measures_format(), sizeof(msg));
-		msg[sizeof(msg) - 1] = '\0';
+		measures_format(msg, sizeof(msg));
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -211,7 +209,7 @@ static void init(void)
 	kfile_close(&conf.fd);
 
 	logging_init();
-	proc_new(radio_process, NULL, sizeof(radio_stack), radio_stack);
+	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 	ledr(false);
 }
 
@@ -251,11 +249,13 @@ int main(void)
 
 		if (timer_clock() - log_start > log_interval)
 		{
+			char msg[100];
 			log_start = timer_clock();
+			monitor_report();
 
-			const char *msg = measures_format();
-			kprintf("%s", msg);
-			logging_data("%s", msg);
+			measures_format(msg, sizeof(msg));
+			kprintf("%s\n", msg);
+			logging_data("%s\n", msg);
 		}
 	}
 	return 0;

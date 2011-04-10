@@ -1,13 +1,12 @@
 #include "measures.h"
 #include "gps.h"
+#include "sensors.h"
 
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-static char workbuf[256];
-
-const char *measures_format(void)
+void measures_format(char *buf, size_t len)
 {
 	struct tm *t;
 	time_t tim;
@@ -27,12 +26,19 @@ const char *measures_format(void)
 	tim = gps_time();
 	t = gmtime(&tim);
 
-	snprintf(workbuf, sizeof(workbuf), "/%02d%02d%02dh%s/%s>%05ld;%s",
+	snprintf(buf, len, "/%02d%02d%02dh%s/%s>%05ld;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%05d",
 	t->tm_hour, t->tm_min, t->tm_sec,
 	lat, lon,
 	gps_info()->altitude,
-	"-43.1;1011;100;-21.1;10.1;-48.1;01234");
+	sensor_read(ADC_T1),
+	sensor_read(ADC_PRESS),
+	sensor_read(ADC_HUMIDITY),
+	10.23, //Internal temp
+	sensor_read(ADC_VIN),
+	9.81, //accelerometer
+	1234 //Geiger
+	);
 
-	return workbuf;
+	buf[len - 1] = '\0';
 }
 
