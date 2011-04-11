@@ -208,7 +208,7 @@ static void init(void)
 
 	landing_init(landing_meters, count_limit, buz_timeout_seconds);
 
-	ini_getString(&conf.fd, "logging", "aprs_interval", "3", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
 	aprs_interval = atoi(inibuf) * 1000;
 
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
