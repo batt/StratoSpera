@@ -7,6 +7,7 @@
 #include "sensors.h"
 #include "logging.h"
 #include "measures.h"
+#include "hadarp.h"
 
 #include "hw/hw_pin.h"
 #include <cpu/irq.h>
@@ -65,6 +66,11 @@ INLINE void ledg(bool val)
 
 #ifdef DEMO_BOARD
 	#warning "Compiling for demoboard!"
+	#define HADARP_PORT SER_UART0
+	#define GPS_PORT    SER_UART1
+#else
+	#define HADARP_PORT SER_UART1
+	#define GPS_PORT    SER_UART0
 #endif
 
 
@@ -92,7 +98,7 @@ static void NORETURN radio_process(void)
 	while (1)
 	{
 		start = timer_clock();
-		measures_format(msg, sizeof(msg));
+		measures_aprsFormat(msg, sizeof(msg));
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -122,12 +128,18 @@ static void init(void)
 	proc_init();
 	afsk_init(&afsk, AFSK_IN_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
-	ser_init(&ser, SER_UART0);
-	ser_setbaudrate(&ser, 4800);
+	#ifndef DEMO_BOARD
+		ser_init(&ser, GPS_PORT);
+		ser_setbaudrate(&ser, 4800);
+		gps_init(&ser.fd);
+	#else
+		#warning "GPS process disabled."
+	#endif
+
 	spi_dma_init(&spi_dma);
 	spi_dma_setclock(20000000L);
-	gps_init(&ser.fd);
 	kbd_init();
+	hadarp_init(HADARP_PORT, 9600);
 
 	PIOA_CODR = LEDR | LEDG;
 	PIOA_PER = LEDR | LEDG;
@@ -196,7 +208,7 @@ static void init(void)
 
 	landing_init(landing_meters, count_limit, buz_timeout_seconds);
 
-	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "logging", "aprs_interval", "3", inibuf, sizeof(inibuf));
 	aprs_interval = atoi(inibuf) * 1000;
 
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
@@ -253,7 +265,7 @@ int main(void)
 			log_start = timer_clock();
 			monitor_report();
 
-			measures_format(msg, sizeof(msg));
+			measures_logFormat(msg, sizeof(msg));
 			kprintf("%s\n", msg);
 			logging_data("%s\n", msg);
 		}

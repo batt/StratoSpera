@@ -169,6 +169,10 @@
     <File Name="bsm-2/bsm-2.mk"/>
     <File Name="bsm-2/bsm-2_user.mk"/>
     <File Name="Makefile"/>
+    <File Name="bsm-2/hadarp.c"/>
+    <File Name="bsm-2/hadarp.h"/>
+    <File Name="bsm-2/measures.c"/>
+    <File Name="bsm-2/measures.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
