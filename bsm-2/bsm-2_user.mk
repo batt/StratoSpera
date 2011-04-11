@@ -55,8 +55,8 @@ bsm-2_USER_CPPAFLAGS = \
 
 # Flags included by the user.
 bsm-2_USER_CPPFLAGS = \
-	-DDEMO_BOARD \
 	-O1 \
 	-fno-strict-aliasing \
 	-fwrapv \
+	-DDEMO_BOARD \
 	#
