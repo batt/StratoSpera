@@ -62,7 +62,7 @@ static void NORETURN hadarp_process(void)
 		}
 
 		hadarp_cnt = atoi(buf);
-		if (hadarp_cnt > 500 || hadarp_cnt < 0)
+		if (hadarp_cnt > 10000 || hadarp_cnt < 0)
 			hadarp_cnt = -1;
 
 		LOG_INFO("HADARP cnt:%d\n", hadarp_cnt);
