@@ -17,6 +17,7 @@ bsm-2_USER_CSRC = \
 	$(bsm-2_SRC_PATH)/landing.c \
 	$(bsm-2_SRC_PATH)/logging.c \
 	$(bsm-2_SRC_PATH)/measures.c \
+	$(bsm-2_SRC_PATH)/hadarp.c \
 	bertos/mware/ini_reader.c \
 	bertos/drv/kbd.c \
 	bertos/kern/signal.c \
@@ -54,8 +55,8 @@ bsm-2_USER_CPPAFLAGS = \
 
 # Flags included by the user.
 bsm-2_USER_CPPFLAGS = \
-	-DDEMO_BOARD \
 	-O1 \
 	-fno-strict-aliasing \
 	-fwrapv \
+	-DDEMO_BOARD \
 	#

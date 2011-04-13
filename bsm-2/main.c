@@ -7,6 +7,7 @@
 #include "sensors.h"
 #include "logging.h"
 #include "measures.h"
+#include "hadarp.h"
 
 #include "hw/hw_pin.h"
 #include <cpu/irq.h>
@@ -65,6 +66,17 @@ INLINE void ledg(bool val)
 
 #ifdef DEMO_BOARD
 	#warning "Compiling for demoboard!"
+	#define GPS_ENABLED 0
+	#define HADARP_ENABLED 1
+
+	#define HADARP_PORT SER_UART0
+	#define GPS_PORT    SER_UART0
+#else
+	#define GPS_ENABLED 1
+	#define HADARP_ENABLED 1
+
+	#define HADARP_PORT SER_UART1
+	#define GPS_PORT    SER_UART0
 #endif
 
 
@@ -92,7 +104,7 @@ static void NORETURN radio_process(void)
 	while (1)
 	{
 		start = timer_clock();
-		measures_format(msg, sizeof(msg));
+		measures_aprsFormat(msg, sizeof(msg));
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -122,11 +134,24 @@ static void init(void)
 	proc_init();
 	afsk_init(&afsk, AFSK_IN_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
-	ser_init(&ser, SER_UART0);
-	ser_setbaudrate(&ser, 4800);
+
+	#if GPS_ENABLED
+		ser_init(&ser, GPS_PORT);
+		ser_setbaudrate(&ser, 4800);
+		gps_init(&ser.fd);
+	#else
+		(void)ser;
+		#warning "GPS process disabled."
+	#endif
+
+	#if HADARP_ENABLED
+		hadarp_init(HADARP_PORT, 9600);
+	#else
+		#warning "HADARP process disabled."
+	#endif
+
 	spi_dma_init(&spi_dma);
 	spi_dma_setclock(20000000L);
-	gps_init(&ser.fd);
 	kbd_init();
 
 	PIOA_CODR = LEDR | LEDG;
@@ -253,7 +278,7 @@ int main(void)
 			log_start = timer_clock();
 			monitor_report();
 
-			measures_format(msg, sizeof(msg));
+			measures_logFormat(msg, sizeof(msg));
 			kprintf("%s\n", msg);
 			logging_data("%s\n", msg);
 		}

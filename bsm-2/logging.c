@@ -73,7 +73,7 @@ static void rotate_file(FatFile *f, const char *prefix)
 void logging_rotate(void)
 {
 	sem_obtain(&log_sem);
-	
+
 	if (logopen)
 	{
 		kfile_close(&logfile.fd);
@@ -81,8 +81,12 @@ void logging_rotate(void)
 	}
 	rotate_file(&logfile, "log");
 	logopen = true;
-	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt;int Temp;ext Temp;Press;Vsupply\n");
-	
+
+	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt (m);"
+		"Ext T1 (°C); Ext T2 (°C);Pressure (mBar);Humidity (%%);Internal Temp (°C);"
+		"Vsupply (V);+5V;+3.3V;Current (mA);"
+		"Acc X (m/s^2);Acc Y (m/s^2);Acc Z (m/s^2);Geiger counter (cpm)\n");
+
 	if (msgopen)
 	{
 		kfile_close(&msgfile.fd);
@@ -90,7 +94,7 @@ void logging_rotate(void)
 	}
 	rotate_file(&msgfile, "msg");
 	msgopen = true;
-	
+
 	sem_release(&log_sem);
 }
 
