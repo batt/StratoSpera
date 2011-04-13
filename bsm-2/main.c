@@ -66,9 +66,15 @@ INLINE void ledg(bool val)
 
 #ifdef DEMO_BOARD
 	#warning "Compiling for demoboard!"
+	#define GPS_ENABLED 0
+	#define HADARP_ENABLED 1
+
 	#define HADARP_PORT SER_UART0
-	#define GPS_PORT    SER_UART1
+	#define GPS_PORT    SER_UART0
 #else
+	#define GPS_ENABLED 1
+	#define HADARP_ENABLED 1
+
 	#define HADARP_PORT SER_UART1
 	#define GPS_PORT    SER_UART0
 #endif
@@ -128,18 +134,25 @@ static void init(void)
 	proc_init();
 	afsk_init(&afsk, AFSK_IN_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
-	#ifndef DEMO_BOARD
+
+	#if GPS_ENABLED
 		ser_init(&ser, GPS_PORT);
 		ser_setbaudrate(&ser, 4800);
 		gps_init(&ser.fd);
 	#else
+		(void)ser;
 		#warning "GPS process disabled."
+	#endif
+
+	#if HADARP_ENABLED
+		hadarp_init(HADARP_PORT, 9600);
+	#else
+		#warning "HADARP process disabled."
 	#endif
 
 	spi_dma_init(&spi_dma);
 	spi_dma_setclock(20000000L);
 	kbd_init();
-	hadarp_init(HADARP_PORT, 9600);
 
 	PIOA_CODR = LEDR | LEDG;
 	PIOA_PER = LEDR | LEDG;
