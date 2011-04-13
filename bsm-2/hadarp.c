@@ -61,7 +61,8 @@ static void NORETURN hadarp_process(void)
 			continue;
 		}
 
-		hadarp_cnt = atoi(buf);
+		// Convert the measures from count in 10s to count in 60 secs (cpm)
+		hadarp_cnt = atoi(buf) * 6;
 		if (hadarp_cnt > 10000 || hadarp_cnt < 0)
 			hadarp_cnt = -1;
 
