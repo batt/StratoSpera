@@ -38,7 +38,7 @@
 #include "sensors.h"
 #include "adc_mgr.h"
 
-#define LOG_LEVEL LOG_LVL_INFO
+#define LOG_LEVEL LOG_LVL_ERR
 #include <cfg/log.h>
 
 /**
