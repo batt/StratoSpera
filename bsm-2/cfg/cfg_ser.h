@@ -56,7 +56,7 @@
  * $WIZ$ type = "int"
  * $WIZ$ min = 2
  */
-#define CONFIG_UART0_RXBUFSIZE  32
+#define CONFIG_UART0_RXBUFSIZE  64
 
 /**
  * Size of the outbound FIFO buffer for port 1 [bytes].
@@ -72,7 +72,7 @@
  * $WIZ$ min = 2
  * $WIZ$ supports = "lm3s or lpc2 or (at91 and not atmega8 and not atmega168 and not atmega32)"
  */
-#define CONFIG_UART1_RXBUFSIZE  32
+#define CONFIG_UART1_RXBUFSIZE  64
 
 /**
  * Size of the outbound FIFO buffer for port 2 [bytes].
