@@ -38,8 +38,6 @@
 #ifndef HW_LM75_H
 #define HW_LM75_H
 
-#warning TODO:This is an example implentation, you must implement it!
-
 #define LM75_HW_INIT() \
 	do { \
 	/* Pin init */\

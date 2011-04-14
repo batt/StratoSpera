@@ -43,8 +43,6 @@
 
 #include <cfg/compiler.h>
 
-#warning TODO:This is an example implentation, you must implement it!
-
 /*! \name Enum for ntc devices.
  * \{
  */
