@@ -26,6 +26,9 @@ bsm-2_USER_CSRC = \
 	bertos/io/kblock.c \
 	bertos/fs/fatfs/diskio.c \
 	bertos/verstag.c \
+	bertos/drv/i2c.c \
+	bertos/drv/i2c_bitbang.c \
+	bertos/drv/lm75.c \
 	#
 
 # Files included by the user.

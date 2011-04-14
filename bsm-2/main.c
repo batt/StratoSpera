@@ -153,6 +153,7 @@ static void init(void)
 	spi_dma_init(&spi_dma);
 	spi_dma_setclock(20000000L);
 	kbd_init();
+	measures_init();
 
 	PIOA_CODR = LEDR | LEDG;
 	PIOA_PER = LEDR | LEDG;

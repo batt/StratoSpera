@@ -34,15 +34,12 @@
  * \brief Macro for I2C bitbang operation.
  *
  *
- * \version $Id: hw_i2c_bitbang.h 2506 2009-04-15 08:29:07Z duplo $
  *
  * \author Francesco Sacchi <batt@develer.com>
  */
 
 #ifndef HW_I2C_BITBANG_H
 #define HW_I2C_BITBANG_H
-
-#warning TODO:This is an example implementation, you must implement it!
 
 #define SDA_HI  do { /* Implement me:Set SDA High by setting SDA pin as input */ } while (0)
 #define SDA_LO  do { /* Implement me:Set SDA Low by setting SDA pin as open collector output */ } while (0)
@@ -62,5 +59,89 @@
  * Half bit delay routine used to generate the correct timings.
  */
 #define I2C_HALFBIT_DELAY() do { /* Implement me! */ } while (0)
+
+
+/*
+ * New api
+ */
+#include <cfg/compiler.h>
+#include <io/arm.h>
+#include <cfg/macros.h>
+#include <drv/timer.h>
+
+#ifdef DEMO_BOARD
+	#define SDA 23
+	#define SCL 24
+#else
+	#define SDA 3
+	#define SCL 4
+#endif
+
+INLINE void i2c_sdaHi(int dev)
+{
+	(void)(dev);
+	/* Implement me:Set SDA High by setting SDA pin as input */
+	PIOA_ODR = BV(SDA);
+}
+
+INLINE void i2c_sdaLo(int dev)
+{
+	(void)(dev);
+	/* Implement me:Set SDA Low by setting SDA pin as open collector output */
+	PIOA_OER = BV(SDA);
+}
+
+INLINE void i2c_sclHi(int dev)
+{
+	(void)(dev);
+	/* Implement me:Set SCL High by setting SCL pin as input */
+	PIOA_ODR = BV(SCL);
+}
+
+INLINE void i2c_sclLo(int dev)
+{
+	(void)(dev);
+	/* Implement me:Set SCL Low by setting SCL pin as open collector output */
+	PIOA_OER = BV(SCL);
+}
+
+INLINE bool i2c_sdaIn(int dev)
+{
+	(void)(dev);
+	/* Implement me: read SDA pin state */
+	return (PIOA_PDSR & BV(SDA));
+}
+
+INLINE bool i2c_sclIn(int dev)
+{
+	(void)(dev);
+	/* Implement me: read SCL pin state */
+	return (PIOA_PDSR & BV(SCL));
+}
+
+/**
+ * Half bit delay routine used to generate the correct timings.
+ */
+INLINE void i2c_halfbitDelay(int dev)
+{
+	(void)(dev);
+	//timer_delay(1);
+	//NOP; NOP; NOP; NOP; NOP; NOP;
+	//NOP; NOP; NOP; NOP; NOP; NOP;
+	//NOP; NOP; NOP; NOP; NOP; NOP;
+	//NOP; NOP; NOP; NOP; NOP; NOP;
+	cpu_relax();
+}
+
+/**
+ * This macro should set SDA and SCL lines as input.
+ */
+INLINE void i2c_bitbangInit(int dev)
+{
+	(void)(dev);
+	PIOA_ODR  = BV(SDA) | BV (SCL);
+	PIOA_CODR = BV(SDA) | BV (SCL);
+	PIOA_PUER = BV(SDA) | BV (SCL);
+}
 
 #endif /* HW_I2C_BITBANG_H */
