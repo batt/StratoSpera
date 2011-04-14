@@ -39,6 +39,7 @@
 #define HW_AFSK_H
 
 #include <cfg/compiler.h>
+#include "hw_pin.h"
 #include <bsm-2/adc_mgr.h>
 
 /**
@@ -53,27 +54,18 @@
  */
 #define AFSK_ADC_INIT(ch, ctx) adc_mgr_init(ch, ctx)
 
-#ifdef DEMO_BOARD
-	#define AFSK_STROBE_PIN 2
-	#define DAC_PIN_START   19
-	#define PTT_PIN         16
-#else
-	#define AFSK_STROBE_PIN 27
-	#define DAC_PIN_START   28
-	#define PTT_PIN         15
-#endif
 
 #define DAC_PIN_MASK (BV(DAC_PIN_START) | BV(DAC_PIN_START+1) | BV(DAC_PIN_START+2) | BV(DAC_PIN_START+3))
 
 #define AFSK_STROBE_INIT() \
 	do { \
-			PIOA_PER  = BV(AFSK_STROBE_PIN); \
-			PIOA_OER = BV(AFSK_STROBE_PIN); \
-			PIOA_CODR = BV(AFSK_STROBE_PIN); \
+			PIOA_PER  = AFSK_STROBE_PIN; \
+			PIOA_OER =  AFSK_STROBE_PIN; \
+			PIOA_CODR = AFSK_STROBE_PIN; \
 	} while (0)
 
-#define AFSK_STROBE_ON()   do { PIOA_SODR = BV(AFSK_STROBE_PIN); } while (0)
-#define AFSK_STROBE_OFF()  do { PIOA_CODR = BV(AFSK_STROBE_PIN); } while (0)
+#define AFSK_STROBE_ON()   do { PIOA_SODR = AFSK_STROBE_PIN; } while (0)
+#define AFSK_STROBE_OFF()  do { PIOA_CODR = AFSK_STROBE_PIN; } while (0)
 
 
 /**
@@ -90,14 +82,14 @@
 	do { \
 		(void)ch, (void)ctx; \
 		/* Disable pullups */ \
-		PIOA_PUDR = DAC_PIN_MASK | BV(PTT_PIN); \
+		PIOA_PUDR = DAC_PIN_MASK | PTT_PIN; \
 		/* Set PIO to pin */ \
-		PIOA_PER  = DAC_PIN_MASK | BV(PTT_PIN); \
+		PIOA_PER  = DAC_PIN_MASK | PTT_PIN; \
 		/* Enable block writing */ \
 		PIOA_OWER = DAC_PIN_MASK; \
 		/* Enanble as autput */ \
-		PIOA_OER = DAC_PIN_MASK | BV(PTT_PIN); \
-		PIOA_CODR = BV(PTT_PIN); \
+		PIOA_OER = DAC_PIN_MASK | PTT_PIN; \
+		PIOA_CODR = PTT_PIN; \
 	} while (0)
 
 /**
@@ -108,7 +100,7 @@
 	do { \
 		(void)ch; \
 		extern bool hw_afsk_dac_isr; \
-		PIOA_SODR = BV(PTT_PIN); \
+		PIOA_SODR = PTT_PIN; \
 		hw_afsk_dac_isr = true; \
 	} while (0)
 
@@ -120,7 +112,7 @@
 	do { \
 	(void)ch; \
 	extern bool hw_afsk_dac_isr; \
-	PIOA_CODR = BV(PTT_PIN); \
+	PIOA_CODR = PTT_PIN; \
 	hw_afsk_dac_isr = false; \
 	} while (0)
 

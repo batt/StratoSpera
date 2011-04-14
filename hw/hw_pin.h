@@ -41,23 +41,56 @@
 #define HW_PIN_H
 
 #ifdef DEMO_BOARD
-	#define LAND_PIN     BV(3)
-	#define CUTOFF_PIN   BV(4)
+	#warning "Compiling for demoboard."
+	#define SD_WRITE_PROTECT_PIN BV(0)
+	#define SD_CARD_PRESENT_PIN  BV(1)
+	#define AFSK_STROBE_PIN      BV(2)
+	#define LAND_PIN             BV(3)
+	#define CUTOFF_PIN           BV(4)
+	#define LEDR                 BV(6)
+	#define LEDG                 BV(7)
+	#define BUZZER_BIT           BV(8)
+	#define SD_CS_PIN            BV(11)
+	#define START_BTN            BV(15)
+	#define PTT_PIN              BV(16)
+	#define DAC_PIN_START        19
+	#define SDA                  BV(23)
+	#define SCL                  BV(24)
+	#define EXT_MUX_START        25
+	#define ADC_STROBE_PIN       BV(28)
 
-	#define LEDR         BV(6)
-	#define LEDG         BV(7)
-	#define BUZZER_BIT   BV(8)
+	#define ADC_RADIO_CH         4
+	#define ADC_MUX_CH           5 // The external mux is connected here
 
-	#define START_BTN    BV(15)
+	#define GPS_ENABLED 0
+	#define HADARP_ENABLED 1
+	#define HADARP_PORT SER_UART0
+	#define GPS_PORT    SER_UART0
 #else
-	#define LAND_PIN     BV(0)
-	#define CUTOFF_PIN   BV(1)
+	#define SD_WRITE_PROTECT_PIN BV(17)
+	#define SD_CARD_PRESENT_PIN  BV(8)
+	#define AFSK_STROBE_PIN      BV(27)
+	#define LAND_PIN             BV(0)
+	#define CUTOFF_PIN           BV(1)
+	#define LEDR                 BV(19)
+	#define LEDG                 BV(18)
+	#define BUZZER_BIT           BV(7)
+	#define SD_CS_PIN            BV(11)
+	#define START_BTN            BV(16)
+	#define PTT_PIN              BV(15)
+	#define DAC_PIN_START        28
+	#define SDA                  BV(3)
+	#define SCL                  BV(4)
+	#define EXT_MUX_START        24
+	#define ADC_STROBE_PIN       BV(20)
 
-	#define LEDR         BV(19)
-	#define LEDG         BV(18)
-	#define BUZZER_BIT   BV(7)
+	#define ADC_RADIO_CH         4
+	#define ADC_MUX_CH           5 // The external mux is connected here
 
-	#define START_BTN    BV(16)
+	#define GPS_ENABLED 1
+	#define HADARP_ENABLED 1
+	#define HADARP_PORT SER_UART1
+	#define GPS_PORT    SER_UART0
 #endif
 
 #endif /* HW_BUZZER_H */

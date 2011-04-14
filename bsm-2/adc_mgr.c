@@ -37,6 +37,7 @@
 
 
 #include "adc_mgr.h"
+#include "hw/hw_pin.h"
 
 #include <cpu/irq.h>
 
@@ -62,15 +63,15 @@
 // Set ADC_MGR_STROBE to 1 in order to enable debugging of adc isr duration.
 #define ADC_MGR_STROBE 1
 #if ADC_MGR_STROBE
-	#warning "ADC_MGR_STROBE active on PA20"
-	#define STROBE_PIN BV(20)
-	#define ADC_MGR_STROBE_LOW()  (PIOA_CODR = STROBE_PIN)
-	#define ADC_MGR_STROBE_HIGH() (PIOA_SODR = STROBE_PIN)
+	#warning "ADC_MGR_STROBE active"
+
+	#define ADC_MGR_STROBE_LOW()  (PIOA_CODR = ADC_STROBE_PIN)
+	#define ADC_MGR_STROBE_HIGH() (PIOA_SODR = ADC_STROBE_PIN)
 	#define ADC_MGR_STROBE_INIT() \
 	do { \
-			PIOA_OER = STROBE_PIN; \
-			PIOA_SODR = STROBE_PIN; \
-			PIOA_PER = STROBE_PIN; \
+			PIOA_OER = ADC_STROBE_PIN; \
+			PIOA_SODR = ADC_STROBE_PIN; \
+			PIOA_PER = ADC_STROBE_PIN; \
 	} while (0)
 #else
 	#define ADC_MGR_STROBE_LOW()
@@ -84,27 +85,23 @@ bool hw_afsk_dac_isr;
 
 #define ADC_CHANNELS  8
 
-#define ADC_MUX_CH 4 // The external mux is connected here
-
-#define EXT_MUX_START 24 // PA24
-
-INLINE void adc_mux_init(void)
-{
-	/* PA24, PA25, PA26 */
-	uint32_t mask = BV(EXT_MUX_START) | BV(EXT_MUX_START+1) | BV(EXT_MUX_START+2);
-
-	PIOA_OER = mask;
-	PIOA_PER = mask;
-	/* Enable block writing */
-	PIOA_OWER = mask;
-	/* Select ch0 */
-	PIOA_ODSR = 0;
-}
+#define EXT_MUX_MASK (BV(EXT_MUX_START) | BV(EXT_MUX_START+1) | BV(EXT_MUX_START+2))
 
 INLINE void adc_mux_sel(unsigned ch)
 {
 	ASSERT(ch < ADC_CHANNELS);
-	PIOA_ODSR = ((uint32_t)ch << EXT_MUX_START);
+	uint32_t tmp = PIOA_ODSR;
+	tmp &= ~EXT_MUX_MASK;
+
+	PIOA_ODSR = tmp | ((uint32_t)ch << EXT_MUX_START);
+}
+
+INLINE void adc_mux_init(void)
+{
+	PIOA_OER = EXT_MUX_MASK;
+	PIOA_PER = EXT_MUX_MASK;
+	PIOA_OWER = EXT_MUX_MASK;
+	adc_mux_sel(0);
 }
 
 static unsigned curr_ch;
@@ -168,11 +165,14 @@ INLINE void afsk_handler(int8_t val)
 {
 	afsk_adc_isr(afsk_ctx, val);
 
+	uint32_t tmp = PIOA_ODSR;
+	tmp &= ~DAC_PIN_MASK;
+
 	if (hw_afsk_dac_isr)
-		PIOA_ODSR = (afsk_dac_isr(afsk_ctx) << (DAC_PIN_START - 4)) & DAC_PIN_MASK;
+		PIOA_ODSR = tmp | ((afsk_dac_isr(afsk_ctx) << (DAC_PIN_START - 4)) & DAC_PIN_MASK);
 	else
 		/* Vdac / 2 */
-		PIOA_ODSR = BV(DAC_PIN_START + 3);
+		PIOA_ODSR = tmp | BV(DAC_PIN_START + 3);
 }
 
 static DECLARE_ISR(adc_mgr_isr)

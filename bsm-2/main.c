@@ -64,22 +64,6 @@ INLINE void ledg(bool val)
 		PIOA_CODR = LEDG;
 }
 
-#ifdef DEMO_BOARD
-	#warning "Compiling for demoboard!"
-	#define GPS_ENABLED 0
-	#define HADARP_ENABLED 1
-
-	#define HADARP_PORT SER_UART0
-	#define GPS_PORT    SER_UART0
-#else
-	#define GPS_ENABLED 1
-	#define HADARP_ENABLED 1
-
-	#define HADARP_PORT SER_UART1
-	#define GPS_PORT    SER_UART0
-#endif
-
-
 static void ax25_log(struct AX25Msg *msg)
 {
 	logging_msg("%.*s\n", msg->len, msg->info);
@@ -122,8 +106,6 @@ static void NORETURN radio_process(void)
 	}
 }
 
-#define AFSK_IN_CH 4
-
 static void init(void)
 {
 	IRQ_ENABLE;
@@ -132,7 +114,7 @@ static void init(void)
 	timer_init();
 	buz_init();
 	proc_init();
-	afsk_init(&afsk, AFSK_IN_CH, 0);
+	afsk_init(&afsk, ADC_RADIO_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
 
 	#if GPS_ENABLED

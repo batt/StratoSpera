@@ -29,11 +29,6 @@
 
 #include <verstag.h>
 
-#ifdef DEMO_BOARD
-	#warning "Compiling for demoboard!"
-#endif
-
-
 /*
  * Define pointer function to main program.
  */
