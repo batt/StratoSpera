@@ -148,6 +148,28 @@ static void init(void)
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
 
 	char inibuf[64];
+	if (ini_getString(&conf.fd, "system", "calibration_mode", "0", inibuf, sizeof(inibuf)) == 0)
+	{
+		if (atoi(inibuf) != 0)
+		{
+			kprintf("Entering calibration mode...\n");
+			bool ledon = true;
+			while (1)
+			{
+				ledg(ledon);
+				ledr(ledon);
+				ledon = !ledon;
+				for (int i = 0; i < ADC_CHANNELS; i++)
+				{
+					uint16_t val = adc_mgr_read(i);
+					kprintf("CH%d %d\n", i, val);
+				}
+				kputchar('\n');
+				timer_delay(1000);
+			}
+		}
+	}
+
 
 	/* Set ADC sensor calibration */
 	for (int i = 0; i < ADC_CHANNELS; i++)
@@ -174,7 +196,7 @@ static void init(void)
 			continue;
 		set.p2.y = atoi(inibuf) / 1000.0;
 
-		LOG_INFO("Calibration loaded for channel %d", i);
+		LOG_INFO("Calibration loaded for channel %d\n", i);
 		sensor_setCalibration(i, set);
 	}
 
