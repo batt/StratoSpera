@@ -84,7 +84,7 @@ static SensorCalibrationSet sensor_calib[ADC_CHANNELS] =
 	//ADC_HUMIDITY %
 	{
 		.p1 = { .x = 0, .y = 0 },
-		.p2 = { .x = 1023, .y = 100 },
+		.p2 = { .x = 853, .y = 92 },
 	},
 };
 
