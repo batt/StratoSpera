@@ -7,3 +7,5 @@ obj
 *.tags
 *.session
 msg/
+BACKUP*
+layout.log
