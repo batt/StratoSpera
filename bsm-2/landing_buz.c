@@ -35,12 +35,12 @@
  * \author Francesco Sacchi <batt@develer.com>
  */
 
-#include "landing.h"
+#include "landing_buz.h"
 
-#include "gps.h"
+#include "status_mgr.h"
 #include "hw/hw_pin.h"
 
-#include <net/nmea.h>
+
 #include <cfg/compiler.h>
 #include <cfg/module.h>
 #include <drv/timer.h>
@@ -54,12 +54,8 @@
 
 #include <math.h>
 
-#define LAND_OFF()  do { PIOA_CODR = LAND_PIN; } while (0)
-#define LAND_ON()   do { PIOA_SODR = LAND_PIN; } while (0)
-#define LAND_INIT() do { LAND_OFF(); PIOA_PER = LAND_PIN; PIOA_OER = LAND_PIN; } while (0)
-
 static bool beep;
-static void beep_start(void)
+void landing_buz_start(void)
 {
 	if (!beep)
 	{
@@ -69,111 +65,53 @@ static void beep_start(void)
 	}
 }
 
-static bool landing;
-static void landing_pulse(void)
-{
-	if (!landing)
-	{
-		LOG_INFO("Sending to camera the landing pulse\n");
-		LAND_ON();
-		timer_delay(300);
-		LAND_OFF();
-
-		landing = true;
-		beep_start();
-	}
-}
-
-
-static int32_t landing_alt;
-static int32_t prev_alt;
-static int alt_cnt;
-static int alt_cnt_limit;
-
-static ticks_t buz_start_time;
 static ticks_t buz_time;
 
-static void landing_altReset(void)
+bool landing_buz_check(ticks_t now)
 {
-	alt_cnt = 0;
-	prev_alt = 0;
+	if (now - status_missionStartTicks() > buz_time)
+	{
+		static bool logging;
+		if (!logging)
+		{
+			LOG_INFO("Buzzer timeout expired\n");
+			logging = true;
+		}
+
+		return false;
+	}
+	else
+		return true;
 }
 
-static void NORETURN landing_process(void)
+static void NORETURN landing_buz_process(void)
 {
 	while (1)
 	{
-		timer_delay(20000);
+		timer_delay(1000);
 
-		if (gps_fixed())
-		{
-			int32_t curr_alt = gps_info()->altitude;
-			int32_t delta = curr_alt - prev_alt;
-			prev_alt = curr_alt;
-
-			if (delta < 0)
-				alt_cnt++;
-			else
-			{
-				if (alt_cnt > 0)
-					alt_cnt--;
-			}
-
-			if (alt_cnt > alt_cnt_limit && curr_alt < landing_alt)
-			{
-				static bool logging;
-				if (!logging)
-				{
-					LOG_INFO("Altitude descending and current altidude lower than %ld m, activating landing mode\n", landing_alt);
-					logging = true;
-				}
-				landing_pulse();
-			}
-		}
-		else
-			landing_altReset();
-
-		if (timer_clock() - buz_start_time > buz_time)
-		{
-			static bool logging;
-			if (!logging)
-			{
-				LOG_INFO("Buzzer timeout expired\n");
-				logging = true;
-			}
-
-			beep_start();
-		}
+		if (!landing_buz_check(timer_clock()))
+			landing_buz_start();
 	}
 }
 
 
-void landing_reset(void)
+void landing_buz_reset(void)
 {
 	LOG_INFO("Resetting landing control data\n");
-	landing = false;
 	beep = false;
 	buz_repeat_stop();
-	buz_start_time = timer_clock();
-	landing_altReset();
 }
 
 
-
-
-void landing_init(int32_t landing_meters, int count_limit, uint32_t buz_timeout_seconds)
+void landing_buz_init(uint32_t buz_timeout_seconds)
 {
-	LAND_INIT();
 	MOD_CHECK(buzzer);
-	alt_cnt_limit = count_limit;
-	landing_alt = landing_meters;
 	buz_time = ms_to_ticks(buz_timeout_seconds * 1000);
 
-	LOG_INFO("Starting landing control process:\n");
-	LOG_INFO(" Altitude meters: %ld meters\n", landing_alt);
-	LOG_INFO(" Altidude descending counter limit: %d\n", alt_cnt_limit);
+	LOG_INFO("Starting landing buzzer control process:\n");
 	LOG_INFO(" Buzzer timeout: %ld seconds\n", buz_timeout_seconds);
-	landing_reset();
+	landing_buz_reset();
 
-	proc_new(landing_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
 }

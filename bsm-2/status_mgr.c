@@ -39,6 +39,7 @@
 
 #include "cutoff.h"
 #include "gps.h"
+#include "landing_buz.h"
 #include "hw/hw_pin.h"
 
 #include <cfg/compiler.h>
@@ -87,7 +88,11 @@ static void status_set(Bsm2Status new_status)
 	ASSERT(new_status < BSM2_CNT);
 	if (new_status != curr_status)
 		LOG_INFO("Changing status to %d\n", new_status);
+
 	curr_status = new_status;
+
+	if (curr_status == BSM2_LANDING)
+		landing_buz_start();
 }
 
 #define CAMPULSE_MIN_DELAY 300
@@ -203,6 +208,8 @@ void status_missionStart(void)
 {
 	mission_start_ticks = timer_clock();
 	status_reset();
+	landing_buz_reset();
+	cutoff_reset();
 }
 
 ticks_t status_missionStartTicks(void)

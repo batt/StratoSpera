@@ -18,6 +18,7 @@ bsm-2_USER_CSRC = \
 	$(bsm-2_SRC_PATH)/measures.c \
 	$(bsm-2_SRC_PATH)/hadarp.c \
 	$(bsm-2_SRC_PATH)/status_mgr.c \
+	$(bsm-2_SRC_PATH)/landing_buz.c \
 	bertos/mware/ini_reader.c \
 	bertos/drv/kbd.c \
 	bertos/kern/signal.c \
