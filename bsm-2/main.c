@@ -206,7 +206,7 @@ static void init(void)
 	cutoff_cfg.mission_timeout = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "delta_altitude", "500", inibuf, sizeof(inibuf));
 	cutoff_cfg.delta_altitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altitude_timeout", "60", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "cutoff", "altitude_timeout", "30", inibuf, sizeof(inibuf));
 	cutoff_cfg.altitude_timeout = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "start_latitude", "43606414", inibuf, sizeof(inibuf));
 	cutoff_cfg.start_latitude = atoi(inibuf);
@@ -230,18 +230,18 @@ static void init(void)
 	status_cfg.rate_up = atoi(inibuf);
 	ini_getString(&conf.fd, "status", "rate_down", "-2", inibuf, sizeof(inibuf));
 	status_cfg.rate_down = atoi(inibuf);
+
 	status_init(&status_cfg);
 
 	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
 	uint32_t buz_timeout_seconds = atoi(inibuf);
+
 	landing_buz_init(buz_timeout_seconds);
 
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
 	aprs_interval = atoi(inibuf) * 1000;
-
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
 	log_interval = ms_to_ticks(atoi(inibuf) * 1000);
-
 	ini_getString(&conf.fd, "logging", "send_call", "STSP2", inibuf, sizeof(inibuf));
 	strncpy(send_call, inibuf, sizeof(send_call));
 	send_call[sizeof(send_call) - 1] = '\0';

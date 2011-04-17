@@ -175,6 +175,7 @@
     <File Name="bsm-2/status_mgr.h"/>
     <File Name="bsm-2/landing_buz.c"/>
     <File Name="bsm-2/landing_buz.h"/>
+    <File Name="conf.ini"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
