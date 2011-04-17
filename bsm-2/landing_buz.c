@@ -69,9 +69,10 @@ static ticks_t buz_time;
 
 bool landing_buz_check(ticks_t now)
 {
+	static bool logging = false;
+
 	if (now - status_missionStartTicks() > buz_time)
 	{
-		static bool logging;
 		if (!logging)
 		{
 			LOG_INFO("Buzzer timeout expired\n");
@@ -81,7 +82,10 @@ bool landing_buz_check(ticks_t now)
 		return false;
 	}
 	else
+	{
+		logging = false;
 		return true;
+	}
 }
 
 static void NORETURN landing_buz_process(void)
@@ -103,15 +107,17 @@ void landing_buz_reset(void)
 	buz_repeat_stop();
 }
 
+void landing_buz_setCfg(uint32_t buz_timeout_seconds)
+{
+	buz_time = ms_to_ticks(buz_timeout_seconds * 1000);
+	LOG_INFO("Buzzer timeout: %ld seconds\n", buz_timeout_seconds);
+}
 
 void landing_buz_init(uint32_t buz_timeout_seconds)
 {
 	MOD_CHECK(buzzer);
-	buz_time = ms_to_ticks(buz_timeout_seconds * 1000);
-
-	LOG_INFO("Starting landing buzzer control process:\n");
-	LOG_INFO(" Buzzer timeout: %ld seconds\n", buz_timeout_seconds);
+	landing_buz_setCfg(buz_timeout_seconds);
 	landing_buz_reset();
-
+	LOG_INFO("Starting landing buzzer control process:\n");
 	proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
 }

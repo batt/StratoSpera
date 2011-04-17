@@ -57,5 +57,6 @@ bool cutoff_checkDist(bool fix, udegree_t lat, udegree_t lon, ticks_t now);
 bool cutoff_checkAltitude(bool fix, int32_t curr_alt, ticks_t now);
 bool cutoff_checkTime(ticks_t now);
 bool cutoff_active(void);
+void cutoff_setCfg(CutoffCfg *cfg);
 void cutoff_init(CutoffCfg *cfg);
 #endif

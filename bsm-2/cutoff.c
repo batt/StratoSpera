@@ -225,6 +225,7 @@ static void cutoff_cut(void)
 		{
 			cutting = true;
 			cut = true;
+			#warning "TODO: use PWM"
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
 			for (int i = 0; i < 3; i++)
 			{
@@ -270,12 +271,10 @@ void cutoff_reset(void)
 	cutting = false;
 }
 
-void cutoff_init(CutoffCfg *_cfg)
+void cutoff_setCfg(CutoffCfg *_cfg)
 {
-	CUTOFF_INIT();
 	memcpy(&cfg, _cfg, sizeof(cfg));
-
-	LOG_INFO("Starting cutoff:\n");
+	LOG_INFO("Setting cutoff configuration\n");
 	LOG_INFO(" mission timeout: %ld seconds\n", cfg.mission_timeout);
 	LOG_INFO(" max delta altitude: %ld m\n", cfg.delta_altitude);
 	LOG_INFO(" delta pressure timeout: %ld seconds\n", cfg.altitude_timeout);
@@ -284,7 +283,15 @@ void cutoff_init(CutoffCfg *_cfg)
 		cfg.start_longitude/1000000, ABS(cfg.start_longitude)%1000000);
 	LOG_INFO(" max distance from base: %ld meters\n", cfg.dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", cfg.dist_timeout);
+}
+
+
+void cutoff_init(CutoffCfg *cfg)
+{
+	CUTOFF_INIT();
+	cutoff_setCfg(cfg);
 	cutoff_reset();
 	//start process
+	LOG_INFO("Starting cutoff process\n");
 	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
 }

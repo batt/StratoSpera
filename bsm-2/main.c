@@ -219,11 +219,21 @@ static void init(void)
 
 	cutoff_init(&cutoff_cfg);
 
+	StatusCfg status_cfg;
+	ini_getString(&conf.fd, "status", "ground_alt", "1500", inibuf, sizeof(inibuf));
+	status_cfg.ground_alt = atoi(inibuf);
 	ini_getString(&conf.fd, "status", "landing_alt", "3600", inibuf, sizeof(inibuf));
-	int32_t landing_meters = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "buz_timeout", "9000", inibuf, sizeof(inibuf));
-	uint32_t buz_timeout_seconds = atoi(inibuf);
+	status_cfg.landing_alt = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
+	status_cfg.tropopause_alt = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "rate_up", "2", inibuf, sizeof(inibuf));
+	status_cfg.rate_up = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "rate_down", "-2", inibuf, sizeof(inibuf));
+	status_cfg.rate_down = atoi(inibuf);
+	status_init(&status_cfg);
 
+	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
+	uint32_t buz_timeout_seconds = atoi(inibuf);
 	landing_buz_init(buz_timeout_seconds);
 
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));

@@ -52,7 +52,7 @@
 #define LOG_VERBOSITY LOG_FMT_VERBOSE
 #include <cfg/log.h>
 
-#include <math.h>
+#include <string.h>
 
 #define CAMPULSE_OFF()  do { PIOA_CODR = CAMPULSE_PIN; } while (0)
 #define CAMPULSE_ON()   do { PIOA_SODR = CAMPULSE_PIN; } while (0)
@@ -139,7 +139,9 @@ void status_check(bool fix, int32_t curr_alt)
 		if (delta_cnt < DELTA_MEAN_LEN)
 			delta_cnt++;
 
-		int32_t delta_avg = delta_sum / delta_cnt;
+		float rate = ((float)delta_sum) / (delta_cnt * STATUS_CHECK_INTERVAL);
+		LOG_INFO("Ascent rate %.2f m/s\n", rate);
+
 		if (delta_cnt >= DELTA_MEAN_LEN)
 			delta_sum -= delta_values[delta_idx];
 
@@ -147,39 +149,39 @@ void status_check(bool fix, int32_t curr_alt)
 		{
 			status_set(BSM2_CUTOFF);
 		}
-		else if (delta_avg < cfg.delta_up
-			&& delta_avg > cfg.delta_down
+		else if (rate < cfg.rate_up
+			&& rate > cfg.rate_down
 			&& curr_alt < cfg.ground_alt)
 		{
 			status_set(BSM2_GROUND_WAIT);
 		}
-		else if (delta_avg < cfg.delta_up
-			&& delta_avg > cfg.delta_down
+		else if (rate < cfg.rate_up
+			&& rate > cfg.rate_down
 			&& curr_alt >= cfg.ground_alt)
 		{
 			status_set(BSM2_HOVERING);
 		}
-		else if (delta_avg > cfg.delta_up
+		else if (rate > cfg.rate_up
 			&& curr_alt < cfg.tropopause_alt)
 		{
 			status_set(BSM2_TAKEOFF);
 		}
-		else if (delta_avg > cfg.delta_up
+		else if (rate > cfg.rate_up
 			&& curr_alt >= cfg.tropopause_alt)
 		{
 			status_set(BSM2_STRATOPHERE_UP);
 		}
-		else if (delta_avg < cfg.delta_down
+		else if (rate < cfg.rate_down
 			&& curr_alt >= cfg.tropopause_alt)
 		{
 			status_set(BSM2_STRATOPHERE_FALL);
 		}
-		else if (delta_avg < cfg.delta_down
+		else if (rate < cfg.rate_down
 			&& curr_alt < cfg.landing_alt)
 		{
 			status_set(BSM2_LANDING);
 		}
-		else if (delta_avg < cfg.delta_down
+		else if (rate < cfg.rate_down
 			&& curr_alt < cfg.tropopause_alt)
 		{
 			status_set(BSM2_STRATOPHERE_FALL);
@@ -204,12 +206,17 @@ static void NORETURN status_process(void)
 	}
 }
 
-void status_missionStart(void)
+void status_missionStartAt(ticks_t ticks)
 {
-	mission_start_ticks = timer_clock();
+	mission_start_ticks = ticks;
 	status_reset();
 	landing_buz_reset();
 	cutoff_reset();
+}
+
+void status_missionStart(void)
+{
+	status_missionStartAt(timer_clock());
 }
 
 ticks_t status_missionStartTicks(void)
@@ -217,11 +224,24 @@ ticks_t status_missionStartTicks(void)
 	return mission_start_ticks;
 }
 
-
-void status_init()
+void status_setCfg(StatusCfg *_cfg)
 {
+	memcpy(&cfg, _cfg, sizeof(cfg));
+	LOG_INFO("Setting status configuration\n");
+	LOG_INFO(" max ground altitude: %ld m\n", cfg.ground_alt);
+	LOG_INFO(" tropopause altitude: %ld m\n", cfg.tropopause_alt);
+	LOG_INFO(" landing altitude: %ld m\n", cfg.landing_alt);
+	LOG_INFO(" ascent rate (UP): %ld m/s\n", cfg.rate_up);
+	LOG_INFO(" descent rate (DOWN): %ld m/s\n", cfg.rate_down);
+}
+
+void status_init(StatusCfg *cfg)
+{
+	status_setCfg(cfg);
 	CAMPULSE_INIT();
-	proc_new(status_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
-	proc_new(camera_process, NULL, KERN_MINSTACKSIZE, NULL);
 	status_missionStart();
+	LOG_INFO("Starting status check process\n");
+	proc_new(status_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	LOG_INFO("Starting camera communication process\n");
+	proc_new(camera_process, NULL, KERN_MINSTACKSIZE, NULL);
 }

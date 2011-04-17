@@ -6,11 +6,11 @@
 
 typedef struct StatusCfg
 {
-	int32_t ground_alt;
-	int32_t tropopause_alt;
-	int32_t landing_alt;
-	int32_t delta_up;
-	int32_t delta_down;
+	int32_t ground_alt;     // meters
+	int32_t tropopause_alt; // meters
+	int32_t landing_alt;    // meters
+	int32_t rate_up;  // m/s
+	int32_t rate_down; // m/s (should be negative!)
 } StatusCfg;
 
 
@@ -29,9 +29,11 @@ typedef enum Bsm2Status
 	BSM2_CNT
 } Bsm2Status;
 
+void status_missionStartAt(ticks_t ticks);
 void status_missionStart(void);
 ticks_t status_missionStartTicks(void);
 void status_check(bool fix, int32_t curr_alt);
-void status_init(void);
+void status_setCfg(StatusCfg *_cfg);
+void status_init(StatusCfg *cfg);
 
 #endif
