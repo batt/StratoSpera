@@ -201,22 +201,23 @@ static void init(void)
 		sensor_setCalibration(i, set);
 	}
 
-	ini_getString(&conf.fd, "cutoff", "mission_time", "8400", inibuf, sizeof(inibuf));
-	uint32_t max_seconds = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "delta_alt", "500", inibuf, sizeof(inibuf));
-	int32_t delta_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "delta_timeout", "60", inibuf, sizeof(inibuf));
-	uint32_t delta_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "base_lat", "43606414", inibuf, sizeof(inibuf));
-	udegree_t base_lat = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "base_lon", "11311832", inibuf, sizeof(inibuf));
-	udegree_t base_lon = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "max_dist", "80000", inibuf, sizeof(inibuf));
-	uint32_t max_meters = atoi(inibuf);
+	CutoffCfg cutoff_cfg;
+	ini_getString(&conf.fd, "cutoff", "mission_timeout", "8400", inibuf, sizeof(inibuf));
+	cutoff_cfg.mission_timeout = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "delta_altitude", "500", inibuf, sizeof(inibuf));
+	cutoff_cfg.delta_altitude = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "altitude_timeout", "60", inibuf, sizeof(inibuf));
+	cutoff_cfg.altitude_timeout = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "start_latitude", "43606414", inibuf, sizeof(inibuf));
+	cutoff_cfg.start_latitude = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "start_longitude", "11311832", inibuf, sizeof(inibuf));
+	cutoff_cfg.start_longitude = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "dist_max_meters", "80000", inibuf, sizeof(inibuf));
+	cutoff_cfg.dist_max_meters = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
-	uint32_t maxdist_timeout = atoi(inibuf);
+	cutoff_cfg.dist_timeout = atoi(inibuf);
 
-	cutoff_init(max_seconds, delta_alt, delta_timeout, base_lat, base_lon, max_meters, maxdist_timeout);
+	cutoff_init(&cutoff_cfg);
 
 	ini_getString(&conf.fd, "status", "landing_alt", "3600", inibuf, sizeof(inibuf));
 	int32_t landing_meters = atoi(inibuf);

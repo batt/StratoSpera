@@ -52,15 +52,13 @@
 #include <cfg/log.h>
 
 #include <math.h>
+#include <string.h>
 
 #define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
 #define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
 #define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
 
-static float start_lat;
-static float start_lon;
-static float max_dist;
-
+static CutoffCfg cfg;
 
 #define PI 3.14159265358979323846
 
@@ -83,8 +81,12 @@ INLINE float rad2deg(float rad)
  * computation even at small distances, unlike calculations based on the
  * spherical law of cosines.
  */
-static float distance(float lat1, float lon1, float lat2, float lon2)
+static float distance(udegree_t _lat1, udegree_t _lon1, udegree_t _lat2, udegree_t _lon2)
 {
+	float lat1 = _lat1 / 1000000.0;
+	float lon1 = _lon1 / 1000000.0;
+	float lat2 = _lat2 / 1000000.0;
+	float lon2 = _lon2 / 1000000.0;
 	const float PLANET_RADIUS = 6371000;
 	float d_lat = deg2rad(lat2 - lat1);
 	float d_lon = deg2rad(lon2 - lon1);
@@ -97,32 +99,28 @@ static float distance(float lat1, float lon1, float lat2, float lon2)
 	return PLANET_RADIUS * c;
 }
 
-static ticks_t maxdist_timeout;
-static bool dist_ok = true;
-static void dist_reset(void)
-{
-	dist_ok = true;
-}
 
-bool cutoff_checkDist(bool fix, float lat, float lon, ticks_t now)
+static bool dist_ok = true;
+
+bool cutoff_checkDist(bool fix, udegree_t lat, udegree_t lon, ticks_t now)
 {
 	static ticks_t dist_ko_time;
 
 	if (fix)
 	{
-		float curr_dist = distance(start_lat, start_lon, lat, lon);
-		if (curr_dist > max_dist)
+		float curr_dist = distance(cfg.start_latitude, cfg.start_longitude, lat, lon);
+		if (curr_dist > cfg.dist_max_meters)
 		{
 			static bool logged = false;
 
 			if (dist_ok)
 			{
-				LOG_INFO("Distance from base: %.0fm; limit %.0fm, starting %lds timeout\n", curr_dist, max_dist, ticks_to_ms(maxdist_timeout) / 1000);
+				LOG_INFO("Distance from base: %.0fm; limit %ldm, starting %lds timeout\n", curr_dist, cfg.dist_max_meters, cfg.dist_timeout);
 				dist_ok = false;
 				dist_ko_time = now;
 				logged = false;
 			}
-			else if (now - dist_ko_time > maxdist_timeout)
+			else if (now - dist_ko_time > ms_to_ticks(cfg.dist_timeout * 1000))
 			{
 				if (!logged)
 				{
@@ -145,8 +143,6 @@ bool cutoff_checkDist(bool fix, float lat, float lon, ticks_t now)
 
 #define MIN_ALTITUDE -2000
 
-static ticks_t delta_timeout;
-static int32_t delta_alt;
 static int32_t alt_max = MIN_ALTITUDE;
 static bool alt_ok = true;
 
@@ -165,19 +161,19 @@ bool cutoff_checkAltitude(bool fix, int32_t curr_alt, ticks_t now)
 	{
 		alt_max = MAX(alt_max, curr_alt);
 
-		if (alt_max - curr_alt > delta_alt)
+		if (alt_max - curr_alt > cfg.delta_altitude)
 		{
 			static bool logged = false;
 
 			if (alt_ok)
 			{
 				LOG_INFO("Current altitude %ld, max altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
-				curr_alt, alt_max, ticks_to_ms(delta_timeout) / 1000);
+					curr_alt, alt_max, cfg.altitude_timeout);
 				alt_ok = false;
 				logged = false;
 				alt_ko_time = now;
 			}
-			else if (now - alt_ko_time > delta_timeout)
+			else if (now - alt_ko_time > ms_to_ticks(cfg.altitude_timeout * 1000))
 			{
 				if (!logged)
 				{
@@ -196,13 +192,11 @@ bool cutoff_checkAltitude(bool fix, int32_t curr_alt, ticks_t now)
 	return true;
 }
 
-
-static ticks_t mission_time;
 bool cutoff_checkTime(ticks_t now)
 {
 	static bool logged = false;
 
-	if (now - status_missionStartTicks() < mission_time)
+	if (now - status_missionStartTicks() < ms_to_ticks(cfg.mission_timeout * 1000))
 	{
 		logged = false;
 		return true;
@@ -255,8 +249,8 @@ static void NORETURN cutoff_process(void)
 		ticks_t now = timer_clock();
 		bool fix = gps_fixed();
 		int32_t curr_alt = gps_info()->altitude;
-		float lat = gps_info()->latitude / 1000000.0;
-		float lon = gps_info()->longitude / 1000000.0;
+		udegree_t lat = gps_info()->latitude;
+		udegree_t lon = gps_info()->longitude;
 
 		if (!cutoff_checkTime(now)
 		 || !cutoff_checkDist(fix, lat, lon, now)
@@ -270,31 +264,26 @@ void cutoff_reset(void)
 {
 	LOG_INFO("Resetting cutoff procedure\n");
 	alt_reset();
-	dist_reset();
+	dist_ok = true;
 
 	cut = false;
 	cutting = false;
 }
 
-void cutoff_init(uint32_t max_seconds, int32_t _delta_alt, uint32_t _delta_timeout, udegree_t _start_lat, udegree_t _start_lon, uint32_t max_meters, uint32_t _maxdist_timeout)
+void cutoff_init(CutoffCfg *_cfg)
 {
 	CUTOFF_INIT();
-	mission_time = ms_to_ticks(max_seconds * 1000);
-	maxdist_timeout = ms_to_ticks(_maxdist_timeout * 1000);
-	start_lat = _start_lat / 1000000.0;
-	start_lon = _start_lon / 1000000.0;
-	max_dist = max_meters;
-	delta_alt = _delta_alt;
-	delta_timeout = ms_to_ticks(_delta_timeout * 1000);
+	memcpy(&cfg, _cfg, sizeof(cfg));
 
 	LOG_INFO("Starting cutoff:\n");
-	LOG_INFO(" max mission time: %ld seconds\n", max_seconds);
-	LOG_INFO(" max delta altitude: %ld m\n", delta_alt);
-	LOG_INFO(" delta pressure timeout: %ld seconds\n", _delta_timeout);
+	LOG_INFO(" mission timeout: %ld seconds\n", cfg.mission_timeout);
+	LOG_INFO(" max delta altitude: %ld m\n", cfg.delta_altitude);
+	LOG_INFO(" delta pressure timeout: %ld seconds\n", cfg.altitude_timeout);
 	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
-		_start_lat/1000000, ABS(_start_lat)%1000000, _start_lon/1000000, ABS(_start_lon)%1000000);
-	LOG_INFO(" max distance from base: %ld meters\n", max_meters);
-	LOG_INFO(" max distance timeout: %ld seconds\n", _maxdist_timeout);
+		cfg.start_latitude/1000000, ABS(cfg.start_latitude)%1000000,
+		cfg.start_longitude/1000000, ABS(cfg.start_longitude)%1000000);
+	LOG_INFO(" max distance from base: %ld meters\n", cfg.dist_max_meters);
+	LOG_INFO(" max distance timeout: %ld seconds\n", cfg.dist_timeout);
 	cutoff_reset();
 	//start process
 	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
