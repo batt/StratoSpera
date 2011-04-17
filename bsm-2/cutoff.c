@@ -37,6 +37,7 @@
 
 #include "cutoff.h"
 
+#include "status_mgr.h"
 #include "gps.h"
 #include "sensors.h"
 #include "hw/hw_pin.h"
@@ -103,15 +104,12 @@ static void dist_reset(void)
 	dist_ok = true;
 }
 
-static bool cutoff_checkDist(void)
+bool cutoff_checkDist(bool fix, float lat, float lon, ticks_t now)
 {
 	static ticks_t dist_ko_time;
 
-	if (gps_fixed())
+	if (fix)
 	{
-		float lat = gps_info()->latitude / 1000000.0;
-		float lon = gps_info()->longitude / 1000000.0;
-
 		float curr_dist = distance(start_lat, start_lon, lat, lon);
 		if (curr_dist > max_dist)
 		{
@@ -121,10 +119,10 @@ static bool cutoff_checkDist(void)
 			{
 				LOG_INFO("Distance from base: %.0fm; limit %.0fm, starting %lds timeout\n", curr_dist, max_dist, ticks_to_ms(maxdist_timeout) / 1000);
 				dist_ok = false;
-				dist_ko_time = timer_clock();
+				dist_ko_time = now;
 				logged = false;
 			}
-			else if (timer_clock() - dist_ko_time > maxdist_timeout)
+			else if (now - dist_ko_time > maxdist_timeout)
 			{
 				if (!logged)
 				{
@@ -145,89 +143,66 @@ static bool cutoff_checkDist(void)
 	return true;
 }
 
-#define PRESS_PERIOD 60
-#define MAX_PRESS 1500
+#define MIN_ALTITUDE -2000
 
-static float delta_press;
 static ticks_t delta_timeout;
-static float press[PRESS_PERIOD];
-static float press_sum;
-static float press_min = MAX_PRESS;
-static int press_idx;
-static int press_cnt = 0;
-static bool press_ok = true;
+static int32_t delta_alt;
+static int32_t alt_max = MIN_ALTITUDE;
+static bool alt_ok = true;
 
-
-#define NEXT_IDX(idx) (((idx + 1) >= PRESS_PERIOD) ? 0 : idx + 1)
-
-static void press_reset(void)
+static void alt_reset(void)
 {
-	press_cnt = 0;
-	press_ok = true;
-	press_idx = 0;
-	press_sum = 0;
-	press_min = MAX_PRESS;
+	alt_ok = true;
+	alt_max = MIN_ALTITUDE;
 }
 
-static bool cutoff_checkPress(void)
+
+bool cutoff_checkAltitude(bool fix, int32_t curr_alt, ticks_t now)
 {
-	static ticks_t press_ko_time;
+	static ticks_t alt_ko_time;
 
-	float curr_press = sensor_press();
-	press[press_idx] = curr_press;
-	ASSERT(press[press_idx] < MAX_PRESS);
-
-	press_sum += press[press_idx];
-	press_idx = NEXT_IDX(press_idx);
-
-	if (press_cnt < PRESS_PERIOD)
-		press_cnt++;
-
-	float press_avg = press_sum / press_cnt;
-	if (press_cnt >= PRESS_PERIOD)
-		press_sum -= press[press_idx];
-
-	press_min = MIN(press_min, press_avg);
-	//LOG_INFO("press_cnt %d Current pressure %.0f, current average pressure %.0f, min pressure %.0f\n", press_cnt, curr_press, press_avg, press_min);
-
-	if (press_avg - press_min > delta_press)
+	if (fix)
 	{
-		static bool logged = false;
+		alt_max = MAX(alt_max, curr_alt);
 
-		if (press_ok)
+		if (alt_max - curr_alt > delta_alt)
 		{
-			LOG_INFO("Current pressure %.0f, current average pressure %.0f, min pressure %.0f; avg pressure greater than delta, starting %ld s timeout\n",
-			curr_press, press_avg, press_min, ticks_to_ms(delta_timeout) / 1000);
-			press_ok = false;
-			logged = false;
-			press_ko_time = timer_clock();
-		}
-		else if (timer_clock() - press_ko_time > delta_timeout)
-		{
-			if (!logged)
+			static bool logged = false;
+
+			if (alt_ok)
 			{
-				LOG_INFO("Average pressure greater than delta pressure and timeout expired\n");
-				logged = true;
+				LOG_INFO("Current altitude %ld, max altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
+				curr_alt, alt_max, ticks_to_ms(delta_timeout) / 1000);
+				alt_ok = false;
+				logged = false;
+				alt_ko_time = now;
 			}
-			return false;
+			else if (now - alt_ko_time > delta_timeout)
+			{
+				if (!logged)
+				{
+					LOG_INFO("Current altitude lower than delta and timeout expired\n");
+					logged = true;
+				}
+				return false;
+			}
+			return true;
 		}
-		return true;
 	}
 
-	if (!press_ok)
-		LOG_INFO("Average pressure ok\n");
-	press_ok = true;
+	if (!alt_ok)
+		LOG_INFO("Current altitude ok\n");
+	alt_ok = true;
 	return true;
 }
 
 
-static ticks_t start_time;
 static ticks_t mission_time;
-static bool cutoff_checkTime(void)
+bool cutoff_checkTime(ticks_t now)
 {
 	static bool logged = false;
 
-	if (timer_clock() - start_time < mission_time)
+	if (now - status_missionStartTicks() < mission_time)
 	{
 		logged = false;
 		return true;
@@ -243,11 +218,18 @@ static bool cutoff_checkTime(void)
 	}
 }
 
+static bool cutting = false;
+bool cutoff_active(void)
+{
+	return cutting;
+}
+
 static bool cut = false;
 static void cutoff_cut(void)
 {
 		if (!cut)
 		{
+			cutting = true;
 			cut = true;
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
 			for (int i = 0; i < 3; i++)
@@ -260,6 +242,7 @@ static void cutoff_cut(void)
 				timer_delay(5000);
 			}
 			LOG_INFO("Cutoff procedure finished.\n");
+			cutting = false;
 		}
 }
 
@@ -269,9 +252,15 @@ static void NORETURN cutoff_process(void)
 	{
 		timer_delay(1000);
 
-		if (!cutoff_checkTime()
-		 || !cutoff_checkDist()
-		 || !cutoff_checkPress())
+		ticks_t now = timer_clock();
+		bool fix = gps_fixed();
+		int32_t curr_alt = gps_info()->altitude;
+		float lat = gps_info()->latitude / 1000000.0;
+		float lon = gps_info()->longitude / 1000000.0;
+
+		if (!cutoff_checkTime(now)
+		 || !cutoff_checkDist(fix, lat, lon, now)
+		 || !cutoff_checkAltitude(fix, curr_alt, now))
 			cutoff_cut();
 
 	}
@@ -280,14 +269,14 @@ static void NORETURN cutoff_process(void)
 void cutoff_reset(void)
 {
 	LOG_INFO("Resetting cutoff procedure\n");
-	start_time = timer_clock();
-	press_reset();
+	alt_reset();
 	dist_reset();
 
 	cut = false;
+	cutting = false;
 }
 
-void cutoff_init(uint32_t max_seconds, float _delta_press, uint32_t _delta_timeout, udegree_t _start_lat, udegree_t _start_lon, uint32_t max_meters, uint32_t _maxdist_timeout)
+void cutoff_init(uint32_t max_seconds, int32_t _delta_alt, uint32_t _delta_timeout, udegree_t _start_lat, udegree_t _start_lon, uint32_t max_meters, uint32_t _maxdist_timeout)
 {
 	CUTOFF_INIT();
 	mission_time = ms_to_ticks(max_seconds * 1000);
@@ -295,12 +284,12 @@ void cutoff_init(uint32_t max_seconds, float _delta_press, uint32_t _delta_timeo
 	start_lat = _start_lat / 1000000.0;
 	start_lon = _start_lon / 1000000.0;
 	max_dist = max_meters;
-	delta_press = _delta_press;
+	delta_alt = _delta_alt;
 	delta_timeout = ms_to_ticks(_delta_timeout * 1000);
 
 	LOG_INFO("Starting cutoff:\n");
 	LOG_INFO(" max mission time: %ld seconds\n", max_seconds);
-	LOG_INFO(" max delta pressure: %.0f mbar\n", delta_press);
+	LOG_INFO(" max delta altitude: %ld m\n", delta_alt);
 	LOG_INFO(" delta pressure timeout: %ld seconds\n", _delta_timeout);
 	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
 		_start_lat/1000000, ABS(_start_lat)%1000000, _start_lon/1000000, ABS(_start_lon)%1000000);

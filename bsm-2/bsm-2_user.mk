@@ -14,10 +14,10 @@ bsm-2_USER_CSRC = \
 	$(bsm-2_SRC_PATH)/adc_mgr.c \
 	$(bsm-2_SRC_PATH)/sensors.c \
 	$(bsm-2_SRC_PATH)/cutoff.c \
-	$(bsm-2_SRC_PATH)/landing.c \
 	$(bsm-2_SRC_PATH)/logging.c \
 	$(bsm-2_SRC_PATH)/measures.c \
 	$(bsm-2_SRC_PATH)/hadarp.c \
+	$(bsm-2_SRC_PATH)/status_mgr.c \
 	bertos/mware/ini_reader.c \
 	bertos/drv/kbd.c \
 	bertos/kern/signal.c \

@@ -173,6 +173,8 @@
     <File Name="bsm-2/hadarp.h"/>
     <File Name="bsm-2/measures.c"/>
     <File Name="bsm-2/measures.h"/>
+    <File Name="bsm-2/status_mgr.c"/>
+    <File Name="bsm-2/status_mgr.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">

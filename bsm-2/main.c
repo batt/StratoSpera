@@ -8,6 +8,7 @@
 #include "logging.h"
 #include "measures.h"
 #include "hadarp.h"
+#include "status_mgr.h"
 
 #include "hw/hw_pin.h"
 #include <cpu/irq.h>
@@ -202,8 +203,8 @@ static void init(void)
 
 	ini_getString(&conf.fd, "cutoff", "mission_time", "8400", inibuf, sizeof(inibuf));
 	uint32_t max_seconds = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "delta_press", "100", inibuf, sizeof(inibuf));
-	float delta_press = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "delta_alt", "500", inibuf, sizeof(inibuf));
+	int32_t delta_alt = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "delta_timeout", "60", inibuf, sizeof(inibuf));
 	uint32_t delta_timeout = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "base_lat", "43606414", inibuf, sizeof(inibuf));
@@ -215,7 +216,7 @@ static void init(void)
 	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
 	uint32_t maxdist_timeout = atoi(inibuf);
 
-	cutoff_init(max_seconds, delta_press, delta_timeout, base_lat, base_lon, max_meters, maxdist_timeout);
+	cutoff_init(max_seconds, delta_alt, delta_timeout, base_lat, base_lon, max_meters, maxdist_timeout);
 
 	ini_getString(&conf.fd, "landing", "landing_alt", "3600", inibuf, sizeof(inibuf));
 	int32_t landing_meters = atoi(inibuf);
@@ -224,7 +225,7 @@ static void init(void)
 	ini_getString(&conf.fd, "landing", "buz_timeout", "9000", inibuf, sizeof(inibuf));
 	uint32_t buz_timeout_seconds = atoi(inibuf);
 
-	landing_init(landing_meters, count_limit, buz_timeout_seconds);
+	//landing_init(landing_meters, count_limit, buz_timeout_seconds);
 
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
 	aprs_interval = atoi(inibuf) * 1000;
@@ -270,7 +271,8 @@ int main(void)
 
 		if (kbd_peek() & K_START)
 		{
-			landing_reset();
+//			landing_reset();
+			status_missionStart();
 			cutoff_reset();
 			ledg(true);
 			ledr(true);
