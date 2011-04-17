@@ -201,6 +201,20 @@ static void init(void)
 		sensor_setCalibration(i, set);
 	}
 
+	StatusCfg status_cfg;
+	ini_getString(&conf.fd, "status", "ground_alt", "1500", inibuf, sizeof(inibuf));
+	status_cfg.ground_alt = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "landing_alt", "3600", inibuf, sizeof(inibuf));
+	status_cfg.landing_alt = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
+	status_cfg.tropopause_alt = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "rate_up", "2", inibuf, sizeof(inibuf));
+	status_cfg.rate_up = atoi(inibuf);
+	ini_getString(&conf.fd, "status", "rate_down", "-2", inibuf, sizeof(inibuf));
+	status_cfg.rate_down = atoi(inibuf);
+
+	status_init(&status_cfg);
+
 	CutoffCfg cutoff_cfg;
 	ini_getString(&conf.fd, "cutoff", "mission_timeout", "8400", inibuf, sizeof(inibuf));
 	cutoff_cfg.mission_timeout = atoi(inibuf);
@@ -218,20 +232,6 @@ static void init(void)
 	cutoff_cfg.dist_timeout = atoi(inibuf);
 
 	cutoff_init(&cutoff_cfg);
-
-	StatusCfg status_cfg;
-	ini_getString(&conf.fd, "status", "ground_alt", "1500", inibuf, sizeof(inibuf));
-	status_cfg.ground_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "landing_alt", "3600", inibuf, sizeof(inibuf));
-	status_cfg.landing_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
-	status_cfg.tropopause_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "rate_up", "2", inibuf, sizeof(inibuf));
-	status_cfg.rate_up = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "rate_down", "-2", inibuf, sizeof(inibuf));
-	status_cfg.rate_down = atoi(inibuf);
-
-	status_init(&status_cfg);
 
 	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
 	uint32_t buz_timeout_seconds = atoi(inibuf);

@@ -95,6 +95,11 @@ static void status_set(Bsm2Status new_status)
 		landing_buz_start();
 }
 
+Bsm2Status status_currStatus(void)
+{
+	return curr_status;
+}
+
 #define CAMPULSE_MIN_DELAY 300
 #define CAMPULSE_INC 50
 
@@ -137,7 +142,12 @@ void status_check(bool fix, int32_t curr_alt)
 		delta_idx = NEXT_IDX(delta_idx);
 
 		if (delta_cnt < DELTA_MEAN_LEN)
+		{
 			delta_cnt++;
+			// Stay in the previuos state until we have a good
+			// approximation of the ascent rate.
+			return;
+		}
 
 		float rate = ((float)delta_sum) / (delta_cnt * STATUS_CHECK_INTERVAL);
 		LOG_INFO("Ascent rate %.2f m/s\n", rate);

@@ -102,11 +102,12 @@ static float distance(udegree_t _lat1, udegree_t _lon1, udegree_t _lat2, udegree
 
 static bool dist_ok = true;
 
-bool cutoff_checkDist(bool fix, udegree_t lat, udegree_t lon, ticks_t now)
+bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 {
 	static ticks_t dist_ko_time;
 
-	if (fix)
+	if (status_currStatus() != BSM2_GROUND_WAIT
+		&& status_currStatus() != BSM2_NOFIX)
 	{
 		float curr_dist = distance(cfg.start_latitude, cfg.start_longitude, lat, lon);
 		if (curr_dist > cfg.dist_max_meters)
@@ -153,11 +154,12 @@ static void alt_reset(void)
 }
 
 
-bool cutoff_checkAltitude(bool fix, int32_t curr_alt, ticks_t now)
+bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 {
 	static ticks_t alt_ko_time;
 
-	if (fix)
+	if (status_currStatus() != BSM2_GROUND_WAIT
+		&& status_currStatus() != BSM2_NOFIX)
 	{
 		alt_max = MAX(alt_max, curr_alt);
 
@@ -248,14 +250,13 @@ static void NORETURN cutoff_process(void)
 		timer_delay(1000);
 
 		ticks_t now = timer_clock();
-		bool fix = gps_fixed();
 		int32_t curr_alt = gps_info()->altitude;
 		udegree_t lat = gps_info()->latitude;
 		udegree_t lon = gps_info()->longitude;
 
 		if (!cutoff_checkTime(now)
-		 || !cutoff_checkDist(fix, lat, lon, now)
-		 || !cutoff_checkAltitude(fix, curr_alt, now))
+		 || !cutoff_checkDist(lat, lon, now)
+		 || !cutoff_checkAltitude(curr_alt, now))
 			cutoff_cut();
 
 	}
