@@ -1,0 +1,16 @@
+Logging start...
+10:21:58:Current pressure 223, current average pressure 211, min pressure 111; avg pressure greater than delta, starting 60 s timeout
+10:22:59:Average pressure greater than delta pressure and timeout expired
+10:22:59:---CUTOFF ACTIVATED---
+10:22:59:Cutoff pulse 1
+10:23:04:Cutoff pulse 1 done
+10:23:09:Cutoff pulse 2
+10:23:14:Cutoff pulse 2 done
+10:23:19:Cutoff pulse 3
+10:23:24:Cutoff pulse 3 done
+10:23:29:Cutoff procedure finished.
+10:35:55:Altitude descending and current altidude lower than 3600 m, activating landing mode
+10:35:55:Sending to camera the landing pulse
+10:35:55:Starting the landing beeper
+11:23:32:Maximum mission time expired
+11:33:33:Buzzer timeout expired

@@ -1,0 +1,3 @@
+Logging start...
+GPS time;GPS FIX;GPS lat;GPS lon;GPS alt;int Temp;ext Temp;Press;Vsupply
+08:59:58;FIX;43.606490;011.311808;239;37.2;27.5;968;9.05
