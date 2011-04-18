@@ -1,6 +1,6 @@
 {Program	GerbTool for Layout
 	{Version	8.0}
-	{Created	Wed Apr 13 15:42:35 2011}
+	{Created	Mon Apr 18 10:45:34 2011}
 }
 {Environment
 	{FilesPath  C:\SRC\BSM-2\SCHEMATICS}
@@ -25,24 +25,6 @@
 		{Type        Bottom}
 	}
 	{Layer  3
-		{File        BSM-2.GND}
-		{LyrName     -}
-		{ApList      }
-		{Visibility  On}
-		{FlashColor  gray50}
-		{DrawColor   gray50}
-		{Type        Other}
-	}
-	{Layer  4
-		{File        BSM-2.PWR}
-		{LyrName     -}
-		{ApList      }
-		{Visibility  On}
-		{FlashColor  vga16green}
-		{DrawColor   vga16green}
-		{Type        Other}
-	}
-	{Layer  5
 		{File        BSM-2.SMT}
 		{LyrName     -}
 		{ApList      }
@@ -51,25 +33,16 @@
 		{DrawColor   Green}
 		{Type        Other}
 	}
-	{Layer  6
-		{File        BSM-2.SMB}
-		{LyrName     -}
-		{ApList      }
-		{Visibility  On}
-		{FlashColor  vga16yellow}
-		{DrawColor   vga16yellow}
-		{Type        Other}
-	}
-	{Layer  7
+	{Layer  4
 		{File        BSM-2.SST}
 		{LyrName     -}
 		{ApList      }
 		{Visibility  On}
-		{FlashColor  White}
-		{DrawColor   White}
+		{FlashColor  sienna1}
+		{DrawColor   sienna1}
 		{Type        Other}
 	}
-	{Layer  8
+	{Layer  5
 		{File        BSM-2.AST}
 		{LyrName     -}
 		{ApList      }
@@ -78,7 +51,7 @@
 		{DrawColor   Green}
 		{Type        Other}
 	}
-	{Layer  9
+	{Layer  6
 		{File        BSM-2.DRD}
 		{LyrName     -}
 		{ApList      }
@@ -87,7 +60,7 @@
 		{DrawColor   Red}
 		{Type        Other}
 	}
-	{Layer  10
+	{Layer  7
 		{File        BSM-2.FAB}
 		{LyrName     -}
 		{ApList      }
