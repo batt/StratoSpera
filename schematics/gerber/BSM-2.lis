@@ -1,6 +1,6 @@
 Post Processor Report
 OrCAD FILE: C:\SRC\BSM-2\SCHEMATICS\BSM-2.MAX
-Mon Apr 18 10:45:33 2011
+Mon Apr 18 11:54:34 2011
 
 *********************************************************
 
@@ -60,17 +60,16 @@ D58:  0.0787 x 0.0118 OBLONG    -----       6 Flashes
 D59:  0.0118 x 0.0787 OBLONG    -----      10 Flashes
 D60:  0.2165 x 0.0787 RECTANGLE -----       2 Flashes
 D61:  0.0280 ROUND  --       0 Draws,      30 Flashes
-D62:  0.0100 ROUND  --    2524 Draws,       0 Flashes
-D63:  0.0080 ROUND  --    9363 Draws,       0 Flashes
+D62:  0.0100 ROUND  --    2522 Draws,       0 Flashes
+D63:  0.0080 ROUND  --    8955 Draws,       0 Flashes
 D64:  0.0010 ROUND  --    6236 Draws,       0 Flashes
-D65:  0.0280 ROUND  --       0 Draws,       4 Flashes
-D66:  0.0120 ROUND  --    1301 Draws,       0 Flashes
-D67:  0.0375 ROUND  --      31 Draws,       0 Flashes
-D68:  0.0280 ROUND  --       0 Draws,     419 Flashes
-D69:  0.0500 ROUND  --       0 Draws,       2 Flashes
-D70:  0.0280 ROUND  --       0 Draws,       2 Flashes
+D65:  0.0120 ROUND  --    1360 Draws,       0 Flashes
+D66:  0.0280 ROUND  --       0 Draws,     421 Flashes
+D67:  0.0375 ROUND  --      35 Draws,       0 Flashes
+D68:  0.0500 ROUND  --       0 Draws,       2 Flashes
+D69:  0.0280 ROUND  --       0 Draws,       2 Flashes
 ---------------------------------------------------------
- 61 D-Codes      -----   19455 Draws,    1161 Flashes
+ 60 D-Codes      -----   19108 Draws,    1159 Flashes
 
 *********************************************************
 
@@ -78,36 +77,35 @@ Output file: C:\SRC\BSM-2\SCHEMATICS\BSM-2.BOT
 
 Aperture totals for C:\SRC\BSM-2\SCHEMATICS\BSM-2.BOT:
 ---------------------------------------------------------
-D62:  0.0100 ROUND  --    2714 Draws,       0 Flashes
-D63:  0.0080 ROUND  --   11435 Draws,       0 Flashes
+D62:  0.0100 ROUND  --    2688 Draws,       0 Flashes
+D63:  0.0080 ROUND  --   11374 Draws,       0 Flashes
 D64:  0.0010 ROUND  --    7301 Draws,       0 Flashes
-D65:  0.0280 ROUND  --       0 Draws,       4 Flashes
-D66:  0.0120 ROUND  --     649 Draws,       0 Flashes
+D65:  0.0120 ROUND  --     672 Draws,       0 Flashes
+D66:  0.0280 ROUND  --       0 Draws,     419 Flashes
 D67:  0.0375 ROUND  --       7 Draws,       0 Flashes
-D68:  0.0280 ROUND  --       0 Draws,     418 Flashes
-D69:  0.0500 ROUND  --       0 Draws,       2 Flashes
-D70:  0.0280 ROUND  --       0 Draws,       3 Flashes
-D71:  0.0520 ROUND  --       0 Draws,       5 Flashes
-D72:  0.0520 SQUARE --       0 Draws,       4 Flashes
-D73:  0.0570 ROUND  --       0 Draws,       4 Flashes
-D74:  0.0570 SQUARE --       0 Draws,       4 Flashes
-D75:  0.0740 ROUND  --       0 Draws,      10 Flashes
-D76:  0.0580 ROUND  --       0 Draws,      51 Flashes
-D77:  0.0580 SQUARE --       0 Draws,       9 Flashes
-D78:  0.0748 ROUND  --       0 Draws,      18 Flashes
-D79:  0.0748 SQUARE --       0 Draws,      10 Flashes
-D80:  0.0500 x 0.0670 RECTANGLE -----       6 Flashes
-D81:  0.2362 ROUND  --       0 Draws,       5 Flashes
-D82:  0.0680 ROUND  --       0 Draws,       1 Flashes
-D83:  0.0840 ROUND  --       0 Draws,       1 Flashes
-D84:  0.1470 ROUND  --       0 Draws,       1 Flashes
-D85:  0.0750 SQUARE --       0 Draws,       1 Flashes
-D86:  0.0750 ROUND  --       0 Draws,       2 Flashes
-D87:  0.0550 SQUARE --       0 Draws,       1 Flashes
-D88:  0.0550 ROUND  --       0 Draws,       3 Flashes
-D89:  0.0280 ROUND  --       0 Draws,      30 Flashes
+D68:  0.0500 ROUND  --       0 Draws,       2 Flashes
+D69:  0.0280 ROUND  --       0 Draws,       4 Flashes
+D70:  0.0520 ROUND  --       0 Draws,       5 Flashes
+D71:  0.0520 SQUARE --       0 Draws,       4 Flashes
+D72:  0.0570 ROUND  --       0 Draws,       4 Flashes
+D73:  0.0570 SQUARE --       0 Draws,       4 Flashes
+D74:  0.0740 ROUND  --       0 Draws,      10 Flashes
+D75:  0.0580 ROUND  --       0 Draws,      51 Flashes
+D76:  0.0580 SQUARE --       0 Draws,       9 Flashes
+D77:  0.0748 ROUND  --       0 Draws,      18 Flashes
+D78:  0.0748 SQUARE --       0 Draws,      10 Flashes
+D79:  0.0500 x 0.0670 RECTANGLE -----       6 Flashes
+D80:  0.2362 ROUND  --       0 Draws,       5 Flashes
+D81:  0.0680 ROUND  --       0 Draws,       1 Flashes
+D82:  0.0840 ROUND  --       0 Draws,       1 Flashes
+D83:  0.1470 ROUND  --       0 Draws,       1 Flashes
+D84:  0.0750 SQUARE --       0 Draws,       1 Flashes
+D85:  0.0750 ROUND  --       0 Draws,       2 Flashes
+D86:  0.0550 SQUARE --       0 Draws,       1 Flashes
+D87:  0.0550 ROUND  --       0 Draws,       3 Flashes
+D88:  0.0280 ROUND  --       0 Draws,      30 Flashes
 ---------------------------------------------------------
- 28 D-Codes      -----   22106 Draws,     593 Flashes
+ 27 D-Codes      -----   22042 Draws,     591 Flashes
 
 *********************************************************
 
@@ -115,62 +113,62 @@ Output file: C:\SRC\BSM-2\SCHEMATICS\BSM-2.SMT
 
 Aperture totals for C:\SRC\BSM-2\SCHEMATICS\BSM-2.SMT:
 ---------------------------------------------------------
-D70:  0.0280 ROUND  --       0 Draws,       2 Flashes
-D71:  0.0520 ROUND  --       0 Draws,       5 Flashes
-D72:  0.0520 SQUARE --       0 Draws,       4 Flashes
-D76:  0.0580 ROUND  --       0 Draws,      51 Flashes
-D77:  0.0580 SQUARE --       0 Draws,       9 Flashes
-D81:  0.2362 ROUND  --       0 Draws,       5 Flashes
-D82:  0.0680 ROUND  --       0 Draws,       5 Flashes
-D83:  0.0840 ROUND  --       0 Draws,      11 Flashes
-D84:  0.1470 ROUND  --       0 Draws,       1 Flashes
-D85:  0.0750 SQUARE --       0 Draws,       1 Flashes
-D86:  0.0750 ROUND  --       0 Draws,       2 Flashes
-D87:  0.0550 SQUARE --       0 Draws,       1 Flashes
-D88:  0.0550 ROUND  --       0 Draws,       3 Flashes
-D90:  0.0500 SQUARE --       0 Draws,     350 Flashes
-D91:  0.0320 x 0.0380 RECTANGLE -----       2 Flashes
-D92:  0.0600 SQUARE --       0 Draws,       4 Flashes
-D93:  0.0740 x 0.0480 RECTANGLE -----       2 Flashes
-D94:  0.0680 SQUARE --       0 Draws,       4 Flashes
-D95:  0.0900 x 0.1000 RECTANGLE -----       4 Flashes
-D96:  0.0866 ROUND  --       0 Draws,      18 Flashes
-D97:  0.0866 SQUARE --       0 Draws,      10 Flashes
-D98:  0.1968 x 0.1575 RECTANGLE -----       2 Flashes
-D99:  0.0720 x 0.0780 RECTANGLE -----       6 Flashes
-D100: 0.0780 x 0.0720 RECTANGLE -----       2 Flashes
-D101: 0.0500 x 0.0340 RECTANGLE -----       1 Flashes
-D102: 0.0400 x 0.0340 RECTANGLE -----       2 Flashes
-D103: 0.0340 x 0.0500 RECTANGLE -----       2 Flashes
-D104: 0.0340 x 0.0400 RECTANGLE -----       4 Flashes
-D105: 0.0640 x 0.1000 RECTANGLE -----       2 Flashes
-D106: 0.0600 x 0.0700 RECTANGLE -----      12 Flashes
-D107: 0.0860 x 0.0240 OBLONG    -----      17 Flashes
-D108: 0.0860 x 0.0240 RECTANGLE -----       1 Flashes
-D109: 0.0110 x 0.0700 OBLONG    -----      28 Flashes
-D110: 0.0110 x 0.0700 RECTANGLE -----       4 Flashes
-D111: 0.0700 x 0.0110 OBLONG    -----      29 Flashes
-D112: 0.0700 x 0.0110 RECTANGLE -----       3 Flashes
-D113: 0.1181 x 0.0984 RECTANGLE -----       2 Flashes
-D114: 0.0984 x 0.0275 RECTANGLE -----       1 Flashes
-D115: 0.1378 x 0.0275 RECTANGLE -----       2 Flashes
-D116: 0.1496 x 0.0433 RECTANGLE -----       9 Flashes
-D117: 0.0250 x 0.0940 OBLONG    -----      22 Flashes
-D118: 0.0250 x 0.0940 RECTANGLE -----       2 Flashes
-D119: 0.0940 x 0.0250 OBLONG    -----      21 Flashes
-D120: 0.0940 x 0.0250 RECTANGLE -----       3 Flashes
-D121: 0.0950 x 0.1220 RECTANGLE -----       1 Flashes
-D122: 0.0750 x 0.0240 RECTANGLE -----       8 Flashes
-D123: 0.2450 ROUND  --       0 Draws,       2 Flashes
-D124: 0.0177 x 0.0701 RECTANGLE -----       8 Flashes
-D125: 0.0787 x 0.0118 OBLONG    -----       6 Flashes
-D126: 0.0118 x 0.0787 OBLONG    -----      10 Flashes
-D127: 0.2165 x 0.0787 RECTANGLE -----       2 Flashes
-D128: 0.0160 ROUND  --       0 Draws,      30 Flashes
-D129: 0.0160 ROUND  --       0 Draws,     190 Flashes
-D130: 0.0160 ROUND  --       0 Draws,     235 Flashes
+D69:  0.0280 ROUND  --       0 Draws,       2 Flashes
+D70:  0.0520 ROUND  --       0 Draws,       5 Flashes
+D71:  0.0520 SQUARE --       0 Draws,       4 Flashes
+D75:  0.0580 ROUND  --       0 Draws,      51 Flashes
+D76:  0.0580 SQUARE --       0 Draws,       9 Flashes
+D80:  0.2362 ROUND  --       0 Draws,       5 Flashes
+D81:  0.0680 ROUND  --       0 Draws,       5 Flashes
+D82:  0.0840 ROUND  --       0 Draws,      11 Flashes
+D83:  0.1470 ROUND  --       0 Draws,       1 Flashes
+D84:  0.0750 SQUARE --       0 Draws,       1 Flashes
+D85:  0.0750 ROUND  --       0 Draws,       2 Flashes
+D86:  0.0550 SQUARE --       0 Draws,       1 Flashes
+D87:  0.0550 ROUND  --       0 Draws,       3 Flashes
+D89:  0.0500 SQUARE --       0 Draws,     350 Flashes
+D90:  0.0320 x 0.0380 RECTANGLE -----       2 Flashes
+D91:  0.0600 SQUARE --       0 Draws,       4 Flashes
+D92:  0.0740 x 0.0480 RECTANGLE -----       2 Flashes
+D93:  0.0680 SQUARE --       0 Draws,       4 Flashes
+D94:  0.0900 x 0.1000 RECTANGLE -----       4 Flashes
+D95:  0.0866 ROUND  --       0 Draws,      18 Flashes
+D96:  0.0866 SQUARE --       0 Draws,      10 Flashes
+D97:  0.1968 x 0.1575 RECTANGLE -----       2 Flashes
+D98:  0.0720 x 0.0780 RECTANGLE -----       6 Flashes
+D99:  0.0780 x 0.0720 RECTANGLE -----       2 Flashes
+D100: 0.0500 x 0.0340 RECTANGLE -----       1 Flashes
+D101: 0.0400 x 0.0340 RECTANGLE -----       2 Flashes
+D102: 0.0340 x 0.0500 RECTANGLE -----       2 Flashes
+D103: 0.0340 x 0.0400 RECTANGLE -----       4 Flashes
+D104: 0.0640 x 0.1000 RECTANGLE -----       2 Flashes
+D105: 0.0600 x 0.0700 RECTANGLE -----      12 Flashes
+D106: 0.0860 x 0.0240 OBLONG    -----      17 Flashes
+D107: 0.0860 x 0.0240 RECTANGLE -----       1 Flashes
+D108: 0.0110 x 0.0700 OBLONG    -----      28 Flashes
+D109: 0.0110 x 0.0700 RECTANGLE -----       4 Flashes
+D110: 0.0700 x 0.0110 OBLONG    -----      29 Flashes
+D111: 0.0700 x 0.0110 RECTANGLE -----       3 Flashes
+D112: 0.1181 x 0.0984 RECTANGLE -----       2 Flashes
+D113: 0.0984 x 0.0275 RECTANGLE -----       1 Flashes
+D114: 0.1378 x 0.0275 RECTANGLE -----       2 Flashes
+D115: 0.1496 x 0.0433 RECTANGLE -----       9 Flashes
+D116: 0.0250 x 0.0940 OBLONG    -----      22 Flashes
+D117: 0.0250 x 0.0940 RECTANGLE -----       2 Flashes
+D118: 0.0940 x 0.0250 OBLONG    -----      21 Flashes
+D119: 0.0940 x 0.0250 RECTANGLE -----       3 Flashes
+D120: 0.0950 x 0.1220 RECTANGLE -----       1 Flashes
+D121: 0.0750 x 0.0240 RECTANGLE -----       8 Flashes
+D122: 0.2450 ROUND  --       0 Draws,       2 Flashes
+D123: 0.0177 x 0.0701 RECTANGLE -----       8 Flashes
+D124: 0.0787 x 0.0118 OBLONG    -----       6 Flashes
+D125: 0.0118 x 0.0787 OBLONG    -----      10 Flashes
+D126: 0.2165 x 0.0787 RECTANGLE -----       2 Flashes
+D127: 0.0160 ROUND  --       0 Draws,      30 Flashes
+D128: 0.0160 ROUND  --       0 Draws,     169 Flashes
+D129: 0.0160 ROUND  --       0 Draws,     254 Flashes
 ---------------------------------------------------------
- 54 D-Codes      -----       0 Draws,    1163 Flashes
+ 54 D-Codes      -----       0 Draws,    1161 Flashes
 
 *********************************************************
 
@@ -178,18 +176,19 @@ Output file: C:\SRC\BSM-2\SCHEMATICS\BSM-2.SST
 
 Aperture totals for C:\SRC\BSM-2\SCHEMATICS\BSM-2.SST:
 ---------------------------------------------------------
-D62:  0.0100 ROUND  --      45 Draws,       0 Flashes
-D63:  0.0080 ROUND  --    6484 Draws,       0 Flashes
-D66:  0.0120 ROUND  --       4 Draws,       0 Flashes
-D131: 0.0079 ROUND  --      51 Draws,       0 Flashes
-D132: 0.0031 ROUND  --       3 Draws,       0 Flashes
-D133: 0.0060 ROUND  --     760 Draws,       0 Flashes
-D134: 0.0118 ROUND  --      50 Draws,       0 Flashes
-D135: 0.0040 ROUND  --      21 Draws,       0 Flashes
-D136: 0.0039 ROUND  --      13 Draws,       0 Flashes
-D137: 0.0157 ROUND  --       8 Draws,       0 Flashes
+D62:  0.0100 ROUND  --    1744 Draws,       0 Flashes
+D63:  0.0080 ROUND  --    5151 Draws,       0 Flashes
+D65:  0.0120 ROUND  --       4 Draws,       0 Flashes
+D130: 0.0079 ROUND  --      51 Draws,       0 Flashes
+D131: 0.0031 ROUND  --       3 Draws,       0 Flashes
+D132: 0.0060 ROUND  --     760 Draws,       0 Flashes
+D133: 0.0118 ROUND  --      50 Draws,       0 Flashes
+D134: 0.0040 ROUND  --      21 Draws,       0 Flashes
+D135: 0.0157 ROUND  --       8 Draws,       0 Flashes
+D136: 0.0039 ROUND  --       9 Draws,       0 Flashes
+D137: 0.0150 ROUND  --      73 Draws,       0 Flashes
 ---------------------------------------------------------
- 10 D-Codes      -----    7439 Draws,       0 Flashes
+ 11 D-Codes      -----    7874 Draws,       0 Flashes
 
 *********************************************************
 
@@ -199,54 +198,54 @@ Aperture totals for C:\SRC\BSM-2\SCHEMATICS\BSM-2.AST:
 ---------------------------------------------------------
 D62:  0.0100 ROUND  --      11 Draws,       0 Flashes
 D63:  0.0080 ROUND  --      91 Draws,       0 Flashes
-D71:  0.0520 ROUND  --       0 Draws,       5 Flashes
-D72:  0.0520 SQUARE --       0 Draws,       4 Flashes
-D76:  0.0580 ROUND  --       0 Draws,      51 Flashes
-D77:  0.0580 SQUARE --       0 Draws,       9 Flashes
-D78:  0.0748 ROUND  --       0 Draws,      18 Flashes
-D79:  0.0748 SQUARE --       0 Draws,      10 Flashes
-D82:  0.0680 ROUND  --       0 Draws,       1 Flashes
-D83:  0.0840 ROUND  --       0 Draws,       1 Flashes
-D84:  0.1470 ROUND  --       0 Draws,       1 Flashes
-D85:  0.0750 SQUARE --       0 Draws,       1 Flashes
-D86:  0.0750 ROUND  --       0 Draws,       2 Flashes
-D87:  0.0550 SQUARE --       0 Draws,       1 Flashes
-D88:  0.0550 ROUND  --       0 Draws,       3 Flashes
-D90:  0.0500 SQUARE --       0 Draws,     350 Flashes
-D91:  0.0320 x 0.0380 RECTANGLE -----       2 Flashes
-D92:  0.0600 SQUARE --       0 Draws,       4 Flashes
-D93:  0.0740 x 0.0480 RECTANGLE -----       2 Flashes
-D95:  0.0900 x 0.1000 RECTANGLE -----       4 Flashes
-D98:  0.1968 x 0.1575 RECTANGLE -----       2 Flashes
-D99:  0.0720 x 0.0780 RECTANGLE -----       6 Flashes
-D100: 0.0780 x 0.0720 RECTANGLE -----       2 Flashes
-D101: 0.0500 x 0.0340 RECTANGLE -----       1 Flashes
-D102: 0.0400 x 0.0340 RECTANGLE -----       2 Flashes
-D103: 0.0340 x 0.0500 RECTANGLE -----       2 Flashes
-D104: 0.0340 x 0.0400 RECTANGLE -----       4 Flashes
-D105: 0.0640 x 0.1000 RECTANGLE -----       2 Flashes
-D106: 0.0600 x 0.0700 RECTANGLE -----      12 Flashes
-D107: 0.0860 x 0.0240 OBLONG    -----      17 Flashes
-D108: 0.0860 x 0.0240 RECTANGLE -----       1 Flashes
-D109: 0.0110 x 0.0700 OBLONG    -----      28 Flashes
-D110: 0.0110 x 0.0700 RECTANGLE -----       4 Flashes
-D111: 0.0700 x 0.0110 OBLONG    -----      29 Flashes
-D112: 0.0700 x 0.0110 RECTANGLE -----       3 Flashes
-D113: 0.1181 x 0.0984 RECTANGLE -----       2 Flashes
-D114: 0.0984 x 0.0275 RECTANGLE -----       1 Flashes
-D115: 0.1378 x 0.0275 RECTANGLE -----       2 Flashes
-D116: 0.1496 x 0.0433 RECTANGLE -----       9 Flashes
-D117: 0.0250 x 0.0940 OBLONG    -----      22 Flashes
-D118: 0.0250 x 0.0940 RECTANGLE -----       2 Flashes
-D119: 0.0940 x 0.0250 OBLONG    -----      21 Flashes
-D120: 0.0940 x 0.0250 RECTANGLE -----       3 Flashes
-D121: 0.0950 x 0.1220 RECTANGLE -----       1 Flashes
-D122: 0.0750 x 0.0240 RECTANGLE -----       8 Flashes
-D124: 0.0177 x 0.0701 RECTANGLE -----       8 Flashes
-D125: 0.0787 x 0.0118 OBLONG    -----       6 Flashes
-D126: 0.0118 x 0.0787 OBLONG    -----      10 Flashes
-D127: 0.2165 x 0.0787 RECTANGLE -----       2 Flashes
-D133: 0.0060 ROUND  --     760 Draws,       0 Flashes
+D70:  0.0520 ROUND  --       0 Draws,       5 Flashes
+D71:  0.0520 SQUARE --       0 Draws,       4 Flashes
+D75:  0.0580 ROUND  --       0 Draws,      51 Flashes
+D76:  0.0580 SQUARE --       0 Draws,       9 Flashes
+D77:  0.0748 ROUND  --       0 Draws,      18 Flashes
+D78:  0.0748 SQUARE --       0 Draws,      10 Flashes
+D81:  0.0680 ROUND  --       0 Draws,       1 Flashes
+D82:  0.0840 ROUND  --       0 Draws,       1 Flashes
+D83:  0.1470 ROUND  --       0 Draws,       1 Flashes
+D84:  0.0750 SQUARE --       0 Draws,       1 Flashes
+D85:  0.0750 ROUND  --       0 Draws,       2 Flashes
+D86:  0.0550 SQUARE --       0 Draws,       1 Flashes
+D87:  0.0550 ROUND  --       0 Draws,       3 Flashes
+D89:  0.0500 SQUARE --       0 Draws,     350 Flashes
+D90:  0.0320 x 0.0380 RECTANGLE -----       2 Flashes
+D91:  0.0600 SQUARE --       0 Draws,       4 Flashes
+D92:  0.0740 x 0.0480 RECTANGLE -----       2 Flashes
+D94:  0.0900 x 0.1000 RECTANGLE -----       4 Flashes
+D97:  0.1968 x 0.1575 RECTANGLE -----       2 Flashes
+D98:  0.0720 x 0.0780 RECTANGLE -----       6 Flashes
+D99:  0.0780 x 0.0720 RECTANGLE -----       2 Flashes
+D100: 0.0500 x 0.0340 RECTANGLE -----       1 Flashes
+D101: 0.0400 x 0.0340 RECTANGLE -----       2 Flashes
+D102: 0.0340 x 0.0500 RECTANGLE -----       2 Flashes
+D103: 0.0340 x 0.0400 RECTANGLE -----       4 Flashes
+D104: 0.0640 x 0.1000 RECTANGLE -----       2 Flashes
+D105: 0.0600 x 0.0700 RECTANGLE -----      12 Flashes
+D106: 0.0860 x 0.0240 OBLONG    -----      17 Flashes
+D107: 0.0860 x 0.0240 RECTANGLE -----       1 Flashes
+D108: 0.0110 x 0.0700 OBLONG    -----      28 Flashes
+D109: 0.0110 x 0.0700 RECTANGLE -----       4 Flashes
+D110: 0.0700 x 0.0110 OBLONG    -----      29 Flashes
+D111: 0.0700 x 0.0110 RECTANGLE -----       3 Flashes
+D112: 0.1181 x 0.0984 RECTANGLE -----       2 Flashes
+D113: 0.0984 x 0.0275 RECTANGLE -----       1 Flashes
+D114: 0.1378 x 0.0275 RECTANGLE -----       2 Flashes
+D115: 0.1496 x 0.0433 RECTANGLE -----       9 Flashes
+D116: 0.0250 x 0.0940 OBLONG    -----      22 Flashes
+D117: 0.0250 x 0.0940 RECTANGLE -----       2 Flashes
+D118: 0.0940 x 0.0250 OBLONG    -----      21 Flashes
+D119: 0.0940 x 0.0250 RECTANGLE -----       3 Flashes
+D120: 0.0950 x 0.1220 RECTANGLE -----       1 Flashes
+D121: 0.0750 x 0.0240 RECTANGLE -----       8 Flashes
+D123: 0.0177 x 0.0701 RECTANGLE -----       8 Flashes
+D124: 0.0787 x 0.0118 OBLONG    -----       6 Flashes
+D125: 0.0118 x 0.0787 OBLONG    -----      10 Flashes
+D126: 0.2165 x 0.0787 RECTANGLE -----       2 Flashes
+D132: 0.0060 ROUND  --     760 Draws,       0 Flashes
 ---------------------------------------------------------
  50 D-Codes      -----     862 Draws,     681 Flashes
 
@@ -256,10 +255,10 @@ Output file: C:\SRC\BSM-2\SCHEMATICS\BSM-2.DRD
 
 Aperture totals for C:\SRC\BSM-2\SCHEMATICS\BSM-2.DRD:
 ---------------------------------------------------------
-D62:  0.0100 ROUND  --    4837 Draws,       0 Flashes
+D62:  0.0100 ROUND  --    4878 Draws,       0 Flashes
 D63:  0.0080 ROUND  --       4 Draws,       0 Flashes
 ---------------------------------------------------------
-  2 D-Codes      -----    4841 Draws,       0 Flashes
+  2 D-Codes      -----    4882 Draws,       0 Flashes
 
 *********************************************************
 
@@ -268,12 +267,12 @@ Output file: C:\SRC\BSM-2\SCHEMATICS\BSM-2.FAB
 Aperture totals for C:\SRC\BSM-2\SCHEMATICS\BSM-2.FAB:
 ---------------------------------------------------------
 D63:  0.0080 ROUND  --       4 Draws,       0 Flashes
-D70:  0.0280 ROUND  --       0 Draws,       2 Flashes
-D128: 0.0160 ROUND  --       0 Draws,      30 Flashes
-D129: 0.0160 ROUND  --       0 Draws,     190 Flashes
-D130: 0.0160 ROUND  --       0 Draws,     235 Flashes
+D69:  0.0280 ROUND  --       0 Draws,       2 Flashes
+D127: 0.0160 ROUND  --       0 Draws,      30 Flashes
+D128: 0.0160 ROUND  --       0 Draws,     169 Flashes
+D129: 0.0160 ROUND  --       0 Draws,     254 Flashes
 ---------------------------------------------------------
-  5 D-Codes      -----       4 Draws,     457 Flashes
+  5 D-Codes      -----       4 Draws,     455 Flashes
 
 
 *********************************************************
@@ -332,84 +331,84 @@ D58:  0.0787 x 0.0118 OBLONG    -----       6 Flashes
 D59:  0.0118 x 0.0787 OBLONG    -----      10 Flashes
 D60:  0.2165 x 0.0787 RECTANGLE -----       2 Flashes
 D61:  0.0280 ROUND  --       0 Draws,      30 Flashes
-D62:  0.0100 ROUND  --   10131 Draws,       0 Flashes
-D63:  0.0080 ROUND  --   27381 Draws,       0 Flashes
+D62:  0.0100 ROUND  --   11843 Draws,       0 Flashes
+D63:  0.0080 ROUND  --   25579 Draws,       0 Flashes
 D64:  0.0010 ROUND  --   13537 Draws,       0 Flashes
-D65:  0.0280 ROUND  --       0 Draws,       8 Flashes
-D66:  0.0120 ROUND  --    1954 Draws,       0 Flashes
-D67:  0.0375 ROUND  --      38 Draws,       0 Flashes
-D68:  0.0280 ROUND  --       0 Draws,     837 Flashes
-D69:  0.0500 ROUND  --       0 Draws,       4 Flashes
-D70:  0.0280 ROUND  --       0 Draws,       9 Flashes
-D71:  0.0520 ROUND  --       0 Draws,      15 Flashes
-D72:  0.0520 SQUARE --       0 Draws,      12 Flashes
-D73:  0.0570 ROUND  --       0 Draws,       4 Flashes
-D74:  0.0570 SQUARE --       0 Draws,       4 Flashes
-D75:  0.0740 ROUND  --       0 Draws,      10 Flashes
-D76:  0.0580 ROUND  --       0 Draws,     153 Flashes
-D77:  0.0580 SQUARE --       0 Draws,      27 Flashes
-D78:  0.0748 ROUND  --       0 Draws,      36 Flashes
-D79:  0.0748 SQUARE --       0 Draws,      20 Flashes
-D80:  0.0500 x 0.0670 RECTANGLE -----       6 Flashes
-D81:  0.2362 ROUND  --       0 Draws,      10 Flashes
-D82:  0.0680 ROUND  --       0 Draws,       7 Flashes
-D83:  0.0840 ROUND  --       0 Draws,      13 Flashes
-D84:  0.1470 ROUND  --       0 Draws,       3 Flashes
-D85:  0.0750 SQUARE --       0 Draws,       3 Flashes
-D86:  0.0750 ROUND  --       0 Draws,       6 Flashes
-D87:  0.0550 SQUARE --       0 Draws,       3 Flashes
-D88:  0.0550 ROUND  --       0 Draws,       9 Flashes
-D89:  0.0280 ROUND  --       0 Draws,      30 Flashes
-D90:  0.0500 SQUARE --       0 Draws,     700 Flashes
-D91:  0.0320 x 0.0380 RECTANGLE -----       4 Flashes
-D92:  0.0600 SQUARE --       0 Draws,       8 Flashes
-D93:  0.0740 x 0.0480 RECTANGLE -----       4 Flashes
-D94:  0.0680 SQUARE --       0 Draws,       4 Flashes
-D95:  0.0900 x 0.1000 RECTANGLE -----       8 Flashes
-D96:  0.0866 ROUND  --       0 Draws,      18 Flashes
-D97:  0.0866 SQUARE --       0 Draws,      10 Flashes
-D98:  0.1968 x 0.1575 RECTANGLE -----       4 Flashes
-D99:  0.0720 x 0.0780 RECTANGLE -----      12 Flashes
-D100: 0.0780 x 0.0720 RECTANGLE -----       4 Flashes
-D101: 0.0500 x 0.0340 RECTANGLE -----       2 Flashes
-D102: 0.0400 x 0.0340 RECTANGLE -----       4 Flashes
-D103: 0.0340 x 0.0500 RECTANGLE -----       4 Flashes
-D104: 0.0340 x 0.0400 RECTANGLE -----       8 Flashes
-D105: 0.0640 x 0.1000 RECTANGLE -----       4 Flashes
-D106: 0.0600 x 0.0700 RECTANGLE -----      24 Flashes
-D107: 0.0860 x 0.0240 OBLONG    -----      34 Flashes
-D108: 0.0860 x 0.0240 RECTANGLE -----       2 Flashes
-D109: 0.0110 x 0.0700 OBLONG    -----      56 Flashes
-D110: 0.0110 x 0.0700 RECTANGLE -----       8 Flashes
-D111: 0.0700 x 0.0110 OBLONG    -----      58 Flashes
-D112: 0.0700 x 0.0110 RECTANGLE -----       6 Flashes
-D113: 0.1181 x 0.0984 RECTANGLE -----       4 Flashes
-D114: 0.0984 x 0.0275 RECTANGLE -----       2 Flashes
-D115: 0.1378 x 0.0275 RECTANGLE -----       4 Flashes
-D116: 0.1496 x 0.0433 RECTANGLE -----      18 Flashes
-D117: 0.0250 x 0.0940 OBLONG    -----      44 Flashes
-D118: 0.0250 x 0.0940 RECTANGLE -----       4 Flashes
-D119: 0.0940 x 0.0250 OBLONG    -----      42 Flashes
-D120: 0.0940 x 0.0250 RECTANGLE -----       6 Flashes
-D121: 0.0950 x 0.1220 RECTANGLE -----       2 Flashes
-D122: 0.0750 x 0.0240 RECTANGLE -----      16 Flashes
-D123: 0.2450 ROUND  --       0 Draws,       2 Flashes
-D124: 0.0177 x 0.0701 RECTANGLE -----      16 Flashes
-D125: 0.0787 x 0.0118 OBLONG    -----      12 Flashes
-D126: 0.0118 x 0.0787 OBLONG    -----      20 Flashes
-D127: 0.2165 x 0.0787 RECTANGLE -----       4 Flashes
-D128: 0.0160 ROUND  --       0 Draws,      60 Flashes
-D129: 0.0160 ROUND  --       0 Draws,     380 Flashes
-D130: 0.0160 ROUND  --       0 Draws,     470 Flashes
-D131: 0.0079 ROUND  --      51 Draws,       0 Flashes
-D132: 0.0031 ROUND  --       3 Draws,       0 Flashes
-D133: 0.0060 ROUND  --    1520 Draws,       0 Flashes
-D134: 0.0118 ROUND  --      50 Draws,       0 Flashes
-D135: 0.0040 ROUND  --      21 Draws,       0 Flashes
-D136: 0.0039 ROUND  --      13 Draws,       0 Flashes
-D137: 0.0157 ROUND  --       8 Draws,       0 Flashes
+D65:  0.0120 ROUND  --    2036 Draws,       0 Flashes
+D66:  0.0280 ROUND  --       0 Draws,     840 Flashes
+D67:  0.0375 ROUND  --      42 Draws,       0 Flashes
+D68:  0.0500 ROUND  --       0 Draws,       4 Flashes
+D69:  0.0280 ROUND  --       0 Draws,      10 Flashes
+D70:  0.0520 ROUND  --       0 Draws,      15 Flashes
+D71:  0.0520 SQUARE --       0 Draws,      12 Flashes
+D72:  0.0570 ROUND  --       0 Draws,       4 Flashes
+D73:  0.0570 SQUARE --       0 Draws,       4 Flashes
+D74:  0.0740 ROUND  --       0 Draws,      10 Flashes
+D75:  0.0580 ROUND  --       0 Draws,     153 Flashes
+D76:  0.0580 SQUARE --       0 Draws,      27 Flashes
+D77:  0.0748 ROUND  --       0 Draws,      36 Flashes
+D78:  0.0748 SQUARE --       0 Draws,      20 Flashes
+D79:  0.0500 x 0.0670 RECTANGLE -----       6 Flashes
+D80:  0.2362 ROUND  --       0 Draws,      10 Flashes
+D81:  0.0680 ROUND  --       0 Draws,       7 Flashes
+D82:  0.0840 ROUND  --       0 Draws,      13 Flashes
+D83:  0.1470 ROUND  --       0 Draws,       3 Flashes
+D84:  0.0750 SQUARE --       0 Draws,       3 Flashes
+D85:  0.0750 ROUND  --       0 Draws,       6 Flashes
+D86:  0.0550 SQUARE --       0 Draws,       3 Flashes
+D87:  0.0550 ROUND  --       0 Draws,       9 Flashes
+D88:  0.0280 ROUND  --       0 Draws,      30 Flashes
+D89:  0.0500 SQUARE --       0 Draws,     700 Flashes
+D90:  0.0320 x 0.0380 RECTANGLE -----       4 Flashes
+D91:  0.0600 SQUARE --       0 Draws,       8 Flashes
+D92:  0.0740 x 0.0480 RECTANGLE -----       4 Flashes
+D93:  0.0680 SQUARE --       0 Draws,       4 Flashes
+D94:  0.0900 x 0.1000 RECTANGLE -----       8 Flashes
+D95:  0.0866 ROUND  --       0 Draws,      18 Flashes
+D96:  0.0866 SQUARE --       0 Draws,      10 Flashes
+D97:  0.1968 x 0.1575 RECTANGLE -----       4 Flashes
+D98:  0.0720 x 0.0780 RECTANGLE -----      12 Flashes
+D99:  0.0780 x 0.0720 RECTANGLE -----       4 Flashes
+D100: 0.0500 x 0.0340 RECTANGLE -----       2 Flashes
+D101: 0.0400 x 0.0340 RECTANGLE -----       4 Flashes
+D102: 0.0340 x 0.0500 RECTANGLE -----       4 Flashes
+D103: 0.0340 x 0.0400 RECTANGLE -----       8 Flashes
+D104: 0.0640 x 0.1000 RECTANGLE -----       4 Flashes
+D105: 0.0600 x 0.0700 RECTANGLE -----      24 Flashes
+D106: 0.0860 x 0.0240 OBLONG    -----      34 Flashes
+D107: 0.0860 x 0.0240 RECTANGLE -----       2 Flashes
+D108: 0.0110 x 0.0700 OBLONG    -----      56 Flashes
+D109: 0.0110 x 0.0700 RECTANGLE -----       8 Flashes
+D110: 0.0700 x 0.0110 OBLONG    -----      58 Flashes
+D111: 0.0700 x 0.0110 RECTANGLE -----       6 Flashes
+D112: 0.1181 x 0.0984 RECTANGLE -----       4 Flashes
+D113: 0.0984 x 0.0275 RECTANGLE -----       2 Flashes
+D114: 0.1378 x 0.0275 RECTANGLE -----       4 Flashes
+D115: 0.1496 x 0.0433 RECTANGLE -----      18 Flashes
+D116: 0.0250 x 0.0940 OBLONG    -----      44 Flashes
+D117: 0.0250 x 0.0940 RECTANGLE -----       4 Flashes
+D118: 0.0940 x 0.0250 OBLONG    -----      42 Flashes
+D119: 0.0940 x 0.0250 RECTANGLE -----       6 Flashes
+D120: 0.0950 x 0.1220 RECTANGLE -----       2 Flashes
+D121: 0.0750 x 0.0240 RECTANGLE -----      16 Flashes
+D122: 0.2450 ROUND  --       0 Draws,       2 Flashes
+D123: 0.0177 x 0.0701 RECTANGLE -----      16 Flashes
+D124: 0.0787 x 0.0118 OBLONG    -----      12 Flashes
+D125: 0.0118 x 0.0787 OBLONG    -----      20 Flashes
+D126: 0.2165 x 0.0787 RECTANGLE -----       4 Flashes
+D127: 0.0160 ROUND  --       0 Draws,      60 Flashes
+D128: 0.0160 ROUND  --       0 Draws,     338 Flashes
+D129: 0.0160 ROUND  --       0 Draws,     508 Flashes
+D130: 0.0079 ROUND  --      51 Draws,       0 Flashes
+D131: 0.0031 ROUND  --       3 Draws,       0 Flashes
+D132: 0.0060 ROUND  --    1520 Draws,       0 Flashes
+D133: 0.0118 ROUND  --      50 Draws,       0 Flashes
+D134: 0.0040 ROUND  --      21 Draws,       0 Flashes
+D135: 0.0157 ROUND  --       8 Draws,       0 Flashes
+D136: 0.0039 ROUND  --       9 Draws,       0 Flashes
+D137: 0.0150 ROUND  --      73 Draws,       0 Flashes
 ---------------------------------------------------------
-128 D-Codes      -----   54707 Draws,    4055 Flashes
+128 D-Codes      -----   54772 Draws,    4047 Flashes
 
 
 No warnings or errors.
