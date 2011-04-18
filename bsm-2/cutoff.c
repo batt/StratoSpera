@@ -54,9 +54,15 @@
 #include <math.h>
 #include <string.h>
 
-#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
-#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
-#define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
+#if !(ARCH & ARCH_UNITTEST)
+	#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
+	#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
+	#define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
+#else
+	#define CUTOFF_OFF()  do {  } while (0)
+	#define CUTOFF_ON()   do {  } while (0)
+	#define CUTOFF_INIT() do {  } while (0)
+#endif
 
 static CutoffCfg cfg;
 
@@ -116,7 +122,8 @@ bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 
 			if (dist_ok)
 			{
-				LOG_INFO("Distance from base: %.0fm; limit %ldm, starting %lds timeout\n", curr_dist, cfg.dist_max_meters, cfg.dist_timeout);
+				LOG_INFO("Distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
+					curr_dist, (long)cfg.dist_max_meters, (long)cfg.dist_timeout);
 				dist_ok = false;
 				dist_ko_time = now;
 				logged = false;
@@ -170,7 +177,7 @@ bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 			if (alt_ok)
 			{
 				LOG_INFO("Current altitude %ld, max altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
-					curr_alt, alt_max, cfg.altitude_timeout);
+					(long)curr_alt, (long)alt_max, (long)cfg.altitude_timeout);
 				alt_ok = false;
 				logged = false;
 				alt_ko_time = now;
@@ -276,14 +283,14 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 {
 	memcpy(&cfg, _cfg, sizeof(cfg));
 	LOG_INFO("Setting cutoff configuration\n");
-	LOG_INFO(" mission timeout: %ld seconds\n", cfg.mission_timeout);
-	LOG_INFO(" max delta altitude: %ld m\n", cfg.delta_altitude);
-	LOG_INFO(" delta pressure timeout: %ld seconds\n", cfg.altitude_timeout);
+	LOG_INFO(" mission timeout: %ld seconds\n", (long)cfg.mission_timeout);
+	LOG_INFO(" max delta altitude: %ld m\n", (long)cfg.delta_altitude);
+	LOG_INFO(" delta pressure timeout: %ld seconds\n", (long)cfg.altitude_timeout);
 	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
-		cfg.start_latitude/1000000, ABS(cfg.start_latitude)%1000000,
-		cfg.start_longitude/1000000, ABS(cfg.start_longitude)%1000000);
-	LOG_INFO(" max distance from base: %ld meters\n", cfg.dist_max_meters);
-	LOG_INFO(" max distance timeout: %ld seconds\n", cfg.dist_timeout);
+		(long)cfg.start_latitude/1000000, (long)ABS(cfg.start_latitude)%1000000,
+		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
+	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
+	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
 }
 
 

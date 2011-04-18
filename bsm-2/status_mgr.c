@@ -54,14 +54,20 @@
 
 #include <string.h>
 
-#define CAMPULSE_OFF()  do { PIOA_CODR = CAMPULSE_PIN; } while (0)
-#define CAMPULSE_ON()   do { PIOA_SODR = CAMPULSE_PIN; } while (0)
-#define CAMPULSE_INIT() \
-	do { \
-		CAMPULSE_OFF(); \
-		PIOA_PER = CAMPULSE_PIN; \
-		PIOA_OER = CAMPULSE_PIN; \
-	} while (0)
+#if !(ARCH & ARCH_UNITTEST)
+	#define CAMPULSE_OFF()  do { PIOA_CODR = CAMPULSE_PIN; } while (0)
+	#define CAMPULSE_ON()   do { PIOA_SODR = CAMPULSE_PIN; } while (0)
+	#define CAMPULSE_INIT() \
+		do { \
+			CAMPULSE_OFF(); \
+			PIOA_PER = CAMPULSE_PIN; \
+			PIOA_OER = CAMPULSE_PIN; \
+		} while (0)
+#else
+	#define CAMPULSE_OFF()  do {  } while (0)
+	#define CAMPULSE_ON()   do {  } while (0)
+	#define CAMPULSE_INIT() do {  } while (0)
+#endif
 
 #define STATUS_CHECK_INTERVAL 10 //seconds
 #define DELTA_MEAN_TIME 60 //seconds
@@ -83,11 +89,26 @@ static ticks_t mission_start_ticks;
 static StatusCfg cfg;
 static Bsm2Status curr_status;
 
+static const char *status_names[] =
+{
+	"NOFIX",
+	"GROUND_WAIT",
+	"TAKEOFF",
+	"STRATOPHERE_UP",
+	"CUTOFF",
+	"STRATOPHERE_FALL",
+	"FALLING",
+	"LANDING",
+	"HOVERING",
+};
+
+STATIC_ASSERT(countof(status_names) == BSM2_CNT);
+
 static void status_set(Bsm2Status new_status)
 {
 	ASSERT(new_status < BSM2_CNT);
 	if (new_status != curr_status)
-		LOG_INFO("Changing status to %d\n", new_status);
+		LOG_INFO("Changing status to %s\n", status_names[new_status]);
 
 	curr_status = new_status;
 
@@ -150,7 +171,7 @@ void status_check(bool fix, int32_t curr_alt)
 		}
 
 		float rate = ((float)delta_sum) / (delta_cnt * STATUS_CHECK_INTERVAL);
-		LOG_INFO("Ascent rate %.2f m/s\n", rate);
+		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
 
 		if (delta_cnt >= DELTA_MEAN_LEN)
 			delta_sum -= delta_values[delta_idx];
@@ -160,23 +181,23 @@ void status_check(bool fix, int32_t curr_alt)
 			status_set(BSM2_CUTOFF);
 		}
 		else if (rate < cfg.rate_up
-			&& rate > cfg.rate_down
+			&& rate >= cfg.rate_down
 			&& curr_alt < cfg.ground_alt)
 		{
 			status_set(BSM2_GROUND_WAIT);
 		}
 		else if (rate < cfg.rate_up
-			&& rate > cfg.rate_down
+			&& rate >= cfg.rate_down
 			&& curr_alt >= cfg.ground_alt)
 		{
 			status_set(BSM2_HOVERING);
 		}
-		else if (rate > cfg.rate_up
+		else if (rate >= cfg.rate_up
 			&& curr_alt < cfg.tropopause_alt)
 		{
 			status_set(BSM2_TAKEOFF);
 		}
-		else if (rate > cfg.rate_up
+		else if (rate >= cfg.rate_up
 			&& curr_alt >= cfg.tropopause_alt)
 		{
 			status_set(BSM2_STRATOPHERE_UP);
@@ -194,7 +215,7 @@ void status_check(bool fix, int32_t curr_alt)
 		else if (rate < cfg.rate_down
 			&& curr_alt < cfg.tropopause_alt)
 		{
-			status_set(BSM2_STRATOPHERE_FALL);
+			status_set(BSM2_FALLING);
 		}
 		else
 		{
@@ -218,6 +239,7 @@ static void NORETURN status_process(void)
 
 void status_missionStartAt(ticks_t ticks)
 {
+	LOG_INFO("Mission start at %ld\n", (long)ticks);
 	mission_start_ticks = ticks;
 	status_reset();
 	landing_buz_reset();
@@ -238,11 +260,11 @@ void status_setCfg(StatusCfg *_cfg)
 {
 	memcpy(&cfg, _cfg, sizeof(cfg));
 	LOG_INFO("Setting status configuration\n");
-	LOG_INFO(" max ground altitude: %ld m\n", cfg.ground_alt);
-	LOG_INFO(" tropopause altitude: %ld m\n", cfg.tropopause_alt);
-	LOG_INFO(" landing altitude: %ld m\n", cfg.landing_alt);
-	LOG_INFO(" ascent rate (UP): %ld m/s\n", cfg.rate_up);
-	LOG_INFO(" descent rate (DOWN): %ld m/s\n", cfg.rate_down);
+	LOG_INFO(" max ground altitude: %ld m\n", (long)cfg.ground_alt);
+	LOG_INFO(" tropopause altitude: %ld m\n", (long)cfg.tropopause_alt);
+	LOG_INFO(" landing altitude: %ld m\n", (long)cfg.landing_alt);
+	LOG_INFO(" ascent rate (UP): %ld m/s\n", (long)cfg.rate_up);
+	LOG_INFO(" descent rate (DOWN): %ld m/s\n", (long)cfg.rate_down);
 }
 
 void status_init(StatusCfg *cfg)

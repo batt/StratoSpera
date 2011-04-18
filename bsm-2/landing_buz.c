@@ -54,13 +54,21 @@
 
 #include <math.h>
 
+#if !(ARCH & ARCH_UNITTEST)
+	#define BUZ_START() buz_repeat_start(1000, 3000)
+	#define BUZ_STOP() 	buz_repeat_stop();
+#else
+	#define BUZ_START() /**/
+	#define BUZ_STOP()  /**/
+#endif
+
 static bool beep;
 void landing_buz_start(void)
 {
 	if (!beep)
 	{
 		LOG_INFO("Starting the landing beeper\n");
-		buz_repeat_start(1000, 3000);
+		BUZ_START();
 		beep = true;
 	}
 }
@@ -102,15 +110,15 @@ static void NORETURN landing_buz_process(void)
 
 void landing_buz_reset(void)
 {
-	LOG_INFO("Resetting landing control data\n");
+	LOG_INFO("Resetting landing buzzer control data\n");
 	beep = false;
-	buz_repeat_stop();
+	BUZ_STOP();
 }
 
 void landing_buz_setCfg(uint32_t buz_timeout_seconds)
 {
 	buz_time = ms_to_ticks(buz_timeout_seconds * 1000);
-	LOG_INFO("Buzzer timeout: %ld seconds\n", buz_timeout_seconds);
+	LOG_INFO("Buzzer timeout: %ld seconds\n", (long)buz_timeout_seconds);
 }
 
 void landing_buz_init(uint32_t buz_timeout_seconds)
