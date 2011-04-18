@@ -41,6 +41,22 @@
 #include <net/nmea.h>
 #include <cfg/compiler.h>
 
+typedef struct CutoffCfg
+{
+	uint32_t mission_timeout; //seconds
+	int32_t delta_altitude; //meters
+	uint32_t altitude_timeout; //seconds
+	udegree_t start_latitude; //micro degrees
+	udegree_t start_longitude; //micro degrees
+	uint32_t dist_max_meters; //meters
+	uint32_t dist_timeout; //seconds
+} CutoffCfg;
+
 void cutoff_reset(void);
-void cutoff_init(uint32_t max_seconds, float _delta_press, uint32_t _delta_timeout, udegree_t _start_lat, udegree_t _start_lon, uint32_t max_meters, uint32_t _maxdist_timeout);
+bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now);
+bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now);
+bool cutoff_checkTime(ticks_t now);
+bool cutoff_active(void);
+void cutoff_setCfg(CutoffCfg *cfg);
+void cutoff_init(CutoffCfg *cfg);
 #endif

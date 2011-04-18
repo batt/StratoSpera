@@ -45,7 +45,7 @@
 	#define SD_WRITE_PROTECT_PIN BV(0)
 	#define SD_CARD_PRESENT_PIN  BV(1)
 	#define AFSK_STROBE_PIN      BV(2)
-	#define LAND_PIN             BV(3)
+	#define CAMPULSE_PIN         BV(3)
 	#define CUTOFF_PIN           BV(4)
 	#define LEDR                 BV(6)
 	#define LEDG                 BV(7)
@@ -62,15 +62,15 @@
 	#define ADC_RADIO_CH         4
 	#define ADC_MUX_CH           5 // The external mux is connected here
 
-	#define GPS_ENABLED 0
-	#define HADARP_ENABLED 1
+	#define GPS_ENABLED 1
+	#define HADARP_ENABLED 0
 	#define HADARP_PORT SER_UART0
 	#define GPS_PORT    SER_UART0
 #else
 	#define SD_WRITE_PROTECT_PIN BV(17)
 	#define SD_CARD_PRESENT_PIN  BV(8)
 	#define AFSK_STROBE_PIN      BV(27)
-	#define LAND_PIN             BV(0)
+	#define CAMPULSE_PIN         BV(0)
 	#define CUTOFF_PIN           BV(1)
 	#define LEDR                 BV(19)
 	#define LEDG                 BV(18)

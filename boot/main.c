@@ -51,8 +51,8 @@ int main(void)
 {
 	IRQ_ENABLE;
 	kdbg_init();
-	PIOA_CODR = LEDR | LEDG | BUZZER_BIT | CUTOFF_PIN | LAND_PIN;
-	PIOA_OER = LEDR | LEDG | BUZZER_BIT | CUTOFF_PIN | LAND_PIN;
+	PIOA_CODR = LEDR | LEDG | BUZZER_BIT | CUTOFF_PIN | CAMPULSE_PIN;
+	PIOA_OER = LEDR | LEDG | BUZZER_BIT | CUTOFF_PIN | CAMPULSE_PIN;
 
 	kprintf("BSM-2 bootloader, ver %s\n", vers_tag);
 	timer_init();

@@ -35,12 +35,16 @@
  * \author Francesco Sacchi <batt@develer.com>
  */
 
-#ifndef LANDING_H
-#define LANDING_H
+#ifndef LANDING_BUZ_H
+#define LANDING_BUZ_H
 
 #include <cfg/compiler.h>
+#include <drv/timer.h>
 
-void landing_reset(void);
-void landing_init(int32_t landing_meters, int count_limit, uint32_t buz_timeout_seconds);
+void landing_buz_start(void);
+void landing_buz_reset(void);
+bool landing_buz_check(ticks_t now);
+void landing_buz_setCfg(uint32_t buz_timeout_seconds);
+void landing_buz_init(uint32_t buz_timeout_seconds);
 
 #endif
