@@ -158,7 +158,13 @@ INLINE ticks_t ms_to_ticks(mtime_t ms)
 {
 #if TIMER_TICKS_PER_SEC < 1000
 	/* Slow timer: avoid rounding down too much. */
-	return (ms * TIMER_TICKS_PER_SEC) / 1000;
+
+	#if (1000 % TIMER_TICKS_PER_SEC) == 0
+		return ms / (1000 / TIMER_TICKS_PER_SEC);
+	#else
+		ASSERT(ms * TIMER_TICKS_PER_SEC > 0);
+		return (ms * TIMER_TICKS_PER_SEC) / 1000;
+	#endif
 #else
 	/* Fast timer: don't overflow ticks_t. */
 	return ms * DIV_ROUND(TIMER_TICKS_PER_SEC, 1000);

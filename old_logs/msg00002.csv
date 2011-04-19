@@ -1,0 +1,14 @@
+Logging start...
+00:00:00:Starting cutoff:
+00:00:00: max mission time: 8400 seconds
+00:00:00: max delta pressure: 100 mbar
+00:00:00: delta pressure timeout: 60 seconds
+00:00:00: base coordinates: 43.606414 011.311832
+00:00:00: max distance from base: 80000 meters
+00:00:00: max distance timeout: 300 seconds
+00:00:00:Resetting cutoff procedure
+00:00:00:Starting landing control process:
+00:00:00: Altitude meters: 3600 meters
+00:00:00: Altidude descending counter limit: 20
+00:00:00: Buzzer timeout: 9000 seconds
+00:00:00:Resetting landing control data
