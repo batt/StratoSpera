@@ -9,6 +9,7 @@
 #include "measures.h"
 #include "hadarp.h"
 #include "status_mgr.h"
+#include "radio.h"
 
 #include "hw/hw_pin.h"
 #include <cpu/irq.h>
@@ -28,9 +29,6 @@
 
 #include <fs/fat.h>
 
-#include <net/afsk.h>
-#include <net/ax25.h>
-
 #include <net/nmea.h>
 
 #include <verstag.h>
@@ -42,12 +40,10 @@
 #define LOG_LEVEL LOG_LVL_INFO
 #include <cfg/log.h>
 
-static Afsk afsk;
 static Serial ser;
 static SpiDmaAt91 spi_dma;
 static Sd sd;
 static FATFS fs;
-static AX25Ctx ax25;
 
 INLINE void ledr(bool val)
 {
@@ -65,47 +61,7 @@ INLINE void ledg(bool val)
 		PIOA_CODR = LEDG;
 }
 
-static void ax25_log(struct AX25Msg *msg)
-{
-	logging_msg("%.*s\n", msg->len, msg->info);
-	kprintf("%.*s\n", msg->len, msg->info);
-}
-
-static mtime_t aprs_interval;
 static ticks_t log_interval;
-static char send_call[7];
-
-static void NORETURN radio_process(void)
-{
-	char msg[100];
-	AX25Call path[2]=
-	{
-		AX25_CALL("APZBRT", 0),
-	};
-	memcpy(path[1].call, send_call, sizeof(path[1].call));
-	path[1].ssid = 0;
-
-	ticks_t start;
-	while (1)
-	{
-		start = timer_clock();
-		measures_aprsFormat(msg, sizeof(msg));
-
-		for (int i = 0; i < 3; i++)
-		{
-			ax25_sendVia(&ax25, path, countof(path), msg, strlen(msg));
-			timer_delay((i+1) * 2000);
-		}
-
-		/*
-		 * We have already waited for some time here,
-		 * take into account this difference.
-		 * Also limit the minimum delay to 3 seconds, resulting in a new message
-		 * about every 15 seconds.
-		 */
-		timer_delay(MAX((mtime_t)3000, aprs_interval - ticks_to_ms(timer_clock() - start)));
-	}
-}
 
 static void init(void)
 {
@@ -115,8 +71,6 @@ static void init(void)
 	timer_init();
 	buz_init();
 	proc_init();
-	afsk_init(&afsk, ADC_RADIO_CH, 0);
-	ax25_init(&ax25, &afsk.fd, ax25_log);
 
 	#if GPS_ENABLED
 		ser_init(&ser, GPS_PORT);
@@ -240,18 +194,20 @@ static void init(void)
 
 	landing_buz_init(buz_timeout_seconds);
 
+	RadioCfg radio_cfg;
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
-	aprs_interval = atoi(inibuf) * 1000;
+	radio_cfg.aprs_interval = atoi(inibuf) * 1000;
+	ini_getString(&conf.fd, "logging", "send_call", "STSP2", inibuf, sizeof(inibuf));
+	strncpy(radio_cfg.send_call, inibuf, sizeof(radio_cfg.send_call));
+	radio_cfg.send_call[sizeof(radio_cfg.send_call) - 1] = '\0';
+	radio_init(&radio_cfg);
+
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
 	log_interval = ms_to_ticks(atoi(inibuf) * 1000);
-	ini_getString(&conf.fd, "logging", "send_call", "STSP2", inibuf, sizeof(inibuf));
-	strncpy(send_call, inibuf, sizeof(send_call));
-	send_call[sizeof(send_call) - 1] = '\0';
 
 	kfile_close(&conf.fd);
 
 	logging_init();
-	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 	ledr(false);
 }
 
@@ -264,7 +220,6 @@ int main(void)
 	while (1)
 	{
 		timer_delay(500);
-		ax25_poll(&ax25);
 
 		bool fix = gps_fixed();
 

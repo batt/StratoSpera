@@ -176,6 +176,8 @@
     <File Name="bsm-2/landing_buz.c"/>
     <File Name="bsm-2/landing_buz.h"/>
     <File Name="conf.ini"/>
+    <File Name="bsm-2/radio.c"/>
+    <File Name="bsm-2/radio.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
