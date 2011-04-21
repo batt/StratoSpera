@@ -95,7 +95,6 @@ static const char *status_names[] =
 	"GROUND_WAIT",
 	"TAKEOFF",
 	"STRATOPHERE_UP",
-	"CUTOFF",
 	"STRATOPHERE_FALL",
 	"FALLING",
 	"LANDING",
@@ -121,17 +120,32 @@ Bsm2Status status_currStatus(void)
 	return curr_status;
 }
 
-#define CAMPULSE_MIN_DELAY 300
-#define CAMPULSE_INC 50
+#define NO_PULSE -1
+static mtime_t cam_pulse[] =
+{
+	NO_PULSE, // BSM2_NOFIX
+	NO_PULSE, // BSM2_GROUND_WAIT,
+	NO_PULSE, // BSM2_TAKEOFF,
+	100, // BSM2_STRATOPHERE_UP,
+	200, // BSM2_STRATOPHERE_FALL,
+	400, // BSM2_FALLING,
+	800, // BSM2_LANDING,
+	NO_PULSE, //BSM2_HOVERING,
+};
+
+STATIC_ASSERT(countof(cam_pulse) == BSM2_CNT);
 
 static void NORETURN camera_process(void)
 {
 	while (1)
 	{
 		timer_delay(1000);
-		CAMPULSE_ON();
-		timer_delay(CAMPULSE_MIN_DELAY + curr_status * CAMPULSE_INC);
-		CAMPULSE_OFF();
+		if (cam_pulse[curr_status] != NO_PULSE)
+		{
+			CAMPULSE_ON();
+			timer_delay(cam_pulse[curr_status]);
+			CAMPULSE_OFF();
+		}
 	}
 }
 
@@ -176,11 +190,7 @@ void status_check(bool fix, int32_t curr_alt)
 		if (delta_cnt >= DELTA_MEAN_LEN)
 			delta_sum -= delta_values[delta_idx];
 
-		if (cutoff_active())
-		{
-			status_set(BSM2_CUTOFF);
-		}
-		else if (rate < cfg.rate_up
+		if (rate < cfg.rate_up
 			&& rate >= cfg.rate_down
 			&& curr_alt < cfg.ground_alt)
 		{
