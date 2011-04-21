@@ -230,6 +230,8 @@ static void init(void)
 	cutoff_cfg.dist_max_meters = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
 	cutoff_cfg.dist_timeout = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "pwm_duty", "32768", inibuf, sizeof(inibuf));
+	cutoff_cfg.pwm_duty = atoi(inibuf);
 
 	cutoff_init(&cutoff_cfg);
 

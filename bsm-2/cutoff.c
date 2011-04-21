@@ -41,10 +41,12 @@
 #include "gps.h"
 #include "sensors.h"
 #include "hw/hw_pin.h"
+#include "cfg/cfg_afsk.h"
 
 #include <net/nmea.h>
 #include <cfg/compiler.h>
 #include <drv/timer.h>
+#include <drv/pwm.h>
 #include <kern/proc.h>
 
 #define LOG_LEVEL     LOG_LVL_INFO
@@ -55,13 +57,25 @@
 #include <string.h>
 
 #if !(ARCH & ARCH_UNITTEST)
-	#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
-	#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
-	#define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
+	#ifdef DEMO_BOARD
+		#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_INIT(cfg) do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
+	#else
+		static Pwm cutoff_pwm;
+
+		#define CUTOFF_OFF()  pwm_enable(&cutoff_pwm, false)
+		#define CUTOFF_ON()   pwm_enable(&cutoff_pwm, true)
+		#define CUTOFF_INIT(cfg) do { \
+			pwm_init(&cutoff_pwm, CUTOFF1_PWM); \
+			pwm_setFrequency(&cutoff_pwm, CONFIG_AFSK_DAC_SAMPLERATE / 8); \
+			pwm_setDuty(&cutoff_pwm, cfg->pwm_duty); \
+		} while (0)
+	#endif
 #else
 	#define CUTOFF_OFF()  do {  } while (0)
 	#define CUTOFF_ON()   do {  } while (0)
-	#define CUTOFF_INIT() do {  } while (0)
+	#define CUTOFF_INIT(cfg) do {  } while (0)
 #endif
 
 static CutoffCfg cfg;
@@ -228,7 +242,6 @@ static void cutoff_cut(void)
 		if (!cut)
 		{
 			cut = true;
-			#warning "TODO: use PWM"
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
 			for (int i = 0; i < 3; i++)
 			{
@@ -283,13 +296,14 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
 	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
+	LOG_INFO(" pwm duty %04X\n", cfg.pwm_duty);
 }
 
 
 void cutoff_init(CutoffCfg *cfg)
 {
-	CUTOFF_INIT();
 	cutoff_setCfg(cfg);
+	CUTOFF_INIT(cfg);
 	cutoff_reset();
 	//start process
 	LOG_INFO("Starting cutoff process\n");

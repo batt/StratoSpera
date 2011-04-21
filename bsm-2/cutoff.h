@@ -40,6 +40,7 @@
 
 #include <net/nmea.h>
 #include <cfg/compiler.h>
+#include <drv/pwm.h>
 
 typedef struct CutoffCfg
 {
@@ -50,6 +51,7 @@ typedef struct CutoffCfg
 	udegree_t start_longitude; //micro degrees
 	uint32_t dist_max_meters; //meters
 	uint32_t dist_timeout; //seconds
+	pwm_duty_t pwm_duty;
 } CutoffCfg;
 
 void cutoff_reset(void);

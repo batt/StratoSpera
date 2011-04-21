@@ -66,6 +66,7 @@
 	#define HADARP_ENABLED 0
 	#define HADARP_PORT SER_UART0
 	#define GPS_PORT    SER_UART0
+
 #else
 	#define SD_WRITE_PROTECT_PIN BV(17)
 	#define SD_CARD_PRESENT_PIN  BV(8)
@@ -91,6 +92,8 @@
 	#define HADARP_ENABLED 1
 	#define HADARP_PORT SER_UART1
 	#define GPS_PORT    SER_UART0
+
+	#define CUTOFF1_PWM 1
 #endif
 
 #endif /* HW_BUZZER_H */
