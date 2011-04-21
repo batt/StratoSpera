@@ -3,6 +3,7 @@
 #include "measures.h"
 #include "status_mgr.h"
 #include "logging.h"
+#include "gps.h"
 
 #include <kern/proc.h>
 #include <kern/sem.h>
@@ -48,10 +49,17 @@ int radio_printf(const char * fmt, ...)
 	int result;
 	va_list ap;
 
+	struct tm t;
+	time_t tim;
+
+	tim = gps_time();
+	gmtime_r(&tim, &t);
+
 	sem_obtain(&radio_sem);
+	sprintf(radio_msg, ">%02d%02d%02dh", t.tm_hour, t.tm_min, t.tm_sec);
 
 	va_start(ap, fmt);
-	result = vsnprintf(radio_msg, sizeof(radio_msg), fmt, ap);
+	result = vsnprintf(&radio_msg[8], sizeof(radio_msg), fmt, ap);
 	va_end(ap);
 
 	radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
