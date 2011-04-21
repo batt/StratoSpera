@@ -261,6 +261,11 @@ void status_missionStart(void)
 	status_missionStartAt(timer_clock());
 }
 
+mtime_t status_missionTime(void)
+{
+	return ticks_to_ms(timer_clock() - mission_start_ticks);
+}
+
 ticks_t status_missionStartTicks(void)
 {
 	return mission_start_ticks;

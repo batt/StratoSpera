@@ -31,6 +31,7 @@ typedef enum Bsm2Status
 void status_missionStartAt(ticks_t ticks);
 void status_missionStart(void);
 ticks_t status_missionStartTicks(void);
+mtime_t status_missionTime(void);
 Bsm2Status status_currStatus(void);
 void status_check(bool fix, int32_t curr_alt);
 void status_setCfg(StatusCfg *_cfg);
