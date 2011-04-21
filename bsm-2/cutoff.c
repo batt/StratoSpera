@@ -40,6 +40,8 @@
 #include "status_mgr.h"
 #include "gps.h"
 #include "sensors.h"
+#include "radio.h"
+
 #include "hw/hw_pin.h"
 #include "cfg/cfg_afsk.h"
 
@@ -243,6 +245,7 @@ static void cutoff_cut(void)
 		{
 			cut = true;
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
+			radio_printf("---CUTOFF ACTIVATED---");
 			for (int i = 0; i < 3; i++)
 			{
 				LOG_INFO("Cutoff pulse %d\n", i+1);

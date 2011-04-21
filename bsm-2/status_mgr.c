@@ -40,6 +40,7 @@
 #include "cutoff.h"
 #include "gps.h"
 #include "landing_buz.h"
+#include "radio.h"
 #include "hw/hw_pin.h"
 
 #include <cfg/compiler.h>
@@ -107,7 +108,10 @@ static void status_set(Bsm2Status new_status)
 {
 	ASSERT(new_status < BSM2_CNT);
 	if (new_status != curr_status)
+	{
 		LOG_INFO("Changing status to %s\n", status_names[new_status]);
+		radio_printf("Changing status to %s", status_names[new_status]);
+	}
 
 	curr_status = new_status;
 
