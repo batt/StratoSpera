@@ -220,7 +220,7 @@ void adc_mgr_init(int ch, struct Afsk * ctx)
 {
 	ADC_MGR_STROBE_INIT();
 
-	LOG_INFO("prescaler[%d], stup[%ld], shtim[%ld]\n", ADC_COMPUTED_PRESCALER,
+	LOG_INFO("prescaler[%ld], stup[%ld], shtim[%ld]\n", ADC_COMPUTED_PRESCALER,
 								ADC_COMPUTED_STARTUPTIME, ADC_COMPUTED_SHTIME);
 
 	ADC_MR = 0;
