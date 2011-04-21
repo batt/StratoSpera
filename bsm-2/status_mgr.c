@@ -254,6 +254,7 @@ static void NORETURN status_process(void)
 void status_missionStartAt(ticks_t ticks)
 {
 	LOG_INFO("Mission start at %ld\n", (long)ticks);
+	radio_printf("Mission start");
 	mission_start_ticks = ticks;
 	status_reset();
 	landing_buz_reset();
