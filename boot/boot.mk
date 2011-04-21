@@ -82,6 +82,7 @@ boot_CPU_CPPASRC = bertos/cpu/arm/hw/crt_arm7tdmi.S bertos/cpu/arm/hw/vectors_at
 boot_CPU_CPPAFLAGS = -g -gdwarf-2
 boot_CPU_CPPFLAGS = -O0 -g3 -gdwarf-2 -fverbose-asm -Ibertos/cpu/arm/ -D__ARM_AT91SAM7S256__
 boot_CPU_CSRC = bertos/cpu/arm/hw/init_at91.c
+#boot_PROGRAMMER_CPU = at91sam7
 boot_PROGRAMMER_CPU = at91sam7-0.4
 boot_CPU_LDFLAGS = -nostartfiles -Wl,--no-warn-mismatch -T bertos/cpu/arm/scripts/at91sam7_256_rom.ld
 boot_STOPFLASH_SCRIPT = bertos/prg_scripts/arm/stopopenocd.sh
