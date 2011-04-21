@@ -221,18 +221,12 @@ bool cutoff_checkTime(ticks_t now)
 	}
 }
 
-static bool cutting = false;
-bool cutoff_active(void)
-{
-	return cutting;
-}
 
 static bool cut = false;
 static void cutoff_cut(void)
 {
 		if (!cut)
 		{
-			cutting = true;
 			cut = true;
 			#warning "TODO: use PWM"
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
@@ -246,7 +240,6 @@ static void cutoff_cut(void)
 				timer_delay(5000);
 			}
 			LOG_INFO("Cutoff procedure finished.\n");
-			cutting = false;
 		}
 }
 
@@ -276,7 +269,6 @@ void cutoff_reset(void)
 	dist_ok = true;
 
 	cut = false;
-	cutting = false;
 }
 
 void cutoff_setCfg(CutoffCfg *_cfg)
