@@ -23,6 +23,7 @@
 
 static Afsk afsk;
 static AX25Ctx ax25;
+static bool radio_initialized;
 
 static void ax25_log(struct AX25Msg *msg)
 {
@@ -46,6 +47,12 @@ static void radio_send(char *buf, size_t len)
 
 int radio_printf(const char * fmt, ...)
 {
+	if (!radio_initialized)
+	{
+		LOG_WARN("Radio not yet initialized\n");
+		return EOF;
+	}
+
 	int result;
 	va_list ap;
 
@@ -120,5 +127,6 @@ void radio_init(RadioCfg *cfg)
 	sem_init(&radio_sem);
 	afsk_init(&afsk, ADC_RADIO_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
+	radio_initialized = true;
 	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 }
