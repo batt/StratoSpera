@@ -9,7 +9,7 @@ typedef struct RadioCfg
 	char send_call[7];
 } RadioCfg;
 
-void radio_send(char *buf, size_t len);
+int radio_printf(const char * fmt, ...);
 void radio_init(RadioCfg *_cfg);
 
 #endif

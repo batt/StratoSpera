@@ -11,7 +11,11 @@
 #include <net/afsk.h>
 #include <net/ax25.h>
 
+#include <cfg/compiler.h>
+
 #include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #define LOG_LEVEL LOG_LVL_INFO
 #include <cfg/log.h>
@@ -32,15 +36,28 @@ static AX25Call ax25_path[2]=
 static mtime_t aprs_interval;
 
 static Semaphore radio_sem;
+static char radio_msg[100];
 
-void radio_send(char *buf, size_t len)
+static void radio_send(char *buf, size_t len)
 {
-	sem_obtain(&radio_sem);
 	ax25_sendVia(&ax25, ax25_path, countof(ax25_path), buf, len);
-	sem_release(&radio_sem);
 }
 
-static char msg[100];
+int radio_printf(const char * fmt, ...)
+{
+	int result;
+	va_list ap;
+
+	sem_obtain(&radio_sem);
+
+	va_start(ap, fmt);
+	result = vsnprintf(radio_msg, sizeof(radio_msg), fmt, ap);
+	va_end(ap);
+
+	radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
+	sem_release(&radio_sem);
+	return result;
+}
 
 #define STARTUP_SETUP_TIME  (3 * 60 * 1000) // 3 minutes
 #define STARTUP_SETUP_DELAY ms_to_ticks(15 * 1000) // 15 seconds
@@ -73,8 +90,11 @@ static void NORETURN radio_process(void)
 		if (timer_clock() - start > delay)
 		{
 			start = timer_clock();
-			measures_aprsFormat(msg, sizeof(msg));
-			radio_send(msg, strnlen(msg, sizeof(msg)));
+
+			sem_obtain(&radio_sem);
+			measures_aprsFormat(radio_msg, sizeof(radio_msg));
+			radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
+			sem_release(&radio_sem);
 		}
 	}
 }
