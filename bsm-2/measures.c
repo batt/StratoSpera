@@ -16,7 +16,7 @@ static I2c i2c_bus;
 
 void measures_aprsFormat(char *buf, size_t len)
 {
-	struct tm *t;
+	struct tm t;
 	time_t tim;
 
 	const char *lat, *lon;
@@ -32,13 +32,13 @@ void measures_aprsFormat(char *buf, size_t len)
 	}
 
 	tim = gps_time();
-	t = gmtime(&tim);
+	gmtime_r(&tim, &t);
 
 	#warning "fixme: read these values."
 	float acc = 9.81;
 
 	snprintf(buf, len, "/%02d%02d%02dh%s/%s>%ld;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%d",
-		t->tm_hour, t->tm_min, t->tm_sec,
+		t.tm_hour, t.tm_min, t.tm_sec,
 		lat, lon,
 		gps_info()->altitude,
 		sensor_read(ADC_T1),
