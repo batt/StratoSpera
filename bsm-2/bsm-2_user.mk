@@ -62,5 +62,5 @@ bsm-2_USER_CPPFLAGS = \
 	-O1 \
 	-fno-strict-aliasing \
 	-fwrapv \
-	-DDEMO_BOARD \
+	#-DDEMO_BOARD \
 	#
