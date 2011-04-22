@@ -132,17 +132,11 @@ typedef struct Iir
 
 static Iir filters[ADC_CHANNELS];
 
-#define FILTER_ENABLE 0
-#define IIR_FREQ 8
-#if (IIR_FREQ == 8)
-	#define GAIN 4.873950141e+01
-	#define IIR_SHIFT 9
-	#define IIR_CONST 0.9589655220
-
-	#define IIR_GAIN  ((int)((BV(IIR_SHIFT) / GAIN)))
-#else
-	#error "Filter constants for this frequency not defined"
-#endif
+#define FILTER_ENABLE 1
+#define GAIN      1.283324496e+02
+#define IIR_CONST 0.9844154771
+#define IIR_SHIFT 9
+#define IIR_GAIN  ((int)((BV(IIR_SHIFT) / GAIN) + 0.5))
 
 uint16_t adc_mgr_read(AdcChannels ch)
 {
@@ -246,7 +240,7 @@ void adc_mgr_init(int ch, struct Afsk * ctx)
 
 	//Register interrupt vector
 	AIC_SVR(ADC_ID) = adc_mgr_isr;
-	AIC_SMR(ADC_ID) = AIC_SRCTYPE_INT_EDGE_TRIGGERED;
+	AIC_SMR(ADC_ID) = AIC_SRCTYPE_INT_EDGE_TRIGGERED | 7;
 	AIC_IECR = BV(ADC_ID);
 
 	/*
