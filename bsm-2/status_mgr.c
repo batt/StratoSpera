@@ -295,5 +295,5 @@ void status_init(StatusCfg *cfg)
 	LOG_INFO("Starting status check process\n");
 	proc_new(status_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
 	LOG_INFO("Starting camera communication process\n");
-	proc_new(camera_process, NULL, KERN_MINSTACKSIZE, NULL);
+	proc_new(camera_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
 }
