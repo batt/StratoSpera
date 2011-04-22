@@ -373,10 +373,19 @@
 	#define PWM_PIO_ABSR    PIOB_ASR
 
 #elif CPU_ARM_SAM7S_LARGE
+
+#if 0
 	#define PWM0  11 // PA11
 	#define PWM1  12 // PA12
 	#define PWM2  13 // PA13
 	#define PWM3  14 // PA14
+#else
+	/* We use different mapping in BSM-2*/
+	#define PWM0  0 // PA0
+	#define PWM1  1 // PA1
+	#define PWM2  2 // PA2
+	#define PWM3  7 // PA7
+#endif
 
 	#define PWM_PIO_PDR     PIOA_PDR
 	#define PWM_PIO_PER     PIOA_PER
