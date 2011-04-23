@@ -5,6 +5,7 @@
 #include "radio.h"
 #include "cutoff.h"
 #include "status_mgr.h"
+#include "measures.h"
 
 #include "hw/hw_led.h"
 #include "hw/hw_buzzer.h"
@@ -49,6 +50,11 @@ void testmode_run(void)
 				uint16_t val = adc_mgr_read(i);
 				kprintf("CH%d %d\n", i, val);
 			}
+			kprintf("LM75 temp %.1fC, acceleration X %.2f Y %.2f Z %.2f m/s^2\n",
+				measures_intTemp(),
+				measures_acceleration(ACC_X),
+				measures_acceleration(ACC_Y),
+				measures_acceleration(ACC_Z));
 			kputchar('\n');
 		}
 
