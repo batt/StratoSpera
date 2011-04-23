@@ -40,7 +40,6 @@
 #define LOG_LEVEL LOG_LVL_INFO
 #include <cfg/log.h>
 
-static Serial ser;
 static SpiDmaAt91 spi_dma;
 static Sd sd;
 static FATFS fs;
@@ -73,11 +72,8 @@ static void init(void)
 	proc_init();
 
 	#if GPS_ENABLED
-		ser_init(&ser, GPS_PORT);
-		ser_setbaudrate(&ser, 4800);
-		gps_init(&ser.fd);
+		gps_init(GPS_PORT, 4800);
 	#else
-		(void)ser;
 		#warning "GPS process disabled."
 	#endif
 

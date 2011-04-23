@@ -1,5 +1,6 @@
-#ifndef BSM1_GPS_H
-#define BSM1_GPS_H
+#ifndef BSM2_GPS_H
+#define BSM2_GPS_H
+
 #include <cfg/compiler.h>
 #include <net/nmea.h>
 
@@ -40,6 +41,6 @@ INLINE bool gps_fixed(void)
 	return gps_fix;
 }
 
-void gps_init(KFile *_ch);
+void gps_init(unsigned port, unsigned long baudrate);
 
 #endif

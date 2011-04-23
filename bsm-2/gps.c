@@ -4,12 +4,13 @@
 #include <kern/proc.h>
 
 #include <drv/timer.h>
+#include <drv/ser.h>
 
 #include <net/nmea.h>
 
 #include <stdio.h>
 
-static KFile *ch;
+static Serial ser;
 static nmeap_context_t nmea;
 
 char aprs_lat[9];
@@ -63,13 +64,14 @@ static void NORETURN time_process(void)
 static void NORETURN gps_process(void)
 {
 	while (1)
-		nmea_poll(&nmea, ch);
+		nmea_poll(&nmea, &ser.fd);
 }
 
-void gps_init(KFile *_ch)
+void gps_init(unsigned port, unsigned long baudrate)
 {
-	ASSERT(_ch);
-	ch = _ch;
+	ser_init(&ser, port);
+	ser_setbaudrate(&ser, baudrate);
+
 	nmeap_init(&nmea, NULL);
 
 	nmeap_addParser(&nmea, "GPGGA", nmea_gpgga, aprs_gpgga, &gps_gga);
