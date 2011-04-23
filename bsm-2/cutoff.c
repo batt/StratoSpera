@@ -316,7 +316,7 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
 	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
-	LOG_INFO(" pwm duty %04X\n", cfg.pwm_duty);
+	LOG_INFO(" pwm duty 0x%04X\n", cfg.pwm_duty);
 }
 
 
