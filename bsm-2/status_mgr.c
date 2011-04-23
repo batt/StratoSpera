@@ -96,12 +96,6 @@ void status_setTestmode(bool mode)
 	test_mode = mode;
 }
 
-void status_setTestStatus(Bsm2Status new_status)
-{
-	if (test_mode)
-		curr_status = new_status;
-}
-
 
 static const char *status_names[] =
 {
@@ -114,6 +108,15 @@ static const char *status_names[] =
 	"LANDING",
 	"HOVERING",
 };
+
+void status_setTestStatus(Bsm2Status new_status)
+{
+	if (test_mode)
+	{
+		curr_status = new_status;
+		LOG_INFO("Changing status to %s\n", status_names[new_status]);
+	}
+}
 
 STATIC_ASSERT(countof(status_names) == BSM2_CNT);
 
