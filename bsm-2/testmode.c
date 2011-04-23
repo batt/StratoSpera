@@ -8,6 +8,7 @@
 
 #include "hw/hw_led.h"
 #include "hw/hw_buzzer.h"
+#include "hw/hw_aux.h"
 
 #include <drv/timer.h>
 #include <drv/kbd.h>
@@ -50,6 +51,7 @@ void testmode_run(void)
 			ledr(true);
 			ledg(true);
 			BUZZER_ON;
+			aux_out(true);
 			cutoff_test_cut(true);
 			status_setTestStatus(status++);
 			if (status >= BSM2_CNT)
@@ -59,6 +61,7 @@ void testmode_run(void)
 
 			timer_delay(2500);
 
+			aux_out(false);
 			cutoff_test_cut(false);
 			BUZZER_OFF;
 			ledr(false);

@@ -178,6 +178,8 @@
     <File Name="conf.ini"/>
     <File Name="bsm-2/radio.c"/>
     <File Name="bsm-2/radio.h"/>
+    <File Name="bsm-2/testmode.c"/>
+    <File Name="bsm-2/testmode.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
@@ -1414,6 +1416,7 @@
     <File Name="hw/hw_kbd.h"/>
     <File Name="hw/hw_tas5706a.h"/>
     <File Name="hw/mcp41_map.h"/>
+    <File Name="hw/hw_aux.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="scripts">
     <File Name="scripts/uploader.py"/>

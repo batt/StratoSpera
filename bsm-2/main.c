@@ -14,6 +14,8 @@
 
 #include "hw/hw_pin.h"
 #include "hw/hw_led.h"
+#include "hw/hw_aux.h"
+
 #include <cpu/irq.h>
 #include <cfg/debug.h>
 
@@ -52,6 +54,7 @@ static void init(void)
 {
 	IRQ_ENABLE;
 	led_init();
+	aux_init();
 	kdbg_init();
 	kprintf("BSM-2, ver %s\n", vers_tag);
 	timer_init();
