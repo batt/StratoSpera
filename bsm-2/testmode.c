@@ -31,12 +31,18 @@ void testmode_run(void)
 	ticks_t adc_start = timer_clock();
 
 	Bsm2Status status = 0;
+	bool led = true;
+	ledr(led);
+	ledg(led);
 
 	while (timer_clock() - start < TESTMODE_TIMEOUT)
 	{
 		if (timer_clock() - adc_start > ms_to_ticks(1000))
 		{
 			adc_start = timer_clock();
+			ledr(led);
+			ledg(!led);
+			led = !led;
 
 			for (int i = 0; i < ADC_CHANNELS; i++)
 			{
@@ -57,7 +63,8 @@ void testmode_run(void)
 			if (status >= BSM2_CNT)
 				status = 0;
 
-			radio_printf("TEST");
+			radio_printf("TEST MODE");
+			radio_sendTelemetry();
 
 			timer_delay(2500);
 
