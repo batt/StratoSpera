@@ -41,6 +41,7 @@ INLINE bool gps_fixed(void)
 	return gps_fix;
 }
 
+void gps_setTestmode(bool mode);
 void gps_init(unsigned port, unsigned long baudrate);
 
 #endif

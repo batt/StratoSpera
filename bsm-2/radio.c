@@ -24,10 +24,17 @@
 static Afsk afsk;
 static AX25Ctx ax25;
 static bool radio_initialized;
+static bool test_mode;
+
+void radio_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
 
 static void ax25_log(struct AX25Msg *msg)
 {
-	logging_msg("%.*s\n", msg->len, msg->info);
+	if (!test_mode)
+		logging_msg("%.*s\n", msg->len, msg->info);
 	kprintf("%.*s\n", msg->len, msg->info);
 }
 
@@ -86,6 +93,9 @@ static void NORETURN radio_process(void)
 	{
 		ax25_poll(&ax25);
 		timer_delay(100);
+
+		if (test_mode)
+			continue;
 
 		if (status_missionTime() < STARTUP_SETUP_TIME)
 		{

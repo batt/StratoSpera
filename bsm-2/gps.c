@@ -21,11 +21,20 @@ bool gps_fix = false;
 time_t gps_clock;
 
 static ticks_t last_heard;
+static bool test_mode;
+
+void gps_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
 
 static void aprs_gpgga(nmeap_context_t *context, void *data, void *userdata)
 {
 	(void)data;
 	(void)userdata;
+
+	if (test_mode)
+		kprintf("%.*s\n", NMEAP_MAX_SENTENCE_LENGTH, context->debug_input);
 
 	last_heard = timer_clock();
 	sprintf(aprs_time, "%.6sh", context->token[1]);
@@ -39,8 +48,6 @@ static void aprs_gpgga(nmeap_context_t *context, void *data, void *userdata)
 	}
 	else
 		gps_fix = false;
-
-	//kprintf("FIX:%s, time:%s lat:%s lon:%s\n", gps_fix ? "OK": "FAIL", aprs_time, aprs_lat, aprs_lon);
 }
 
 static void NORETURN time_process(void)

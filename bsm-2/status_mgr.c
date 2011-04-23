@@ -89,6 +89,19 @@ static ticks_t mission_start_ticks;
 
 static StatusCfg cfg;
 static Bsm2Status curr_status;
+static bool test_mode;
+
+void status_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
+
+void status_setTestStatus(Bsm2Status new_status)
+{
+	if (test_mode)
+		curr_status = new_status;
+}
+
 
 static const char *status_names[] =
 {
@@ -247,7 +260,8 @@ static void NORETURN status_process(void)
 	while (1)
 	{
 		timer_delay(STATUS_CHECK_INTERVAL * 1000);
-		status_check(gps_fixed(), gps_info()->altitude);
+		if (!test_mode)
+			status_check(gps_fixed(), gps_info()->altitude);
 	}
 }
 

@@ -10,8 +10,10 @@
 #include "hadarp.h"
 #include "status_mgr.h"
 #include "radio.h"
+#include "testmode.h"
 
 #include "hw/hw_pin.h"
+#include "hw/hw_led.h"
 #include <cpu/irq.h>
 #include <cfg/debug.h>
 
@@ -43,30 +45,6 @@
 static SpiDmaAt91 spi_dma;
 static Sd sd;
 static FATFS fs;
-
-INLINE void ledr(bool val)
-{
-	if (val)
-		PIOA_SODR = LEDR;
-	else
-		PIOA_CODR = LEDR;
-}
-
-INLINE void ledg(bool val)
-{
-	if (val)
-		PIOA_SODR = LEDG;
-	else
-		PIOA_CODR = LEDG;
-}
-
-INLINE void led_init(void)
-{
-	PIOA_CODR = LEDR | LEDG;
-	PIOA_PER = LEDR | LEDG;
-	PIOA_OER = LEDR | LEDG;
-	ledr(true);
-}
 
 static ticks_t log_interval;
 
@@ -103,28 +81,6 @@ static void init(void)
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
 
 	char inibuf[64];
-	if (ini_getString(&conf.fd, "system", "test_mode", "0", inibuf, sizeof(inibuf)) == 0)
-	{
-		if (atoi(inibuf) != 0)
-		{
-			kprintf("Entering calibration mode...\n");
-			bool ledon = true;
-			while (1)
-			{
-				ledg(ledon);
-				ledr(ledon);
-				ledon = !ledon;
-				for (int i = 0; i < ADC_CHANNELS; i++)
-				{
-					uint16_t val = adc_mgr_read(i);
-					kprintf("CH%d %d\n", i, val);
-				}
-				kputchar('\n');
-				timer_delay(1000);
-			}
-		}
-	}
-
 
 	/* Set ADC sensor calibration */
 	for (int i = 0; i < ADC_CHANNELS; i++)
@@ -205,7 +161,11 @@ static void init(void)
 	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
 	log_interval = ms_to_ticks(atoi(inibuf) * 1000);
 
+	ini_getString(&conf.fd, "system", "test_mode", "0", inibuf, sizeof(inibuf));
 	kfile_close(&conf.fd);
+
+	if (atoi(inibuf) != 0)
+			testmode_run();
 
 	logging_init();
 	ledr(false);
