@@ -60,11 +60,20 @@ INLINE void ledg(bool val)
 		PIOA_CODR = LEDG;
 }
 
+INLINE void led_init(void)
+{
+	PIOA_CODR = LEDR | LEDG;
+	PIOA_PER = LEDR | LEDG;
+	PIOA_OER = LEDR | LEDG;
+	ledr(true);
+}
+
 static ticks_t log_interval;
 
 static void init(void)
 {
 	IRQ_ENABLE;
+	led_init();
 	kdbg_init();
 	kprintf("BSM-2, ver %s\n", vers_tag);
 	timer_init();
@@ -88,18 +97,13 @@ static void init(void)
 	kbd_init();
 	measures_init();
 
-	PIOA_CODR = LEDR | LEDG;
-	PIOA_PER = LEDR | LEDG;
-	PIOA_OER = LEDR | LEDG;
-
-	ledr(true);
 	ASSERT(sd_init(&sd, &spi_dma.fd, false));
 	ASSERT(f_mount(0, &fs) == FR_OK);
 	FatFile conf;
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
 
 	char inibuf[64];
-	if (ini_getString(&conf.fd, "system", "calibration_mode", "0", inibuf, sizeof(inibuf)) == 0)
+	if (ini_getString(&conf.fd, "system", "test_mode", "0", inibuf, sizeof(inibuf)) == 0)
 	{
 		if (atoi(inibuf) != 0)
 		{
