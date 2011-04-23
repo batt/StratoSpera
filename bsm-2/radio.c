@@ -81,6 +81,14 @@ int radio_printf(const char * fmt, ...)
 	return result;
 }
 
+void radio_sendTelemetry(void)
+{
+	sem_obtain(&radio_sem);
+	measures_aprsFormat(radio_msg, sizeof(radio_msg));
+	radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
+	sem_release(&radio_sem);
+}
+
 #define STARTUP_SETUP_TIME  (3 * 60 * 1000) // 3 minutes
 #define STARTUP_SETUP_DELAY ms_to_ticks(15 * 1000) // 15 seconds
 
@@ -115,11 +123,7 @@ static void NORETURN radio_process(void)
 		if (timer_clock() - start > delay)
 		{
 			start = timer_clock();
-
-			sem_obtain(&radio_sem);
-			measures_aprsFormat(radio_msg, sizeof(radio_msg));
-			radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
-			sem_release(&radio_sem);
+			radio_sendTelemetry();
 		}
 	}
 }
