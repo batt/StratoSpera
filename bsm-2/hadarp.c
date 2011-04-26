@@ -37,6 +37,8 @@
 
 #include "hadarp.h"
 
+#include "testmode.h"
+
 #include <drv/ser.h>
 #include <kern/proc.h>
 
@@ -65,7 +67,8 @@ static void NORETURN hadarp_process(void)
 		if (hadarp_cnt > 10000 || hadarp_cnt < 0)
 			hadarp_cnt = -1;
 
-		LOG_INFO("HADARP cnt:%d\n", hadarp_cnt);
+		if (testmode())
+			kprintf("HADARP cnt:%d\n", hadarp_cnt);
 	}
 }
 

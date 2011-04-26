@@ -1,7 +1,6 @@
 #include "testmode.h"
 
 #include "adc_mgr.h"
-#include "gps.h"
 #include "radio.h"
 #include "cutoff.h"
 #include "status_mgr.h"
@@ -19,14 +18,17 @@
 
 #define TESTMODE_TIMEOUT ms_to_ticks(5*60*1000) //5 minutes
 
+static bool test_mode;
+
+bool testmode(void)
+{
+	return test_mode;
+}
+
 void testmode_run(void)
 {
 	kprintf("Entering test mode...\n");
-
-	gps_setTestmode(true);
-	radio_setTestmode(true);
-	cutoff_setTestmode(true);
-	status_setTestmode(true);
+	test_mode = true;
 
 	ticks_t start = timer_clock();
 	ticks_t adc_start = timer_clock();
@@ -84,8 +86,5 @@ void testmode_run(void)
 		timer_delay(100);
 	}
 
-	gps_setTestmode(false);
-	radio_setTestmode(false);
-	cutoff_setTestmode(false);
-	status_setTestmode(false);
+	test_mode = false;
 }

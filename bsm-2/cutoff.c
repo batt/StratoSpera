@@ -41,6 +41,7 @@
 #include "gps.h"
 #include "sensors.h"
 #include "radio.h"
+#include "testmode.h"
 
 #include "hw/hw_pin.h"
 #include "cfg/cfg_afsk.h"
@@ -81,13 +82,6 @@
 #endif
 
 static CutoffCfg cfg;
-
-static bool test_mode;
-
-void cutoff_setTestmode(bool mode)
-{
-	test_mode = mode;
-}
 
 #define PI 3.14159265358979323846
 
@@ -246,7 +240,7 @@ bool cutoff_checkTime(ticks_t now)
 
 void cutoff_test_cut(bool on)
 {
-	if (test_mode)
+	if (testmode())
 	{
 		if (on)
 			CUTOFF_ON();
@@ -258,7 +252,7 @@ void cutoff_test_cut(bool on)
 static bool cut = false;
 static void cutoff_cut(void)
 {
-		if (!cut && !test_mode)
+		if (!cut && !testmode())
 		{
 			cut = true;
 			LOG_INFO("---CUTOFF ACTIVATED---\n");

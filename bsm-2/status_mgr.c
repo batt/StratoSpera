@@ -41,6 +41,8 @@
 #include "gps.h"
 #include "landing_buz.h"
 #include "radio.h"
+#include "testmode.h"
+
 #include "hw/hw_pin.h"
 
 #include <cfg/compiler.h>
@@ -89,13 +91,6 @@ static ticks_t mission_start_ticks;
 
 static StatusCfg cfg;
 static Bsm2Status curr_status;
-static bool test_mode;
-
-void status_setTestmode(bool mode)
-{
-	test_mode = mode;
-}
-
 
 static const char *status_names[] =
 {
@@ -111,7 +106,7 @@ static const char *status_names[] =
 
 void status_setTestStatus(Bsm2Status new_status)
 {
-	if (test_mode)
+	if (testmode())
 	{
 		curr_status = new_status;
 		LOG_INFO("Changing status to %s\n", status_names[new_status]);
@@ -263,7 +258,7 @@ static void NORETURN status_process(void)
 	while (1)
 	{
 		timer_delay(STATUS_CHECK_INTERVAL * 1000);
-		if (!test_mode)
+		if (!testmode())
 			status_check(gps_fixed(), gps_info()->altitude);
 	}
 }
