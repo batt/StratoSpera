@@ -42,6 +42,7 @@
 #include "landing_buz.h"
 #include "radio.h"
 #include "testmode.h"
+#include "sensors.h"
 
 #include "hw/hw_pin.h"
 
@@ -159,8 +160,11 @@ static void NORETURN camera_process(void)
 #define DELTA_MEAN_LEN (DELTA_MEAN_TIME / STATUS_CHECK_INTERVAL)
 
 static int32_t prev_alt;
-
 static MOVING_AVG_DEFINE(int32_t, alt_delta, DELTA_MEAN_LEN);
+
+static float prev_press;
+static MOVING_AVG_DEFINE(float, press_delta, DELTA_MEAN_LEN);
+
 
 static void status_reset(void)
 {
@@ -169,20 +173,28 @@ static void status_reset(void)
 	status_set(BSM2_NOFIX);
 
 	MOVING_AVG_RESET(&alt_delta);
+	MOVING_AVG_RESET(&press_delta);
 }
 
 
-void status_check(bool fix, int32_t curr_alt)
+void status_check(bool fix, int32_t curr_alt, float curr_press)
 {
 	if (fix)
 	{
 		if (MOVING_AVG_EMPTY(&alt_delta))
+		{
 			prev_alt = curr_alt;
+			prev_press = curr_press;
+		}
 
-		int32_t delta = curr_alt - prev_alt;
+		int32_t delta_alt = curr_alt - prev_alt;
 		prev_alt = curr_alt;
 
-		MOVING_AVG_PUSH(&alt_delta, delta);
+		float delta_press = curr_press - prev_press;
+		prev_press = curr_press;
+
+		MOVING_AVG_PUSH(&alt_delta, delta_alt);
+		MOVING_AVG_PUSH(&press_delta, delta_press);
 
 		if (!MOVING_AVG_FULL(&alt_delta))
 		{
@@ -191,7 +203,15 @@ void status_check(bool fix, int32_t curr_alt)
 			return;
 		}
 
-		float rate = MOVING_AVG_GET(&alt_delta, float) / STATUS_CHECK_INTERVAL;
+		// In order to compute ascent rate, at low altitudes we use the
+		// pressure sensor which is more accurate than the GPS.
+		float rate;
+		if (curr_alt >= cfg.ground_alt)
+			rate = MOVING_AVG_GET(&alt_delta, float) / STATUS_CHECK_INTERVAL;
+		else
+			// If pressure decreases of 1 mBar we have gained ~11 meters in height.
+			rate = -11.0 * (MOVING_AVG_GET(&press_delta) / STATUS_CHECK_INTERVAL);
+
 		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
 
 		if (rate < cfg.rate_up
@@ -248,7 +268,7 @@ static void NORETURN status_process(void)
 	{
 		timer_delay(STATUS_CHECK_INTERVAL * 1000);
 		if (!testmode())
-			status_check(gps_fixed(), gps_info()->altitude);
+			status_check(gps_fixed(), gps_info()->altitude, sensor_read(ADC_PRESS));
 	}
 }
 

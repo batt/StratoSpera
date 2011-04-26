@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <math.h>
 
 int status_testSetup(void)
 {
@@ -74,7 +74,8 @@ int status_testRun(void)
 
 		if (t - status_start > DELAY)
 		{
-			status_check(fix, alt);
+			#warning "fixme: use real pressure here"
+			status_check(fix, alt, 1013.25 * pow(1 - 2.25577e-5 * alt, 5.25588));
 			status_start += DELAY;
 		}
 	}
