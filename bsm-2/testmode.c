@@ -5,6 +5,8 @@
 #include "cutoff.h"
 #include "status_mgr.h"
 #include "measures.h"
+#include "sensors.h"
+#include "hadarp.h"
 
 #include "hw/hw_led.h"
 #include "hw/hw_buzzer.h"
@@ -50,13 +52,15 @@ void testmode_run(void)
 			for (int i = 0; i < ADC_CHANNELS; i++)
 			{
 				uint16_t val = adc_mgr_read(i);
-				kprintf("CH%d %d\n", i, val);
+				kprintf("CH%d ADC:%4d -> ", i, val);
+				kprintf("%7.2f\n", sensor_read(i));
 			}
 			kprintf("LM75 temp %.1fC, acceleration X %.2f Y %.2f Z %.2f m/s^2\n",
 				measures_intTemp(),
 				measures_acceleration(ACC_X),
 				measures_acceleration(ACC_Y),
 				measures_acceleration(ACC_Z));
+			kprintf("HADARP count:%d\n", hadarp_read());
 			kputchar('\n');
 		}
 
