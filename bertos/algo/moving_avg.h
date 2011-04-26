@@ -30,34 +30,58 @@
  * All Rights Reserved.
  * -->
  *
- * \brief Cutoff control.
+ * \brief Moving Average algorith macros.
  *
  * \author Francesco Sacchi <batt@develer.com>
  */
 
-#ifndef CUTOFF_H
-#define CUTOFF_H
+#ifndef ALGO_MOVING_AVG_H
+#define ALGO_MOVING_AVG_H
 
-#include <net/nmea.h>
 #include <cfg/compiler.h>
+#include <cfg/macros.h>
 
-typedef struct CutoffCfg
-{
-	uint32_t mission_timeout; //seconds
-	int32_t delta_altitude; //meters
-	uint32_t altitude_timeout; //seconds
-	udegree_t start_latitude; //micro degrees
-	udegree_t start_longitude; //micro degrees
-	uint32_t dist_max_meters; //meters
-	uint32_t dist_timeout; //seconds
-	uint16_t pwm_duty;
-} CutoffCfg;
+#define MOVING_AVG_TYPE(name) struct name##MovingAverage
 
-void cutoff_reset(void);
-bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now);
-bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now);
-bool cutoff_checkTime(ticks_t now);
-void cutoff_setCfg(CutoffCfg *cfg);
-void cutoff_test_cut(bool on);
-void cutoff_init(CutoffCfg *cfg);
-#endif
+#define MOVING_AVG_DEFINE(type, name, size) \
+	MOVING_AVG_TYPE(name) \
+	{ \
+		type values[size]; \
+		type sum; \
+		unsigned cnt; \
+		unsigned idx; \
+	} name
+
+#define MOVING_AVG_RESET(avg) \
+	do { \
+		(avg)->sum = 0; \
+		(avg)->cnt = 0; \
+		(avg)->idx = 0; \
+	} while(0)
+
+#define MOVING_AVG_COUNT(avg) ((avg)->cnt)
+#define MOVING_AVG_EMPTY(avg) (MOVING_AVG_COUNT(avg) == 0)
+#define MOVING_AVG_FULL(avg)  (MOVING_AVG_COUNT(avg) >= countof((avg)->values))
+
+
+#define MOVING_AVG_PUSH(avg, val) \
+	do { \
+		if ((avg)->cnt >= countof((avg)->values)) \
+			(avg)->sum -= (avg)->values[(avg)->idx]; \
+		(avg)->values[(avg)->idx] = (val); \
+		(avg)->sum += (val); \
+		(avg)->idx = (avg)->idx + 1 >= countof((avg)->values) ? 0 : (avg)->idx + 1; \
+		if ((avg)->cnt < countof((avg)->values)) \
+			(avg)->cnt++; \
+	} while (0)
+
+#define MOVING_AVG_GET(avg, ...) \
+	({ \
+		ASSERT(!MOVING_AVG_EMPTY(avg)); \
+		PP_CAT(MOVING_AVG_GET_, COUNT_PARMS(__VA_ARGS__))(avg, ## __VA_ARGS__); \
+	})
+
+#define MOVING_AVG_GET_0(avg) ((avg)->sum / (int)(avg)->cnt)
+#define MOVING_AVG_GET_1(avg, type) (((type)(avg)->sum) / (int)(avg)->cnt)
+
+#endif /* ALGO_MOVING_AVG_H */

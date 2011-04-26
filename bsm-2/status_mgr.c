@@ -45,6 +45,8 @@
 
 #include "hw/hw_pin.h"
 
+#include <algo/moving_avg.h>
+
 #include <cfg/compiler.h>
 #include <cfg/module.h>
 #include <drv/timer.h>
@@ -72,22 +74,7 @@
 	#define CAMPULSE_INIT() do {  } while (0)
 #endif
 
-#define STATUS_CHECK_INTERVAL 10 //seconds
-#define DELTA_MEAN_TIME 60 //seconds
-
-#define DELTA_MEAN_LEN (DELTA_MEAN_TIME / STATUS_CHECK_INTERVAL)
-
-static int32_t prev_alt;
-
-static int32_t delta_values[DELTA_MEAN_LEN];
-static int32_t delta_sum = 0;
-static int delta_cnt = 0;
-static int delta_idx = 0;
-
 static ticks_t mission_start_ticks;
-
-#define NEXT_IDX(idx) (((idx + 1) >= DELTA_MEAN_LEN) ? 0 : idx + 1)
-
 
 static StatusCfg cfg;
 static Bsm2Status curr_status;
@@ -121,7 +108,9 @@ static void status_set(Bsm2Status new_status)
 	if (new_status != curr_status)
 	{
 		LOG_INFO("Changing status to %s\n", status_names[new_status]);
-		radio_printf("Changing status to %s", status_names[new_status]);
+		#if !(ARCH & ARCH_UNITTEST)
+			radio_printf("Changing status to %s", status_names[new_status]);
+		#endif
 	}
 
 	curr_status = new_status;
@@ -164,15 +153,22 @@ static void NORETURN camera_process(void)
 	}
 }
 
+#define STATUS_CHECK_INTERVAL 10 //seconds
+#define DELTA_MEAN_TIME 60 //seconds
+
+#define DELTA_MEAN_LEN (DELTA_MEAN_TIME / STATUS_CHECK_INTERVAL)
+
+static int32_t prev_alt;
+
+static MOVING_AVG_DEFINE(int32_t, alt_delta, DELTA_MEAN_LEN);
+
 static void status_reset(void)
 {
 	LOG_INFO("Resetting status control data\n");
 
 	status_set(BSM2_NOFIX);
 
-	delta_cnt = 0;
-	delta_idx = 0;
-	delta_sum = 0;
+	MOVING_AVG_RESET(&alt_delta);
 }
 
 
@@ -180,30 +176,23 @@ void status_check(bool fix, int32_t curr_alt)
 {
 	if (fix)
 	{
-		if (delta_cnt == 0)
+		if (MOVING_AVG_EMPTY(&alt_delta))
 			prev_alt = curr_alt;
 
 		int32_t delta = curr_alt - prev_alt;
 		prev_alt = curr_alt;
 
-		delta_values[delta_idx] = delta;
+		MOVING_AVG_PUSH(&alt_delta, delta);
 
-		delta_sum += delta;
-		delta_idx = NEXT_IDX(delta_idx);
-
-		if (delta_cnt < DELTA_MEAN_LEN)
+		if (!MOVING_AVG_FULL(&alt_delta))
 		{
-			delta_cnt++;
 			// Stay in the previuos state until we have a good
 			// approximation of the ascent rate.
 			return;
 		}
 
-		float rate = ((float)delta_sum) / (delta_cnt * STATUS_CHECK_INTERVAL);
+		float rate = MOVING_AVG_GET(&alt_delta, float) / STATUS_CHECK_INTERVAL;
 		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
-
-		if (delta_cnt >= DELTA_MEAN_LEN)
-			delta_sum -= delta_values[delta_idx];
 
 		if (rate < cfg.rate_up
 			&& rate >= cfg.rate_down
@@ -266,7 +255,9 @@ static void NORETURN status_process(void)
 void status_missionStartAt(ticks_t ticks)
 {
 	LOG_INFO("Mission start at %ld\n", (long)ticks);
-	radio_printf("Mission start");
+	#if !(ARCH & ARCH_UNITTEST)
+		radio_printf("Mission start");
+	#endif
 	mission_start_ticks = ticks;
 	status_reset();
 	landing_buz_reset();

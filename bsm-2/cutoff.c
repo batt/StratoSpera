@@ -49,7 +49,6 @@
 #include <net/nmea.h>
 #include <cfg/compiler.h>
 #include <drv/timer.h>
-#include <drv/pwm.h>
 #include <kern/proc.h>
 
 #define LOG_LEVEL     LOG_LVL_INFO
@@ -60,11 +59,13 @@
 #include <string.h>
 
 #if !(ARCH & ARCH_UNITTEST)
+
 	#ifdef DEMO_BOARD
 		#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
 		#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
 		#define CUTOFF_INIT(cfg) do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
 	#else
+		#include <drv/pwm.h>
 		static Pwm cutoff_pwm;
 
 		#define CUTOFF_OFF()  pwm_enable(&cutoff_pwm, false)
