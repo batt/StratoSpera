@@ -208,9 +208,9 @@ int main(void)
 
 		if (timer_clock() - log_start > log_interval)
 		{
-			char msg[100];
+			char msg[128];
 			log_start = timer_clock();
-			monitor_report();
+			//monitor_report();
 
 			measures_logFormat(msg, sizeof(msg));
 			kprintf("%s\n", msg);
@@ -219,4 +219,3 @@ int main(void)
 	}
 	return 0;
 }
-
