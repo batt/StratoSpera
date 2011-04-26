@@ -84,6 +84,7 @@
 	#define SCL                  BV(4)
 	#define EXT_MUX_START        24
 	#define ADC_STROBE_PIN       BV(20)
+	#define AUX_OUT              BV(23)
 
 	#define ADC_RADIO_CH         4
 	#define ADC_MUX_CH           5 // The external mux is connected here

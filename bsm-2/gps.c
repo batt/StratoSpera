@@ -4,12 +4,13 @@
 #include <kern/proc.h>
 
 #include <drv/timer.h>
+#include <drv/ser.h>
 
 #include <net/nmea.h>
 
 #include <stdio.h>
 
-static KFile *ch;
+static Serial ser;
 static nmeap_context_t nmea;
 
 char aprs_lat[9];
@@ -20,11 +21,20 @@ bool gps_fix = false;
 time_t gps_clock;
 
 static ticks_t last_heard;
+static bool test_mode;
+
+void gps_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
 
 static void aprs_gpgga(nmeap_context_t *context, void *data, void *userdata)
 {
 	(void)data;
 	(void)userdata;
+
+	if (test_mode)
+		kprintf("%.*s\n", NMEAP_MAX_SENTENCE_LENGTH, context->debug_input);
 
 	last_heard = timer_clock();
 	sprintf(aprs_time, "%.6sh", context->token[1]);
@@ -38,8 +48,6 @@ static void aprs_gpgga(nmeap_context_t *context, void *data, void *userdata)
 	}
 	else
 		gps_fix = false;
-
-	//kprintf("FIX:%s, time:%s lat:%s lon:%s\n", gps_fix ? "OK": "FAIL", aprs_time, aprs_lat, aprs_lon);
 }
 
 static void NORETURN time_process(void)
@@ -63,13 +71,14 @@ static void NORETURN time_process(void)
 static void NORETURN gps_process(void)
 {
 	while (1)
-		nmea_poll(&nmea, ch);
+		nmea_poll(&nmea, &ser.fd);
 }
 
-void gps_init(KFile *_ch)
+void gps_init(unsigned port, unsigned long baudrate)
 {
-	ASSERT(_ch);
-	ch = _ch;
+	ser_init(&ser, port);
+	ser_setbaudrate(&ser, baudrate);
+
 	nmeap_init(&nmea, NULL);
 
 	nmeap_addParser(&nmea, "GPGGA", nmea_gpgga, aprs_gpgga, &gps_gga);

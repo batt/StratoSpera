@@ -82,6 +82,13 @@
 
 static CutoffCfg cfg;
 
+static bool test_mode;
+
+void cutoff_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
+
 #define PI 3.14159265358979323846
 
 INLINE float deg2rad(float deg)
@@ -237,11 +244,21 @@ bool cutoff_checkTime(ticks_t now)
 	}
 }
 
+void cutoff_test_cut(bool on)
+{
+	if (test_mode)
+	{
+		if (on)
+			CUTOFF_ON();
+		else
+			CUTOFF_OFF();
+	}
+}
 
 static bool cut = false;
 static void cutoff_cut(void)
 {
-		if (!cut)
+		if (!cut && !test_mode)
 		{
 			cut = true;
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
@@ -299,7 +316,7 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
 	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
-	LOG_INFO(" pwm duty %04X\n", cfg.pwm_duty);
+	LOG_INFO(" pwm duty 0x%04X\n", cfg.pwm_duty);
 }
 
 

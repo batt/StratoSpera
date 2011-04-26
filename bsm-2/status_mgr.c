@@ -89,6 +89,13 @@ static ticks_t mission_start_ticks;
 
 static StatusCfg cfg;
 static Bsm2Status curr_status;
+static bool test_mode;
+
+void status_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
+
 
 static const char *status_names[] =
 {
@@ -101,6 +108,15 @@ static const char *status_names[] =
 	"LANDING",
 	"HOVERING",
 };
+
+void status_setTestStatus(Bsm2Status new_status)
+{
+	if (test_mode)
+	{
+		curr_status = new_status;
+		LOG_INFO("Changing status to %s\n", status_names[new_status]);
+	}
+}
 
 STATIC_ASSERT(countof(status_names) == BSM2_CNT);
 
@@ -247,7 +263,8 @@ static void NORETURN status_process(void)
 	while (1)
 	{
 		timer_delay(STATUS_CHECK_INTERVAL * 1000);
-		status_check(gps_fixed(), gps_info()->altitude);
+		if (!test_mode)
+			status_check(gps_fixed(), gps_info()->altitude);
 	}
 }
 

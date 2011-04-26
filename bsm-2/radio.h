@@ -9,7 +9,9 @@ typedef struct RadioCfg
 	char send_call[7];
 } RadioCfg;
 
+void radio_setTestmode(bool mode);
 int radio_printf(const char * fmt, ...);
+void radio_sendTelemetry(void);
 void radio_init(RadioCfg *_cfg);
 
 #endif

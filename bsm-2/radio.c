@@ -24,10 +24,17 @@
 static Afsk afsk;
 static AX25Ctx ax25;
 static bool radio_initialized;
+static bool test_mode;
+
+void radio_setTestmode(bool mode)
+{
+	test_mode = mode;
+}
 
 static void ax25_log(struct AX25Msg *msg)
 {
-	logging_msg("%.*s\n", msg->len, msg->info);
+	if (!test_mode)
+		logging_msg("%.*s\n", msg->len, msg->info);
 	kprintf("%.*s\n", msg->len, msg->info);
 }
 
@@ -74,6 +81,14 @@ int radio_printf(const char * fmt, ...)
 	return result;
 }
 
+void radio_sendTelemetry(void)
+{
+	sem_obtain(&radio_sem);
+	measures_aprsFormat(radio_msg, sizeof(radio_msg));
+	radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
+	sem_release(&radio_sem);
+}
+
 #define STARTUP_SETUP_TIME  (3 * 60 * 1000) // 3 minutes
 #define STARTUP_SETUP_DELAY ms_to_ticks(15 * 1000) // 15 seconds
 
@@ -86,6 +101,9 @@ static void NORETURN radio_process(void)
 	{
 		ax25_poll(&ax25);
 		timer_delay(100);
+
+		if (test_mode)
+			continue;
 
 		if (status_missionTime() < STARTUP_SETUP_TIME)
 		{
@@ -105,11 +123,7 @@ static void NORETURN radio_process(void)
 		if (timer_clock() - start > delay)
 		{
 			start = timer_clock();
-
-			sem_obtain(&radio_sem);
-			measures_aprsFormat(radio_msg, sizeof(radio_msg));
-			radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
-			sem_release(&radio_sem);
+			radio_sendTelemetry();
 		}
 	}
 }

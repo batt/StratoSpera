@@ -61,7 +61,7 @@
 #define ADC_COMPUTED_SHTIME       (uint32_t)((((uint64_t)CONFIG_ADC_SHTIME * CONFIG_ADC_CLOCK + 500000000UL) / 1000000000UL) - 1)
 
 // Set ADC_MGR_STROBE to 1 in order to enable debugging of adc isr duration.
-#define ADC_MGR_STROBE 1
+#define ADC_MGR_STROBE 0
 #if ADC_MGR_STROBE
 	#warning "ADC_MGR_STROBE active"
 
