@@ -363,7 +363,9 @@
 		PWM_PIO_CODR = ctx->hw->pwm_pin;
 		PWM_PIO_OER  = ctx->hw->pwm_pin;
 		PWM_PIO_PER  = ctx->hw->pwm_pin;
-		PWM_PIO_ABSR = ctx->hw->pwm_pin;
+
+		// In BSM-2 we use different pins
+		//PWM_PIO_ABSR = ctx->hw->pwm_pin;
 
 		PMC_PCER |= BV(PWMC_ID);
 
