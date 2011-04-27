@@ -209,8 +209,8 @@ void status_check(bool fix, int32_t curr_alt, float curr_press)
 		if (curr_alt >= cfg.ground_alt)
 			rate = MOVING_AVG_GET(&alt_delta, float) / STATUS_CHECK_INTERVAL;
 		else
-			// If pressure decreases of 1 mBar we have gained ~10.57 meters in height.
-			rate = -10.57 * (MOVING_AVG_GET(&press_delta) / STATUS_CHECK_INTERVAL);
+			// If pressure decreases of 1 mBar we have gained ~9 meters in height.
+			rate = -9.0 * (MOVING_AVG_GET(&press_delta) / STATUS_CHECK_INTERVAL);
 
 		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
 
