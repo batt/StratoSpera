@@ -9,8 +9,8 @@ typedef struct StatusCfg
 	int32_t ground_alt;     // meters
 	int32_t tropopause_alt; // meters
 	int32_t landing_alt;    // meters
-	int32_t rate_up;  // m/s
-	int32_t rate_down; // m/s (should be negative!)
+	float rate_up;  // m/s
+	float rate_down; // m/s (should be negative!)
 } StatusCfg;
 
 
