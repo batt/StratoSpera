@@ -99,7 +99,7 @@
 #define AFSK_DAC_IRQ_START(ch) \
 	do { \
 		(void)ch; \
-		extern bool hw_afsk_dac_isr; \
+		extern volatile bool hw_afsk_dac_isr; \
 		PIOA_SODR = PTT_PIN; \
 		hw_afsk_dac_isr = true; \
 	} while (0)
@@ -111,7 +111,7 @@
 #define AFSK_DAC_IRQ_STOP(ch) \
 	do { \
 	(void)ch; \
-	extern bool hw_afsk_dac_isr; \
+	extern volatile bool hw_afsk_dac_isr; \
 	PIOA_CODR = PTT_PIN; \
 	hw_afsk_dac_isr = false; \
 	} while (0)

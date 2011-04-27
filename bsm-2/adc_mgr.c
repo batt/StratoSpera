@@ -81,7 +81,7 @@
 
 
 static Afsk *afsk_ctx;
-bool hw_afsk_dac_isr;
+volatile bool hw_afsk_dac_isr;
 
 #define ADC_CHANNELS  8
 
@@ -183,6 +183,10 @@ static DECLARE_ISR(adc_mgr_isr)
 	afsk_handler((adc_res[afsk_ch] >> 2) - 128);
 
 	uint16_t adc_val = adc_res[ADC_MUX_CH];
+
+	// In order to avoid EMI, we ignore data sampled when the radio is transmitting.
+	if (!hw_afsk_dac_isr)
+	{
 	#if FILTER_ENABLE
 		/*
 		 * This filter is designed to work at 1200Hz,
@@ -205,6 +209,7 @@ static DECLARE_ISR(adc_mgr_isr)
 	#else
 		filters[old_ch].y[1] = adc_val;
 	#endif
+	}
 
 	AIC_EOICR = 0;
 	ADC_MGR_STROBE_HIGH();
