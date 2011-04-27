@@ -180,6 +180,7 @@
     <File Name="bsm-2/radio.h"/>
     <File Name="bsm-2/testmode.c"/>
     <File Name="bsm-2/testmode.h"/>
+    <File Name="bsm-2/status_test.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
