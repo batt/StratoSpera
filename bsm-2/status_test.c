@@ -59,8 +59,9 @@ int status_testRun(void)
 		float lat = atof(strtok(NULL, ";"));
 		float lon = atof(strtok(NULL, ";"));
 		int alt = atoi(strtok(NULL, ";"));
+		int press = atoi(strtok(NULL, ";"));
 
-		kprintf("%d %d %f %f %d\n", t, fix, lat, lon, alt);
+		kprintf("%d %d %f %f %d %d\n", t, fix, lat, lon, alt, press);
 		if (status_start == 0)
 		{
 			status_start = t;
@@ -74,8 +75,7 @@ int status_testRun(void)
 
 		if (t - status_start > DELAY)
 		{
-			#warning "fixme: use real pressure here"
-			status_check(fix, alt, 1013.25 * pow(1 - 2.25577e-5 * alt, 5.25588));
+			status_check(fix, alt, press); //1013.25 * pow(1 - 2.25577e-5 * alt, 5.25588));
 			status_start += DELAY;
 		}
 	}
