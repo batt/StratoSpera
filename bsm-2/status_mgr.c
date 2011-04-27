@@ -176,6 +176,49 @@ static void status_reset(void)
 	MOVING_AVG_RESET(&press_delta);
 }
 
+static int32_t rate_up(void)
+{
+	if (curr_status == BSM2_TAKEOFF
+	 || curr_status == BSM2_STRATOPHERE_UP)
+		return 0;
+	else
+		return cfg.rate_up;
+}
+
+static int32_t rate_down(void)
+{
+	if (curr_status == BSM2_STRATOPHERE_FALL
+	 || curr_status == BSM2_FALLING
+	 || curr_status == BSM2_LANDING)
+		return 0;
+	else
+		return cfg.rate_down;
+}
+
+static int32_t ground_alt(void)
+{
+	return cfg.ground_alt;
+}
+
+#define ALT_HIST  750
+
+static int32_t tropopause_alt(void)
+{
+	if (curr_status == BSM2_STRATOPHERE_UP)
+		return cfg.tropopause_alt - ALT_HIST;
+	if (curr_status == BSM2_FALLING)
+		return cfg.tropopause_alt + ALT_HIST;
+	else
+		return cfg.tropopause_alt;
+}
+
+static int32_t landing_alt(void)
+{
+	if (curr_status == BSM2_LANDING)
+		return cfg.landing_alt + ALT_HIST;
+	else
+		return cfg.landing_alt;
+}
 
 void status_check(bool fix, int32_t curr_alt, float curr_press)
 {
@@ -206,7 +249,7 @@ void status_check(bool fix, int32_t curr_alt, float curr_press)
 		// In order to compute ascent rate, at low altitudes we use the
 		// pressure sensor which is more accurate than the GPS.
 		float rate;
-		if (curr_alt >= cfg.ground_alt)
+		if (curr_alt >= ground_alt())
 			rate = MOVING_AVG_GET(&alt_delta, float) / STATUS_CHECK_INTERVAL;
 		else
 			// If pressure decreases of 1 mBar we have gained ~9 meters in height.
@@ -214,40 +257,40 @@ void status_check(bool fix, int32_t curr_alt, float curr_press)
 
 		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
 
-		if (rate < cfg.rate_up
-			&& rate >= cfg.rate_down
-			&& curr_alt < cfg.ground_alt)
+		if (rate < rate_up()
+			&& rate >= rate_down()
+			&& curr_alt < ground_alt())
 		{
 			status_set(BSM2_GROUND_WAIT);
 		}
-		else if (rate < cfg.rate_up
-			&& rate >= cfg.rate_down
-			&& curr_alt >= cfg.ground_alt)
+		else if (rate < rate_up()
+			&& rate >= rate_down()
+			&& curr_alt >= ground_alt())
 		{
 			status_set(BSM2_HOVERING);
 		}
-		else if (rate >= cfg.rate_up
-			&& curr_alt < cfg.tropopause_alt)
+		else if (rate >= rate_up()
+			&& curr_alt < tropopause_alt())
 		{
 			status_set(BSM2_TAKEOFF);
 		}
-		else if (rate >= cfg.rate_up
-			&& curr_alt >= cfg.tropopause_alt)
+		else if (rate >= rate_up()
+			&& curr_alt >= tropopause_alt())
 		{
 			status_set(BSM2_STRATOPHERE_UP);
 		}
-		else if (rate < cfg.rate_down
-			&& curr_alt >= cfg.tropopause_alt)
+		else if (rate < rate_down()
+			&& curr_alt >= tropopause_alt())
 		{
 			status_set(BSM2_STRATOPHERE_FALL);
 		}
-		else if (rate < cfg.rate_down
-			&& curr_alt < cfg.landing_alt)
+		else if (rate < rate_down()
+			&& curr_alt < landing_alt())
 		{
 			status_set(BSM2_LANDING);
 		}
-		else if (rate < cfg.rate_down
-			&& curr_alt < cfg.tropopause_alt)
+		else if (rate < rate_down()
+			&& curr_alt < tropopause_alt())
 		{
 			status_set(BSM2_FALLING);
 		}
