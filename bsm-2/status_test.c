@@ -29,8 +29,8 @@ int status_testSetup(void)
 	StatusCfg status_cfg;
 	status_cfg.ground_alt = 1500;
 	status_cfg.landing_alt = 3600;
-	status_cfg.rate_down = -2;
-	status_cfg.rate_up = 2;
+	status_cfg.rate_down = -3;
+	status_cfg.rate_up = 3;
 	status_cfg.tropopause_alt = 12500;
 
 	status_setCfg(&status_cfg);
