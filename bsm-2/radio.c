@@ -37,7 +37,7 @@ static AX25Call ax25_path[2]=
 {
 	AX25_CALL("APZBRT", 0),
 };
-static mtime_t aprs_interval;
+static ticks_t aprs_interval;
 
 static Semaphore radio_sem;
 static char radio_msg[100];
@@ -124,10 +124,10 @@ static void NORETURN radio_process(void)
 		{
 			/* When we are at ground or with no fix, relax timings in order to
 			 * save radio battery */
-			delay = ms_to_ticks(aprs_interval * 4);
+			delay = aprs_interval * 4;
 		}
 		else
-			delay = ms_to_ticks(aprs_interval);
+			delay = aprs_interval;
 
 		if (timer_clock() - start > delay)
 		{
@@ -143,7 +143,7 @@ void radio_init(RadioCfg *cfg)
 	LOG_INFO(" APRS messages interval %ld seconds\n", cfg->aprs_interval);
 	LOG_INFO(" Send CALL [%.6s]\n", cfg->send_call);
 
-	aprs_interval = cfg->aprs_interval;
+	aprs_interval = ms_to_ticks(cfg->aprs_interval * 1000);
 	memcpy(ax25_path[1].call, cfg->send_call, sizeof(ax25_path[1].call));
 	ax25_path[1].ssid = 0;
 

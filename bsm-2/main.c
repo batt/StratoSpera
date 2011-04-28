@@ -155,7 +155,7 @@ static void init(void)
 
 	RadioCfg radio_cfg;
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
-	radio_cfg.aprs_interval = atoi(inibuf) * 1000;
+	radio_cfg.aprs_interval = atoi(inibuf);
 	ini_getString(&conf.fd, "logging", "send_call", "STSP2", inibuf, sizeof(inibuf));
 	strncpy(radio_cfg.send_call, inibuf, sizeof(radio_cfg.send_call));
 	radio_cfg.send_call[sizeof(radio_cfg.send_call) - 1] = '\0';
