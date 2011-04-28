@@ -203,8 +203,8 @@ int main(void)
 		{
 			ledg(true);
 			ledr(true);
-			status_missionStart();
 			logging_rotate();
+			status_missionStart();
 		}
 
 		if (timer_clock() - log_start > log_interval)
