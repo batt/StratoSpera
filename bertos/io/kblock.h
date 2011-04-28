@@ -227,6 +227,10 @@ INLINE int kblock_error(struct KBlock *b)
 	return b->priv.vt->error(b);
 }
 
+#ifdef clearerr
+#undef clearerr
+#endif
+
 /**
  * Clear the errors of the device.
  *
