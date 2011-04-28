@@ -99,7 +99,7 @@ void radio_sendTelemetry(void)
 }
 
 #define STARTUP_SETUP_TIME  (3 * 60 * 1000) // 3 minutes
-#define STARTUP_SETUP_DELAY ms_to_ticks(15 * 1000) // 15 seconds
+#define STARTUP_SETUP_DELAY ms_to_ticks(10 * 1000) // 10 seconds
 
 static void NORETURN radio_process(void)
 {
@@ -131,7 +131,7 @@ static void NORETURN radio_process(void)
 
 		if (timer_clock() - start > delay)
 		{
-			start = timer_clock();
+			start += delay;
 			radio_sendTelemetry();
 		}
 	}
