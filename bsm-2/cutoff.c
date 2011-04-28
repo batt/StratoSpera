@@ -305,7 +305,7 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 	LOG_INFO("Setting cutoff configuration\n");
 	LOG_INFO(" mission timeout: %ld seconds\n", (long)cfg.mission_timeout);
 	LOG_INFO(" max delta altitude: %ld m\n", (long)cfg.delta_altitude);
-	LOG_INFO(" delta pressure timeout: %ld seconds\n", (long)cfg.altitude_timeout);
+	LOG_INFO(" delta altitude timeout: %ld seconds\n", (long)cfg.altitude_timeout);
 	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
 		(long)cfg.start_latitude/1000000, (long)ABS(cfg.start_latitude)%1000000,
 		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
