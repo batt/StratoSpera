@@ -69,6 +69,10 @@
 			PIOA_PER = CAMPULSE_PIN; \
 			PIOA_OER = CAMPULSE_PIN; \
 		} while (0)
+
+	#include "logging.h"
+	#undef LOG_INFO
+	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
 	#define CAMPULSE_OFF()  do {  } while (0)
 	#define CAMPULSE_ON()   do {  } while (0)
@@ -359,7 +363,7 @@ void status_init(StatusCfg *cfg)
 	CAMPULSE_INIT();
 	status_missionStart();
 	LOG_INFO("Starting status check process\n");
-	proc_new(status_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	proc_new(status_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
 	LOG_INFO("Starting camera communication process\n");
 	proc_new(camera_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
 }

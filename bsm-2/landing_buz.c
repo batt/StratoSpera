@@ -57,6 +57,10 @@
 #if !(ARCH & ARCH_UNITTEST)
 	#define BUZ_START() buz_repeat_start(1000, 3000)
 	#define BUZ_STOP() 	buz_repeat_stop();
+
+	#include "logging.h"
+	#undef LOG_INFO
+	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
 	#define BUZ_START() /**/
 	#define BUZ_STOP()  /**/
@@ -127,5 +131,5 @@ void landing_buz_init(uint32_t buz_timeout_seconds)
 	landing_buz_setCfg(buz_timeout_seconds);
 	landing_buz_reset();
 	LOG_INFO("Starting landing buzzer control process:\n");
-	proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 }

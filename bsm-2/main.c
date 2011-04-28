@@ -82,6 +82,7 @@ static void init(void)
 	ASSERT(f_mount(0, &fs) == FR_OK);
 	FatFile conf;
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
+	logging_init();
 
 	char inibuf[64];
 
@@ -170,7 +171,6 @@ static void init(void)
 	if (atoi(inibuf) != 0)
 			testmode_run();
 
-	logging_init();
 	ledr(false);
 }
 

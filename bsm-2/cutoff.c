@@ -76,6 +76,9 @@
 			pwm_setDuty(&cutoff_pwm, cfg->pwm_duty); \
 		} while (0)
 	#endif
+	#include "logging.h"
+	#undef LOG_INFO
+	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
 	#define CUTOFF_OFF()  do {  } while (0)
 	#define CUTOFF_ON()   do {  } while (0)
@@ -322,5 +325,5 @@ void cutoff_init(CutoffCfg *cfg)
 	cutoff_reset();
 	//start process
 	LOG_INFO("Starting cutoff process\n");
-	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
 }
