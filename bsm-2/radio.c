@@ -47,6 +47,23 @@ static void radio_send(char *buf, size_t len)
 	ax25_sendVia(&ax25, ax25_path, countof(ax25_path), buf, len);
 }
 
+void radio_time(char *time_str, size_t size)
+{
+	static time_t prev_t;
+
+	time_t tim = gps_time();
+	/* Avoid sending two messages with the same timestamp */
+	if (tim == prev_t)
+		tim++;
+
+	struct tm t;
+	gmtime_r(&tim, &t);
+	prev_t = tim;
+
+	snprintf(time_str, size, "%02d%02d%02d", t.tm_hour, t.tm_min, t.tm_sec);
+	time_str[size - 1] = '\0';
+}
+
 int radio_printf(const char * fmt, ...)
 {
 	if (!radio_initialized)
@@ -58,14 +75,11 @@ int radio_printf(const char * fmt, ...)
 	int result;
 	va_list ap;
 
-	struct tm t;
-	time_t tim;
-
-	tim = gps_time();
-	gmtime_r(&tim, &t);
+	char time[7];
+	radio_time(time, sizeof(time));
 
 	sem_obtain(&radio_sem);
-	sprintf(radio_msg, ">%02d%02d%02dh", t.tm_hour, t.tm_min, t.tm_sec);
+	sprintf(radio_msg, ">%sh", time);
 
 	va_start(ap, fmt);
 	result = vsnprintf(&radio_msg[8], sizeof(radio_msg), fmt, ap);

@@ -9,6 +9,7 @@ typedef struct RadioCfg
 	char send_call[7];
 } RadioCfg;
 
+void radio_time(char *time_str, size_t size);
 int radio_printf(const char * fmt, ...);
 void radio_sendTelemetry(void);
 void radio_init(RadioCfg *_cfg);

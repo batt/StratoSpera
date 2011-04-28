@@ -2,6 +2,7 @@
 #include "gps.h"
 #include "sensors.h"
 #include "hadarp.h"
+#include "radio.h"
 
 #include <kern/sem.h>
 
@@ -39,9 +40,6 @@ float measures_acceleration(AccAxis axis)
 
 void measures_aprsFormat(char *buf, size_t len)
 {
-	struct tm t;
-	time_t tim;
-
 	const char *lat, *lon;
 	if (gps_fixed())
 	{
@@ -54,17 +52,17 @@ void measures_aprsFormat(char *buf, size_t len)
 		lon = "00000.00W";
 	}
 
-	tim = gps_time();
-	gmtime_r(&tim, &t);
-
 	float x = measures_acceleration(ACC_X);
 	float y = measures_acceleration(ACC_Y);
 	float z = measures_acceleration(ACC_Z);
 
 	float acc = sqrt(x * x + y * y + z * z);
 
-	snprintf(buf, len, "/%02d%02d%02dh%s/%s>%ld;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%d",
-		t.tm_hour, t.tm_min, t.tm_sec,
+	char time[7];
+	radio_time(time, sizeof(time));
+
+	snprintf(buf, len, "/%.6sh%s/%s>%ld;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%d",
+		time,
 		lat, lon,
 		gps_info()->altitude,
 		sensor_read(ADC_T1),
