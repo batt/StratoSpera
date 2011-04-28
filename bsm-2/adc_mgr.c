@@ -40,6 +40,7 @@
 #include "hw/hw_pin.h"
 
 #include <cpu/irq.h>
+#include <drv/timer.h>
 
 #include <net/afsk.h>
 
@@ -169,6 +170,10 @@ INLINE void afsk_handler(int8_t val)
 		PIOA_ODSR = tmp | BV(DAC_PIN_START + 3);
 }
 
+#define TX_GUARD_TIME ms_to_ticks(250)
+
+static ticks_t tx_end;
+
 static DECLARE_ISR(adc_mgr_isr)
 {
 	ADC_MGR_STROBE_LOW();
@@ -185,7 +190,7 @@ static DECLARE_ISR(adc_mgr_isr)
 	uint16_t adc_val = adc_res[ADC_MUX_CH];
 
 	// In order to avoid EMI, we ignore data sampled when the radio is transmitting.
-	if (!hw_afsk_dac_isr)
+	if (!hw_afsk_dac_isr && (timer_clock() - tx_end > TX_GUARD_TIME))
 	{
 	#if FILTER_ENABLE
 		/*
@@ -210,6 +215,9 @@ static DECLARE_ISR(adc_mgr_isr)
 		filters[old_ch].y[1] = adc_val;
 	#endif
 	}
+
+	if (hw_afsk_dac_isr)
+		tx_end = timer_clock();
 
 	AIC_EOICR = 0;
 	ADC_MGR_STROBE_HIGH();
