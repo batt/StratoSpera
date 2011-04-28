@@ -180,7 +180,6 @@ int main(void)
 	bool led_on = true;
 
 	ticks_t log_start = timer_clock();
-	status_missionStart();
 
 	while (1)
 	{
