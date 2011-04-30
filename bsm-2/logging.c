@@ -85,7 +85,7 @@ void logging_rotate(void)
 	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt (m);"
 		"Ext T1 (°C); Ext T2 (°C);Pressure (mBar);Humidity (%%);Internal Temp (°C);"
 		"Vsupply (V);+5V;+3.3V;Current (mA);"
-		"Acc X (m/s^2);Acc Y (m/s^2);Acc Z (m/s^2);Geiger counter (cpm)\n");
+		"Acc X (m/s^2);Acc Y (m/s^2);Acc Z (m/s^2);HADARP counter (cpm)\n");
 
 	if (msgopen)
 	{
