@@ -69,7 +69,7 @@ do \
 	tim = gps_time(); \
 	t = gmtime(&tim); \
 	char buf[16]; \
-	snprintf(buf, sizeof(buf), "%02d:%02d:%02d:",t->tm_hour, t->tm_min, t->tm_sec); \
+	snprintf(buf, sizeof(buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec); \
 	kprintf("%s", buf); \
 	kprintf(fmt, ##__VA_ARGS__); \
 	sem_obtain(&log_sem); \
