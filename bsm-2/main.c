@@ -123,9 +123,9 @@ static void init(void)
 	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
 	status_cfg.tropopause_alt = atoi(inibuf);
 	ini_getString(&conf.fd, "status", "rate_up", "2", inibuf, sizeof(inibuf));
-	status_cfg.rate_up = atoi(inibuf);
+	status_cfg.rate_up = atoi(inibuf) / 100.0;
 	ini_getString(&conf.fd, "status", "rate_down", "-2", inibuf, sizeof(inibuf));
-	status_cfg.rate_down = atoi(inibuf);
+	status_cfg.rate_down = atoi(inibuf) / 100.0;
 
 	status_init(&status_cfg);
 
