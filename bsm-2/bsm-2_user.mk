@@ -33,6 +33,7 @@ bsm-2_USER_CSRC = \
 	bertos/drv/i2c_bitbang.c \
 	bertos/drv/lm75.c \
 	bertos/drv/pwm.c \
+	bertos/drv/mma845x.c \
 	bertos/cpu/arm/drv/pwm_at91.c \
 	#
 

@@ -5,9 +5,10 @@
 
 typedef enum AccAxis
 {
-	ACC_X,
+	ACC_X = 0,
 	ACC_Y,
 	ACC_Z,
+	ACC_CNT,
 } AccAxis;
 
 float measures_intTemp(void);

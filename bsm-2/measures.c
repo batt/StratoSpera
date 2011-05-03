@@ -8,6 +8,7 @@
 
 #include <drv/i2c.h>
 #include <drv/lm75.h>
+#include <drv/mma845x.h>
 
 #include <time.h>
 #include <stdlib.h>
@@ -30,12 +31,13 @@ float measures_intTemp(void)
 
 float measures_acceleration(AccAxis axis)
 {
+	ASSERT(axis < ACC_CNT);
+	float acc[3];
 	sem_obtain(&i2c_sem);
-	#warning "fixme: read acceleration value from sensor."
-	float acc = (axis != ACC_Z) ? 0 : 9.81;
+	mma845x_read(&i2c_bus, 1, acc);
 	sem_release(&i2c_sem);
 
-	return acc;
+	return acc[axis];
 }
 
 void measures_aprsFormat(char *buf, size_t len)
