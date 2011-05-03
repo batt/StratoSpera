@@ -64,7 +64,7 @@ bool mma845x_read(I2c *i2c, uint8_t addr, float *acc)
 
 	for (int i = 0; i < 3; i++)
 	{
-		int val = (data[i * 2] << 2 | data[i * 2 + 1] >> 6);
+		int val = (((int8_t)data[i * 2]) << 2 | data[i * 2 + 1] >> 6);
 		acc[i] = val * 2 * 9.81 / 512;
 	}
 
