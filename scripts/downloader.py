@@ -27,6 +27,4 @@ if __name__ == "__main__":
 		print "Getting", d
 		msg = utils.http_get(config.base_url + d)
 		utils.write_file(config.logdir + "/" + d, msg)
-
-	if diff_web:
 		utils.update_index(config.logdir)
