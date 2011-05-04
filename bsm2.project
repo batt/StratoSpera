@@ -918,6 +918,8 @@
       <File Name="bertos/drv/adc.c"/>
       <File Name="bertos/drv/kbd.c"/>
       <File Name="bertos/drv/lcd_ili9225.h"/>
+      <File Name="bertos/drv/mma845x.c"/>
+      <File Name="bertos/drv/mma845x.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="io">
       <File Name="bertos/io/kblock.h"/>
