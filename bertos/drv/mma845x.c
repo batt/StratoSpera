@@ -44,11 +44,21 @@
 
 #define MMA845x_DEV_ADDR 0x1C
 
+#define OUT_X_MSB 0x01
+
 #define CTRL_REG1 0x2A
+
+#define DATARATE_SHIFT 3
+#define ACTIVE_BIT BV(0)
+
 #define CTRL_REG2 0x2B
+#define HIGH_RES_MODE 0x02
+
 #define CTRL_REG3 0x2C
 #define CTRL_REG4 0x2D
 #define CTRL_REG5 0x2E
+
+#define XYZ_DATA_CFG 0x0E
 
 
 static bool mma845x_writeReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr, uint8_t data)
@@ -59,7 +69,7 @@ static bool mma845x_writeReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr, uint8
 	i2c_start_w(i2c, dev_addr, 2, I2C_STOP);
 	i2c_putc(i2c, reg_addr);
 	i2c_putc(i2c, data);
-	return !i2c_error(i2c);
+	return (i2c_error(i2c) == 0);
 }
 
 static int mma845x_readReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr)
@@ -68,7 +78,7 @@ static int mma845x_readReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr)
 	dev_addr &= 1;
 	dev_addr = (dev_addr | MMA845x_DEV_ADDR) << 1;
 
-	i2c_start_w(i2c, dev_addr, 1, I2C_STOP);
+	i2c_start_w(i2c, dev_addr, 1, I2C_NOSTOP);
 	i2c_putc(i2c, reg_addr);
 	i2c_start_r(i2c, dev_addr, 1, I2C_STOP);
 	i2c_read(i2c, &data, sizeof(data));
@@ -78,8 +88,6 @@ static int mma845x_readReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr)
 	else
 		return (int)(uint8_t)data;
 }
-
-#define ACTIVE_BIT BV(0)
 
 bool mma845x_enable(I2c *i2c, uint8_t addr, bool state)
 {
@@ -92,50 +100,37 @@ bool mma845x_enable(I2c *i2c, uint8_t addr, bool state)
 	return mma845x_writeReg(i2c, addr, CTRL_REG1, ctrl_reg1);
 }
 
-#define DATARATE_SHIFT 3
-#define DATARATE_MASK (BV(DATARATE_SHIFT) | BV(DATARATE_SHIFT+1) | BV(DATARATE_SHIFT+2))
-
-bool mma845x_datarate(I2c *i2c, uint8_t addr, Mma845xDataRate rate)
+int mma845x_read(I2c *i2c, uint8_t addr, Mma845xAxis axis)
 {
-	ASSERT(rate < MMADR_CNT);
+	ASSERT(axis < MMA_AXIZ_CNT);
 
-	int ctrl_reg1 = mma845x_readReg(i2c, addr, CTRL_REG1);
-	if (ctrl_reg1 == EOF)
-		return false;
+	int msb = mma845x_readReg(i2c, addr, OUT_X_MSB + axis * 2);
+	if (msb == EOF)
+		goto error;
 
-	ctrl_reg1 &= ~DATARATE_MASK;
-	ctrl_reg1 |= rate << DATARATE_SHIFT;
-	return mma845x_writeReg(i2c, addr, CTRL_REG1, ctrl_reg1);
+	int lsb = mma845x_readReg(i2c, addr, OUT_X_MSB + axis * 2 + 1);
+	if (lsb == EOF)
+		goto error;
+
+	return (((int8_t)msb) << 2 | lsb >> 6);
+
+error:
+	return MMA_ERROR;
 }
 
-bool mma845x_read(I2c *i2c, uint8_t addr, float *acc)
+
+bool mma845x_init(I2c *i2c, uint8_t addr, Mma845xDynamicRange dyn_range)
 {
-	uint8_t data[6];
-	addr &= 1;
-	addr = (addr | MMA845x_DEV_ADDR) << 1;
+	ASSERT(dyn_range < MMADYN_CNT);
 
-	i2c_start_w(i2c, addr, 1, I2C_NOSTOP);
-	i2c_putc(i2c, 0x01);
-	i2c_start_r(i2c, addr, sizeof(data), I2C_STOP);
-	i2c_read(i2c, data, sizeof(data));
-
-	if (i2c_error(i2c))
+	if (!mma845x_writeReg(i2c, addr, XYZ_DATA_CFG, dyn_range))
 		return false;
 
-	for (int i = 0; i < 6; i++)
-		kprintf("%02X ", data[i]);
-	kprintf("\n");
+	if (!mma845x_writeReg(i2c, addr, CTRL_REG1, MMADR_1_56HZ << DATARATE_SHIFT))
+		return false;
 
-	for (int i = 0; i < 3; i++)
-	{
-		int val = (((int8_t)data[i * 2]) << 2 | data[i * 2 + 1] >> 6);
-		acc[i] = val * 2 * 9.81 / 512;
-	}
+	if (!mma845x_writeReg(i2c, addr, CTRL_REG2, HIGH_RES_MODE))
+		return false;
 
-	return true;
-}
-
-bool mma845x_init(I2c *i2c, uint8_t addr)
-{
-
+	return mma845x_enable(i2c, addr, true);
 }
