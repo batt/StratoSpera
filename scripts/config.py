@@ -5,13 +5,14 @@ sender = ""
 #Directory where messages will be logged, do not add / at the end!
 logdir = "msg"
 #Base url for remote logging
-base_url = "http://www.develer.com/~batt/stratospera/bsm-2/"
+#base_url = "http://www.develer.com/~batt/stratospera/bsm-2/"
+base_url = "http://83.149.158.210/~batt/stratospera/bsm-2/"
 add_cgi = "add.cgi"
 msg_index = "msg_index"
 #password used to sign messages sent to server
 password = "stsp2"
 #Timeout while sending message to server, if set to 0 will use system timeouts (looongs!)
-net_timeout = 10
+net_timeout = 20
 #Set to true in order to log even messages without timestamp; dangerous!
 log_all_messages = True
 
