@@ -78,7 +78,7 @@ void testmode_run(void)
 			radio_printf("TEST MODE");
 			radio_sendTelemetry();
 
-			timer_delay(2500);
+			timer_delay(5000);
 
 			aux_out(false);
 			cutoff_test_cut(false);
