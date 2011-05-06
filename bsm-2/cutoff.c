@@ -265,7 +265,7 @@ static void cutoff_cut(void)
 			{
 				LOG_INFO("Cutoff pulse %d\n", i+1);
 				CUTOFF_ON();
-				timer_delay(5000);
+				timer_delay(10000);
 				CUTOFF_OFF();
 				LOG_INFO("Cutoff pulse %d done\n", i+1);
 				timer_delay(5000);

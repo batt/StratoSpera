@@ -29,15 +29,16 @@ float measures_intTemp(void)
 	return res;
 }
 
-float measures_acceleration(AccAxis axis)
+float measures_acceleration(Mma845xAxis axis)
 {
-	ASSERT(axis < ACC_CNT);
-	float acc[3];
 	sem_obtain(&i2c_sem);
-	mma845x_read(&i2c_bus, 1, acc);
+	int acc = mma845x_read(&i2c_bus, 0, axis);
 	sem_release(&i2c_sem);
 
-	return acc[axis];
+	if (acc == MMA_ERROR)
+		return -6.66;
+	else
+		return (acc * 9.81 * 8.0) / 512;
 }
 
 void measures_aprsFormat(char *buf, size_t len)
@@ -54,9 +55,9 @@ void measures_aprsFormat(char *buf, size_t len)
 		lon = "00000.00W";
 	}
 
-	float x = measures_acceleration(ACC_X);
-	float y = measures_acceleration(ACC_Y);
-	float z = measures_acceleration(ACC_Z);
+	float x = measures_acceleration(MMA_X);
+	float y = measures_acceleration(MMA_Y);
+	float z = measures_acceleration(MMA_Z);
 
 	float acc = sqrt(x * x + y * y + z * z);
 
@@ -119,9 +120,9 @@ void measures_logFormat(char *buf, size_t len)
 		sensor_read(ADC_5V),
 		sensor_read(ADC_3V3),
 		sensor_read(ADC_CURR),
-		measures_acceleration(ACC_X),
-		measures_acceleration(ACC_Y),
-		measures_acceleration(ACC_Z),
+		measures_acceleration(MMA_X),
+		measures_acceleration(MMA_Y),
+		measures_acceleration(MMA_Z),
 		hadarp_read()
 	);
 
@@ -132,4 +133,5 @@ void measures_init(void)
 {
 	sem_init(&i2c_sem);
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
+	ASSERT(mma845x_init(&i2c_bus, 0, MMADYN_8G));
 }

@@ -57,9 +57,9 @@ void testmode_run(void)
 			}
 			kprintf("LM75 temp %.1fC, acceleration X %.2f Y %.2f Z %.2f m/s^2\n",
 				measures_intTemp(),
-				measures_acceleration(ACC_X),
-				measures_acceleration(ACC_Y),
-				measures_acceleration(ACC_Z));
+				measures_acceleration(MMA_X),
+				measures_acceleration(MMA_Y),
+				measures_acceleration(MMA_Z));
 			kprintf("HADARP count:%d\n", hadarp_read());
 			kputchar('\n');
 		}
@@ -78,7 +78,7 @@ void testmode_run(void)
 			radio_printf("TEST MODE");
 			radio_sendTelemetry();
 
-			timer_delay(2500);
+			timer_delay(5000);
 
 			aux_out(false);
 			cutoff_test_cut(false);

@@ -325,6 +325,11 @@ INLINE void i2c_start_w_4(I2c *i2c, uint16_t slave_addr, size_t size, int flags)
 	i2c_start(i2c, slave_addr, size);
 }
 
+
+#ifdef getc
+#undef getc
+#endif
+
 /**
  * Read a byte from I2C bus.
  * \param i2c I2C context
@@ -349,6 +354,10 @@ INLINE uint8_t i2c_getc(I2c *i2c)
 	else
 		return 0xFF;
 }
+
+#ifdef putc
+#undef putc
+#endif
 
 /**
  * Write the byte \a data into I2C port \a i2c.
