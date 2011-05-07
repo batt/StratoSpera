@@ -55,6 +55,7 @@ void radio_time(char *time_str, size_t size)
 {
 	static time_t prev_t;
 
+	sem_obtain(&radio_sem);
 	time_t tim = gps_time();
 	/* Avoid sending two messages with the same timestamp */
 	if (tim == prev_t)
@@ -66,6 +67,7 @@ void radio_time(char *time_str, size_t size)
 
 	snprintf(time_str, size, "%02d%02d%02d", t.tm_hour, t.tm_min, t.tm_sec);
 	time_str[size - 1] = '\0';
+	sem_release(&radio_sem);
 }
 
 int radio_printf(const char * fmt, ...)
