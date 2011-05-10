@@ -1,0 +1,3 @@
+#!/bin/bash
+
+watch -n1 -d python viewer.py 20
