@@ -3,17 +3,17 @@ import random
 
 start_lat = 43.606463
 start_lon = 11.311823
-end_lat = 43.253265
-end_lon = 11.857652
+end_lat = 43.5385
+end_lon = 11.7815
 alt = [[0, 260],
 	   [3600, 260],
-	   [7200+3600, 27500],
-	   [5400+3600+3600, 200],
-	   [9000+3600+3600, 260],
+	   [3600+6000, 30000],
+	   [3600+6000+2700, 400],
+	   [3600+6000+2700+3600, 500],
 	   ]
 delay = 3
 alt_err = 100
-press_err = 10
+press_err = 5
 
 delta_lat = end_lat - start_lat
 delta_lon = end_lon - start_lon
