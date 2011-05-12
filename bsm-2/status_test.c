@@ -15,7 +15,7 @@ int status_testSetup(void)
 	kdbg_init();
 
 	CutoffCfg cutoff_cfg;
-	cutoff_cfg.altitude_timeout = 60;
+	cutoff_cfg.altitude_timeout = 30;
 	cutoff_cfg.delta_altitude = 500;
 	cutoff_cfg.dist_max_meters = 80000;
 	cutoff_cfg.dist_timeout = 300;
