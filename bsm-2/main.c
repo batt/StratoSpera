@@ -144,10 +144,10 @@ static void init(void)
 	cutoff_cfg.dist_max_meters = atoi(inibuf);
 	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
 	cutoff_cfg.dist_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "alt_max_meters", "50000", inibuf, sizeof(inibuf));
-	cutoff_cfg.alt_max_meters = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "maxalt_timeout", "300", inibuf, sizeof(inibuf));
-	cutoff_cfg.maxalt_timeout = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "altmax_meters", "50000", inibuf, sizeof(inibuf));
+	cutoff_cfg.altmax_meters = atoi(inibuf);
+	ini_getString(&conf.fd, "cutoff", "altmax_timeout", "300", inibuf, sizeof(inibuf));
+	cutoff_cfg.altmax_timeout = atoi(inibuf);
 
 	ini_getString(&conf.fd, "cutoff", "pwm_duty", "32768", inibuf, sizeof(inibuf));
 	cutoff_cfg.pwm_duty = atoi(inibuf);

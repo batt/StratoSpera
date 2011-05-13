@@ -135,19 +135,19 @@ bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 	if (status_currStatus() != BSM2_GROUND_WAIT
 		&& status_currStatus() != BSM2_NOFIX)
 	{
-		if (curr_alt > cfg.alt_max_meters)
+		if (curr_alt > cfg.altmax_meters)
 		{
 			static bool logged = false;
 
 			if (maxalt_ok)
 			{
 				LOG_INFO("Altitude: %ldm; limit %ldm, starting %lds timeout\n",
-					curr_alt, (long)cfg.alt_max_meters, (long)cfg.maxalt_timeout);
+					(long)curr_alt, (long)cfg.altmax_meters, (long)cfg.altmax_timeout);
 				maxalt_ok = false;
 				maxalt_ko_time = now;
 				logged = false;
 			}
-			else if (now - maxalt_ko_time > ms_to_ticks(cfg.maxalt_timeout * 1000))
+			else if (now - maxalt_ko_time > ms_to_ticks(cfg.altmax_timeout * 1000))
 			{
 				if (!logged)
 				{
@@ -358,8 +358,8 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
 	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
-	LOG_INFO(" max altitude %ld meters\n", (long)cfg.alt_max_meters);
-	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)cfg.maxalt_timeout);
+	LOG_INFO(" max altitude: %ld meters\n", (long)cfg.altmax_meters);
+	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)cfg.altmax_timeout);
 
 	LOG_INFO(" pwm duty 0x%04X\n", cfg.pwm_duty);
 }

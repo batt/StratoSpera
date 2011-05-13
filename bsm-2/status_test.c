@@ -19,8 +19,8 @@ int status_testSetup(void)
 	cutoff_cfg.delta_altitude = 500;
 	cutoff_cfg.dist_max_meters = 80000;
 	cutoff_cfg.dist_timeout = 300;
-	cutoff_cfg.alt_max_meters = 15000;
-	cutoff_cfg.maxalt_timeout = 300;
+	cutoff_cfg.altmax_meters = 15000;
+	cutoff_cfg.altmax_timeout = 300;
 	cutoff_cfg.mission_timeout = 8400;
 	cutoff_cfg.start_latitude = 43606414;
 	cutoff_cfg.start_longitude = 11311832;

@@ -50,8 +50,8 @@ typedef struct CutoffCfg
 	udegree_t start_longitude; //micro degrees
 	uint32_t dist_max_meters; //meters
 	uint32_t dist_timeout; //seconds
-	int32_t alt_max_meters; //meters
-	uint32_t maxalt_timeout; //seconds
+	int32_t altmax_meters; //meters
+	uint32_t altmax_timeout; //seconds
 	uint16_t pwm_duty;
 } CutoffCfg;
 
