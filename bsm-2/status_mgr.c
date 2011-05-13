@@ -180,7 +180,7 @@ static void status_reset(void)
 	MOVING_AVG_RESET(&press_delta);
 }
 
-static int32_t rate_up(void)
+static float rate_up(void)
 {
 	if (curr_status == BSM2_TAKEOFF
 	 || curr_status == BSM2_STRATOPHERE_UP)
@@ -189,7 +189,7 @@ static int32_t rate_up(void)
 		return cfg.rate_up;
 }
 
-static int32_t rate_down(void)
+static float rate_down(void)
 {
 	if (curr_status == BSM2_STRATOPHERE_FALL
 	 || curr_status == BSM2_FALLING
@@ -353,8 +353,8 @@ void status_setCfg(StatusCfg *_cfg)
 	LOG_INFO(" max ground altitude: %ld m\n", (long)cfg.ground_alt);
 	LOG_INFO(" tropopause altitude: %ld m\n", (long)cfg.tropopause_alt);
 	LOG_INFO(" landing altitude: %ld m\n", (long)cfg.landing_alt);
-	LOG_INFO(" ascent rate (UP): %ld m/s\n", (long)cfg.rate_up);
-	LOG_INFO(" descent rate (DOWN): %ld m/s\n", (long)cfg.rate_down);
+	LOG_INFO(" ascent rate (UP): %.2f m/s\n", cfg.rate_up);
+	LOG_INFO(" descent rate (DOWN): %.2f m/s\n", cfg.rate_down);
 }
 
 void status_init(StatusCfg *cfg)
