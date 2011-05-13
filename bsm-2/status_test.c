@@ -19,6 +19,8 @@ int status_testSetup(void)
 	cutoff_cfg.delta_altitude = 500;
 	cutoff_cfg.dist_max_meters = 80000;
 	cutoff_cfg.dist_timeout = 300;
+	cutoff_cfg.alt_max_meters = 15000;
+	cutoff_cfg.maxalt_timeout = 300;
 	cutoff_cfg.mission_timeout = 8400;
 	cutoff_cfg.start_latitude = 43606414;
 	cutoff_cfg.start_longitude = 11311832;
@@ -71,6 +73,7 @@ int status_testRun(void)
 		cutoff_checkAltitude(alt, ms_to_ticks(t * 1000));
 		cutoff_checkDist(lat * 1000000, lon * 1000000, ms_to_ticks(t * 1000));
 		cutoff_checkTime(ms_to_ticks(t * 1000));
+		cutoff_checkMaxalt(alt, ms_to_ticks(t * 1000));
 		landing_buz_check(ms_to_ticks(t * 1000));
 
 		if (t - status_start > DELAY)

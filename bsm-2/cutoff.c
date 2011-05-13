@@ -126,6 +126,48 @@ static float distance(udegree_t _lat1, udegree_t _lon1, udegree_t _lat2, udegree
 	return PLANET_RADIUS * c;
 }
 
+static bool maxalt_ok = true;
+
+bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
+{
+	static ticks_t maxalt_ko_time;
+
+	if (status_currStatus() != BSM2_GROUND_WAIT
+		&& status_currStatus() != BSM2_NOFIX)
+	{
+		if (curr_alt > cfg.alt_max_meters)
+		{
+			static bool logged = false;
+
+			if (maxalt_ok)
+			{
+				LOG_INFO("Altitude: %ldm; limit %ldm, starting %lds timeout\n",
+					curr_alt, (long)cfg.alt_max_meters, (long)cfg.maxalt_timeout);
+				maxalt_ok = false;
+				maxalt_ko_time = now;
+				logged = false;
+			}
+			else if (now - maxalt_ko_time > ms_to_ticks(cfg.maxalt_timeout * 1000))
+			{
+				if (!logged)
+				{
+					LOG_INFO("Maximum altitude exceeded and timeout expired\n");
+					logged = true;
+				}
+				return false;
+			}
+
+			return true;
+		}
+	}
+
+	if (!maxalt_ok)
+		LOG_INFO("Maximum altitude ok\n");
+
+	maxalt_ok = true;
+	return true;
+}
+
 
 static bool dist_ok = true;
 
@@ -287,7 +329,8 @@ static void NORETURN cutoff_process(void)
 
 		if (!cutoff_checkTime(now)
 		 || !cutoff_checkDist(lat, lon, now)
-		 || !cutoff_checkAltitude(curr_alt, now))
+		 || !cutoff_checkAltitude(curr_alt, now)
+		 || !cutoff_checkMaxalt(curr_alt, now))
 			cutoff_cut();
 
 	}
@@ -298,6 +341,7 @@ void cutoff_reset(void)
 	LOG_INFO("Resetting cutoff procedure\n");
 	alt_reset();
 	dist_ok = true;
+	maxalt_ok = true;
 
 	cut = false;
 }
@@ -314,6 +358,9 @@ void cutoff_setCfg(CutoffCfg *_cfg)
 		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
 	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
+	LOG_INFO(" max altitude %ld meters\n", (long)cfg.alt_max_meters);
+	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)cfg.maxalt_timeout);
+
 	LOG_INFO(" pwm duty 0x%04X\n", cfg.pwm_duty);
 }
 

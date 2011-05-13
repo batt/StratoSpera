@@ -50,10 +50,13 @@ typedef struct CutoffCfg
 	udegree_t start_longitude; //micro degrees
 	uint32_t dist_max_meters; //meters
 	uint32_t dist_timeout; //seconds
+	int32_t alt_max_meters; //meters
+	uint32_t maxalt_timeout; //seconds
 	uint16_t pwm_duty;
 } CutoffCfg;
 
 void cutoff_reset(void);
+bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now);
 bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now);
 bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now);
 bool cutoff_checkTime(ticks_t now);
