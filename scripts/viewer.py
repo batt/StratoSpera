@@ -15,12 +15,22 @@ def parse_index(index):
 
 	return l
 
+def msg_telemetry(msg):
+	return msg[0] == '/' and msg[1:7].isdigit() and msg[7] == 'h'
+
 def format_time(msg):
 	return "%02d:%02d:%02d" % (int(msg[1:3]), int(msg[3:5]), int(msg[5:7]))
 
+def msg_time(msg):
+	return int(msg[1:3]) * 3600 +  int(msg[3:5]) * 60 + int(msg[5:7])
+
+def msg_alt(msg):
+	alt, _, _, _, _, _, _, _ = map(float, msg[27:].split(';'))
+	return alt
+
 def format_msg(msg):
 	out = ''
-	if msg[0] == '/' and msg[1:7].isdigit() and msg[7] == 'h':
+	if msg_telemetry(msg):
 		lat = float(msg[8:10]) + float(msg[10:15])/60
 		if msg[15] != 'N':
 			lat *= -1
@@ -59,7 +69,24 @@ if __name__ == "__main__":
 		lastmsg = 10
 
 	local.sort()
+	local = local[-lastmsg:]
+
+	start_msg = open(config.logdir + "/" + local[0]).read().strip()
+	end_msg = open(config.logdir + "/" + local[-1]).read().strip()
+	try:
+		start_alt = msg_alt(start_msg)
+		start_time = msg_time(start_msg)
+		end_alt = msg_alt(end_msg)
+		end_time = msg_time(end_msg)
+		ascent_rate = (end_alt - start_alt) / (end_time - start_time)
+		#print start_time, end_time
+		print "Ascent rate %.2f m/s" % ascent_rate
+	except:
+		pass
 	print "Time     Latitude   Longitude   Altitude T.Ext Pressure Humidity T.Int VBatt Acceler. HADARP Link"
-	for m in reversed(local[-lastmsg:]):
+	for m in reversed(local):
 		msg = open(config.logdir + "/" + m).read().strip()
 		print format_msg(msg)
+
+
+
