@@ -190,7 +190,9 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 
 			if (dist_ok)
 			{
-				LOG_INFO("Distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
+				LOG_INFO("Current position %ld.%06ld %ld.%06ld, distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
+					(long)lat / 1000000, (long)lat % 1000000,
+					(long)lon / 1000000, (long)lon % 1000000,
 					curr_dist, (long)cfg.dist_max_meters, (long)cfg.dist_timeout);
 				dist_ok = false;
 				dist_ko_time = now;
