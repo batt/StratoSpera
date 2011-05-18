@@ -215,7 +215,7 @@ int main(void)
 		if (timer_clock() - log_start > log_interval)
 		{
 			char msg[128];
-			log_start = timer_clock();
+			log_start += log_interval;
 			//monitor_report();
 
 			measures_logFormat(msg, sizeof(msg));
