@@ -13,6 +13,12 @@ typedef struct StatusCfg
 	float rate_down; // m/s (should be negative!)
 } StatusCfg;
 
+typedef enum VertDir
+{
+	HOVERING,
+	UP,
+	DOWN,
+} VertDir;
 
 typedef enum Bsm2Status
 {

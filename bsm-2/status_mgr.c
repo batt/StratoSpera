@@ -168,6 +168,7 @@ static MOVING_AVG_DEFINE(int32_t, alt_delta, DELTA_MEAN_LEN);
 static float prev_press;
 static MOVING_AVG_DEFINE(float, press_delta, DELTA_MEAN_LEN);
 
+static VertDir curr_vdir = HOVERING;
 
 static void status_reset(void)
 {
@@ -177,25 +178,36 @@ static void status_reset(void)
 
 	MOVING_AVG_RESET(&alt_delta);
 	MOVING_AVG_RESET(&press_delta);
+	curr_vdir = HOVERING;
 }
 
-static float rate_up(void)
+static VertDir vertical_dir(float rate)
 {
-	if (curr_status == BSM2_TAKEOFF
-	 || curr_status == BSM2_STRATOPHERE_UP)
-		return 0;
-	else
-		return cfg.rate_up;
-}
+	float up_limit = cfg.rate_up;
+	float down_limit = cfg.rate_down;
 
-static float rate_down(void)
-{
-	if (curr_status == BSM2_STRATOPHERE_FALL
-	 || curr_status == BSM2_FALLING
-	 || curr_status == BSM2_LANDING)
-		return 0;
+	switch (curr_vdir)
+	{
+		case HOVERING:
+			break;
+		case UP:
+			up_limit = 0;
+			break;
+		case DOWN:
+			down_limit = 0;
+			break;
+		default:
+			ASSERT(0);
+	}
+
+	if (rate > up_limit)
+		curr_vdir = UP;
+	else if (rate < down_limit)
+		curr_vdir = DOWN;
 	else
-		return cfg.rate_down;
+		curr_vdir = HOVERING;
+
+	return curr_vdir;
 }
 
 static int32_t ground_alt(void)
@@ -260,39 +272,37 @@ void status_check(bool fix, int32_t curr_alt, float curr_press)
 
 		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
 
-		if (rate < rate_up()
-			&& rate >= rate_down()
+		if (vertical_dir(rate) == HOVERING
 			&& curr_alt < ground_alt())
 		{
 			status_set(BSM2_GROUND_WAIT);
 		}
-		else if (rate < rate_up()
-			&& rate >= rate_down()
+		else if (vertical_dir(rate) == HOVERING
 			&& curr_alt >= ground_alt())
 		{
 			status_set(BSM2_HOVERING);
 		}
-		else if (rate >= rate_up()
+		else if (vertical_dir(rate) == UP
 			&& curr_alt < tropopause_alt())
 		{
 			status_set(BSM2_TAKEOFF);
 		}
-		else if (rate >= rate_up()
+		else if (vertical_dir(rate) == UP
 			&& curr_alt >= tropopause_alt())
 		{
 			status_set(BSM2_STRATOPHERE_UP);
 		}
-		else if (rate < rate_down()
+		else if (vertical_dir(rate) == DOWN
 			&& curr_alt >= tropopause_alt())
 		{
 			status_set(BSM2_STRATOPHERE_FALL);
 		}
-		else if (rate < rate_down()
+		else if (vertical_dir(rate) == DOWN
 			&& curr_alt < landing_alt())
 		{
 			status_set(BSM2_LANDING);
 		}
-		else if (rate < rate_down()
+		else if (vertical_dir(rate) == DOWN
 			&& curr_alt < tropopause_alt())
 		{
 			status_set(BSM2_FALLING);
@@ -348,6 +358,8 @@ ticks_t status_missionStartTicks(void)
 void status_setCfg(StatusCfg *_cfg)
 {
 	memcpy(&cfg, _cfg, sizeof(cfg));
+	ASSERT(cfg.rate_up > 0);
+	ASSERT(cfg.rate_down < 0);
 	LOG_INFO("Setting status configuration\n");
 	LOG_INFO(" max ground altitude: %ld m\n", (long)cfg.ground_alt);
 	LOG_INFO(" tropopause altitude: %ld m\n", (long)cfg.tropopause_alt);
