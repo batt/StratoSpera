@@ -158,7 +158,6 @@ static void NORETURN camera_process(void)
 	}
 }
 
-#define STATUS_CHECK_INTERVAL 10 //seconds
 #define DELTA_MEAN_TIME 60 //seconds
 
 #define DELTA_MEAN_LEN (DELTA_MEAN_TIME / STATUS_CHECK_INTERVAL)

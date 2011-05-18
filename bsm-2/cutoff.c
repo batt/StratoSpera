@@ -61,28 +61,33 @@
 #if !(ARCH & ARCH_UNITTEST)
 
 	#ifdef DEMO_BOARD
-		#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
-		#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_OFF(cfg)  do { PIOA_CODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_ON(cfg)   do { PIOA_SODR = CUTOFF_PIN; } while (0)
 		#define CUTOFF_INIT(cfg) do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
 	#else
 		#include <drv/pwm.h>
 		static Pwm cutoff_pwm;
 
-		#define CUTOFF_OFF()  pwm_enable(&cutoff_pwm, false)
-		#define CUTOFF_ON()   pwm_enable(&cutoff_pwm, true)
+		#define CUTOFF_OFF(cfg)  pwm_enable(&cutoff_pwm, false)
+		#define CUTOFF_ON(cfg) \
+			do { \
+				pwm_setDuty(&cutoff_pwm, (cfg)->pwm_duty); \
+				pwm_enable(&cutoff_pwm, true); \
+			} while (0)
+
 		#define CUTOFF_INIT(cfg) do { \
 			pwm_init(&cutoff_pwm, CUTOFF1_PWM); \
 			pwm_setFrequency(&cutoff_pwm, CONFIG_AFSK_DAC_SAMPLERATE / 8); \
-			pwm_setDuty(&cutoff_pwm, cfg->pwm_duty); \
 		} while (0)
 	#endif
 	#include "logging.h"
 	#undef LOG_INFO
 	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
-	#define CUTOFF_OFF()  do {  } while (0)
-	#define CUTOFF_ON()   do {  } while (0)
+	#define CUTOFF_OFF(cfg)  do {  } while (0)
+	#define CUTOFF_ON(cfg)   do {  } while (0)
 	#define CUTOFF_INIT(cfg) do {  } while (0)
+	#define testmode() false
 #endif
 
 static CutoffCfg cfg;
@@ -128,7 +133,7 @@ static float distance(udegree_t _lat1, udegree_t _lon1, udegree_t _lat2, udegree
 
 static bool maxalt_ok = true;
 
-bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
+static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 {
 	static ticks_t maxalt_ko_time;
 
@@ -171,7 +176,7 @@ bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 
 static bool dist_ok = true;
 
-bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
+static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 {
 	static ticks_t dist_ko_time;
 
@@ -224,7 +229,7 @@ static void alt_reset(void)
 }
 
 
-bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
+static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 {
 	static ticks_t alt_ko_time;
 
@@ -264,7 +269,7 @@ bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 	return true;
 }
 
-bool cutoff_checkTime(ticks_t now)
+static bool cutoff_checkTime(ticks_t now)
 {
 	static bool logged = false;
 
@@ -289,9 +294,9 @@ void cutoff_test_cut(bool on)
 	if (testmode())
 	{
 		if (on)
-			CUTOFF_ON();
+			CUTOFF_ON(&cfg);
 		else
-			CUTOFF_OFF();
+			CUTOFF_OFF(&cfg);
 	}
 }
 
@@ -302,18 +307,33 @@ static void cutoff_cut(void)
 		{
 			cut = true;
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
-			radio_printf("---CUTOFF ACTIVATED---");
-			for (int i = 0; i < 3; i++)
-			{
-				LOG_INFO("Cutoff pulse %d\n", i+1);
-				CUTOFF_ON();
-				timer_delay(10000);
-				CUTOFF_OFF();
-				LOG_INFO("Cutoff pulse %d done\n", i+1);
-				timer_delay(5000);
-			}
-			LOG_INFO("Cutoff procedure finished.\n");
+			#if !(ARCH & ARCH_UNITTEST)
+				radio_printf("---CUTOFF ACTIVATED---");
+				for (int i = 0; i < 3; i++)
+				{
+					LOG_INFO("Cutoff pulse %d\n", i+1);
+					CUTOFF_ON(&cfg);
+					timer_delay(10000);
+					CUTOFF_OFF(&cfg);
+					LOG_INFO("Cutoff pulse %d done\n", i+1);
+					timer_delay(5000);
+				}
+				LOG_INFO("Cutoff procedure finished.\n");
+			#endif
 		}
+}
+
+bool cutoff_check(ticks_t now, int32_t curr_alt, udegree_t lat, udegree_t lon)
+{
+	bool cutoff =(!cutoff_checkTime(now) ||
+		!cutoff_checkDist(lat, lon, now) ||
+		!cutoff_checkAltitude(curr_alt, now) ||
+		!cutoff_checkMaxalt(curr_alt, now));
+
+	if (cutoff)
+		cutoff_cut();
+
+	return cutoff;
 }
 
 static void NORETURN cutoff_process(void)
@@ -327,12 +347,7 @@ static void NORETURN cutoff_process(void)
 		udegree_t lat = gps_info()->latitude;
 		udegree_t lon = gps_info()->longitude;
 
-		if (!cutoff_checkTime(now)
-		 || !cutoff_checkDist(lat, lon, now)
-		 || !cutoff_checkAltitude(curr_alt, now)
-		 || !cutoff_checkMaxalt(curr_alt, now))
-			cutoff_cut();
-
+		cutoff_check(now, curr_alt, lat, lon);
 	}
 }
 

@@ -56,10 +56,7 @@ typedef struct CutoffCfg
 } CutoffCfg;
 
 void cutoff_reset(void);
-bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now);
-bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now);
-bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now);
-bool cutoff_checkTime(ticks_t now);
+bool cutoff_check(ticks_t now, int32_t curr_alt, udegree_t lat, udegree_t lon);
 void cutoff_setCfg(CutoffCfg *cfg);
 void cutoff_test_cut(bool on);
 void cutoff_init(CutoffCfg *cfg);

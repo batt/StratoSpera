@@ -17,11 +17,11 @@ int status_testSetup(void)
 	CutoffCfg cutoff_cfg;
 	cutoff_cfg.altitude_timeout = 30;
 	cutoff_cfg.delta_altitude = 500;
-	cutoff_cfg.dist_max_meters = 80000;
+	cutoff_cfg.dist_max_meters = 50000;
 	cutoff_cfg.dist_timeout = 300;
-	cutoff_cfg.altmax_meters = 15000;
+	cutoff_cfg.altmax_meters = 31000;
 	cutoff_cfg.altmax_timeout = 300;
-	cutoff_cfg.mission_timeout = 8400;
+	cutoff_cfg.mission_timeout = 6090;
 	cutoff_cfg.start_latitude = 43606414;
 	cutoff_cfg.start_longitude = 11311832;
 	cutoff_setCfg(&cutoff_cfg);
@@ -42,7 +42,6 @@ int status_testSetup(void)
 
 char line[256];
 
-#define DELAY 10
 int status_testRun(void)
 {
 	FILE *fp = fopen("log.csv", "r");
@@ -53,7 +52,7 @@ int status_testRun(void)
 	{
 		int t = atoi(strtok(line, ";"));
 
-		if (t - status_start > DELAY * 2
+		if (t - status_start > STATUS_CHECK_INTERVAL * 2
 			|| t - status_start < 0)
 			status_start = 0;
 
@@ -70,16 +69,14 @@ int status_testRun(void)
 			status_missionStartAt(ms_to_ticks(t * 1000));
 		}
 
-		cutoff_checkAltitude(alt, ms_to_ticks(t * 1000));
-		cutoff_checkDist(lat * 1000000, lon * 1000000, ms_to_ticks(t * 1000));
-		cutoff_checkTime(ms_to_ticks(t * 1000));
-		cutoff_checkMaxalt(alt, ms_to_ticks(t * 1000));
+		cutoff_check(ms_to_ticks(t * 1000), alt, lat * 1000000, lon * 1000000);
+
 		landing_buz_check(ms_to_ticks(t * 1000));
 
-		if (t - status_start > DELAY)
+		if (t - status_start > STATUS_CHECK_INTERVAL)
 		{
 			status_check(fix, alt, press); //1013.25 * pow(1 - 2.25577e-5 * alt, 5.25588));
-			status_start += DELAY;
+			status_start += STATUS_CHECK_INTERVAL;
 		}
 	}
 

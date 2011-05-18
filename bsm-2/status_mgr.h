@@ -28,6 +28,8 @@ typedef enum Bsm2Status
 	BSM2_CNT
 } Bsm2Status;
 
+#define STATUS_CHECK_INTERVAL 10 //seconds
+
 void status_missionStartAt(ticks_t ticks);
 void status_missionStart(void);
 ticks_t status_missionStartTicks(void);
