@@ -8,7 +8,7 @@ f.readline()
 f.readline()
 for l in f:
 	d = l.split(';')
-	t, fix, lat, lon, alt, _, _, press, _ = d
+	t, fix, lat, lon, alt, _, _, press = d[0:8]
 	t = t.split(':')
 	t = int(t[0]) * 3600 + int(t[1]) * 60 + int(t[2])
 	fix = 1 if fix == 'FIX' else 0
