@@ -122,9 +122,9 @@ static void init(void)
 	status_cfg.landing_alt = atoi(inibuf);
 	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
 	status_cfg.tropopause_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "rate_up", "2", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "status", "rate_up", "200", inibuf, sizeof(inibuf));
 	status_cfg.rate_up = atoi(inibuf) / 100.0;
-	ini_getString(&conf.fd, "status", "rate_down", "-2", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "status", "rate_down", "-200", inibuf, sizeof(inibuf));
 	status_cfg.rate_down = atoi(inibuf) / 100.0;
 
 	status_init(&status_cfg);
@@ -162,7 +162,7 @@ static void init(void)
 	RadioCfg radio_cfg;
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
 	radio_cfg.aprs_interval = atoi(inibuf);
-	ini_getString(&conf.fd, "logging", "send_call", "STSP2", inibuf, sizeof(inibuf));
+	ini_getString(&conf.fd, "logging", "send_call", "STSP3", inibuf, sizeof(inibuf));
 	strncpy(radio_cfg.send_call, inibuf, sizeof(radio_cfg.send_call));
 	radio_cfg.send_call[sizeof(radio_cfg.send_call) - 1] = '\0';
 	radio_init(&radio_cfg);

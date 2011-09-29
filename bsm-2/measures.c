@@ -38,7 +38,7 @@ float measures_acceleration(Mma845xAxis axis)
 	if (acc == MMA_ERROR)
 		return -6.66;
 	else
-		return (acc * 9.81 * 8.0) / 512;
+		return (acc * 9.81 * 4.0) / 512;
 }
 
 void measures_aprsFormat(char *buf, size_t len)
@@ -133,5 +133,5 @@ void measures_init(void)
 {
 	sem_init(&i2c_sem);
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
-	ASSERT(mma845x_init(&i2c_bus, 0, MMADYN_8G));
+	ASSERT(mma845x_init(&i2c_bus, 0, MMADYN_4G));
 }

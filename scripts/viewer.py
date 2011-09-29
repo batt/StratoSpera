@@ -2,6 +2,7 @@
 
 import config
 import utils
+import math
 
 import sys
 
@@ -28,15 +29,34 @@ def msg_alt(msg):
 	alt, _, _, _, _, _, _, _ = map(float, msg[27:].split(';'))
 	return alt
 
+def msg_lat(msg):
+	lat = float(msg[8:10]) + float(msg[10:15])/60
+	if msg[15] != 'N':
+		lat *= -1
+	return lat
+
+def msg_lon(msg):
+	lon = float(msg[17:20]) + float(msg[20:25])/60
+	if msg[25] != 'E':
+		lon *= -1
+	return lon
+
+def deg2rad(deg):
+	return deg * math.pi / 180
+
+def distance(lat1, lon1, lat2, lon2):
+	PLANET_RADIUS = 6371000
+	d_lat = deg2rad(lat2 - lat1)
+	d_lon = deg2rad(lon2 - lon1)
+	a = math.sin(d_lat / 2) * math.sin(d_lat / 2) + math.cos(deg2rad(lat1)) * math.cos(deg2rad(lat2)) * math.sin(d_lon / 2) * math.sin(d_lon / 2)
+	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+	return PLANET_RADIUS * c
+
 def format_msg(msg):
 	out = ''
 	if msg_telemetry(msg):
-		lat = float(msg[8:10]) + float(msg[10:15])/60
-		if msg[15] != 'N':
-			lat *= -1
-		lon = float(msg[17:20]) + float(msg[20:25])/60
-		if msg[25] != 'E':
-			lon *= -1
+		lat = msg_lat(msg)
+		lon = msg_lon(msg)
 
 		alt, t_ext, press, hum, t_int, vbatt, acc, hadarp = map(float, msg[27:].split(';'))
 		url = 'http://maps.google.it/maps?q=lat,lon'
@@ -71,16 +91,21 @@ if __name__ == "__main__":
 	local.sort()
 	local = local[-lastmsg:]
 
-	start_msg = open(config.logdir + "/" + local[0]).read().strip()
-	end_msg = open(config.logdir + "/" + local[-1]).read().strip()
 	try:
+		start_msg = open(config.logdir + "/" + local[-2]).read().strip()
+		end_msg = open(config.logdir + "/" + local[-1]).read().strip()
+		lat = msg_lat(end_msg)
+		lon = msg_lon(end_msg)
+		dist = distance(lat, lon, config.start_lat, config.start_lon)
+
 		start_alt = msg_alt(start_msg)
 		start_time = msg_time(start_msg)
 		end_alt = msg_alt(end_msg)
 		end_time = msg_time(end_msg)
 		ascent_rate = (end_alt - start_alt) / (end_time - start_time)
 		#print start_time, end_time
-		print "Ascent rate %.2f m/s" % ascent_rate
+		print "Vertical speed: %.2f m/s | %.0f km/h" % (ascent_rate, ascent_rate * 3.6)
+		print "Distance from base: %.1f km" % (dist/1000)
 	except:
 		pass
 	print "Time     Latitude   Longitude   Altitude T.Ext Pressure Humidity T.Int VBatt Acceler. HADARP Link"
