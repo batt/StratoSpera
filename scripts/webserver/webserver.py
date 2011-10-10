@@ -2,6 +2,11 @@ from CGIHTTPServer import *
 from BaseHTTPServer import *
 import urllib
 import os
+import random
+from SocketServer import ThreadingMixIn
+
+class ThreadingCGIServer(ThreadingMixIn, HTTPServer):
+	pass
 
 def ensure_dir(f):
 	d = os.path.dirname(f)
@@ -12,8 +17,12 @@ class WebServer(CGIHTTPRequestHandler):
 
 	def do_GET(self):
 		path = self.translate_path(self.path)
-		if not os.path.exists(path):
-			u = urllib.urlopen("http://www.develer.com" + self.path)
+		print self.path
+		if self.path.startswith("/maps") and not os.path.exists(path):
+			url = "http://" + random.choice("abc") + ".tile.opencyclemap.org/cycle" + self.path.replace("/maps", "")
+			print "download", url
+			
+			u = urllib.urlopen(url)
 			if u.getcode() != 404:
 				_, ext = os.path.splitext(path)
 				if not ext:
@@ -39,7 +48,7 @@ class WebServer(CGIHTTPRequestHandler):
 		
 
 if __name__ == "__main__":
-	server = HTTPServer(("", 1234), WebServer)
+	server = ThreadingCGIServer(("", 1234), WebServer)
 	server.allow_reuse_address = True
 	try:
 		server.serve_forever()
