@@ -101,7 +101,9 @@ if __name__ == "__main__":
     afsk = afsk.Afsk(stream)
     ax25 = Ax25(afsk)
     while 1:
-        print ax25.recv()
+        m = ax25.recv()
+        print "AFSK1200: fm %s" % m[0]['src']
+        print m[0]['data']
 
     stream.close()
     p.terminate()
