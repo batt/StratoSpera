@@ -79,12 +79,10 @@ class Ax25(object):
 
         self.escape = False
 
-    def recv(self, size = 1):
-        msg = []
-        while len(msg) < size:
-            m = self._process(self.stream.read(1))
-            if m:
-                msg.append(m)
+    def recv(self):
+        msg = None
+        while not msg:
+            msg = self._process(self.stream.read(1))
 
         return msg
 
@@ -102,8 +100,8 @@ if __name__ == "__main__":
     ax25 = Ax25(afsk)
     while 1:
         m = ax25.recv()
-        print "AFSK1200: fm %s" % m[0]['src']
-        print m[0]['data']
+        print "AFSK1200: fm %s" % m['src']
+        print m['data']
 
     stream.close()
     p.terminate()
