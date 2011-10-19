@@ -2,6 +2,7 @@
 
 from ax25 import AX25_ESC, HDLC_FLAG, HDLC_RESET
 from collections import deque
+from math import sin, pi
 
 SAMPLERATE = 9600
 BITRATE = 1200
@@ -10,6 +11,15 @@ PHASE_BIT = 8
 PHASE_INC = 1
 PHASE_MAX = SAMPLE_PER_BIT * PHASE_BIT
 PHASE_THRES = PHASE_MAX / 2
+
+#Modulator constants
+SIN_LEN = 1024
+
+MARK_FREQ = 1200.0
+MARK_INC = int(round((SIN_LEN * MARK_FREQ) / SAMPLERATE))
+
+SPACE_FREQ = 2200.0
+SPACE_INC = int(round((SIN_LEN * SPACE_FREQ) / SAMPLERATE))
 
 def bit_differ(bitline1, bitline2):
     return (bitline1 ^ bitline2) & 0x01
@@ -67,7 +77,7 @@ class Hdlc(object):
         return out
 
 class Afsk(object):
-    def __init__(self, stream):
+    def __init__(self, stream, preamble_len=500, trailer_len=50):
         self.stream = stream
 
         #RX section
@@ -83,6 +93,67 @@ class Afsk(object):
         self.found_bits = 0
         self.hdlc = Hdlc()
         self.out = deque()
+
+        #TX section
+        self.dds_table = [chr(int(round(127.5 * (1 + sin(2 * pi * i / SIN_LEN))))) for i in range(SIN_LEN)]
+        self.preamble = (preamble_len * BITRATE + 4000) / 8000
+        self.trailer = (trailer_len * BITRATE + 4000) / 8000
+        self.resetTx()
+        self.sending = False
+
+    def switchTone(self):
+        return MARK_INC if self.phase_inc == SPACE_INC else SPACE_INC
+
+    def genBit(self, bit):
+        if not bit:
+            self.phase_inc = self.switchTone()
+
+        for i in range(SAMPLE_PER_BIT):
+            self.stream.write(self.dds_table[self.phase_acc])
+            self.phase_acc += self.phase_inc
+            self.phase_acc %= SIN_LEN
+
+    def sendChar(self, c, stuff=True):
+        c = ord(c)
+        for i in range(8):
+            bit = (1<<i) & c
+            self.genBit(bit)
+            if bit and stuff:
+                self.stuff_cnt +=1
+                if self.stuff_cnt >= 5:
+                    self.genBit(0)
+                    self.stuff_cnt = 0
+            else:
+                self.stuff_cnt = 0
+
+    def resetTx(self):
+        self.phase_acc = 0
+        self.phase_inc = MARK_INC
+        self.stuff_cnt = 0
+        self.escape = False
+
+    def sendSync(self, c):
+        l = self.preamble if self.sending else self.trailer
+        for i in range(l):
+            self.sendChar(c, stuff=False)
+
+    def write(self, data):
+        for c in data:
+            if c == AX25_ESC and not self.escape:
+                self.escape = True
+                continue
+
+            if c == HDLC_FLAG and not self.escape:
+                self.sending = not self.sending
+                if self.sending:
+                    self.resetTx()
+                self.sendSync(HDLC_FLAG)
+            elif c == HDLC_RESET and not self.escape:
+                self.sendChar(c, stuff=False)
+            else:
+                self.sendChar(c)
+
+            self.escape = False
 
     def _processSample(self, sample):
         sample = ord(sample) - 127
@@ -119,7 +190,6 @@ class Afsk(object):
         else:
             return ""
 
-
     def read(self, size=1):
         while len(self.out) < size:
             for c in self.stream.read(512):
@@ -137,9 +207,12 @@ if __name__ == "__main__":
         channels = 1,
         rate = SAMPLERATE,
         input = True,
+        output = True,
         frames_per_buffer = 1024)
     afsk = Afsk(stream)
-    sys.stdout.write(afsk.read(1024))
+    #sys.stdout.write(afsk.read(1024))
+    afsk.write(HDLC_FLAG)
+    afsk.write(">this is a test")
     stream.close()
     p.terminate()
 
