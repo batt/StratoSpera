@@ -60,7 +60,7 @@ class Ax25(object):
 
             self.sync = True
             self.crc_in = CRC_CCITT_INIT_VAL
-            self.buf = deque()
+            self.buf.clear()
             return msg
 
 
