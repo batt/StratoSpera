@@ -125,11 +125,8 @@ class Afsk(object):
             for c in self.stream.read(512):
                 self.out.extend(self._processSample(c))
 
-        out = ""
-        for i in range(size):
-            out += self.out.popleft()
-
-        return out
+        out = [self.out.popleft() for i in range(size)]
+        return "".join(out)
 
 if __name__ == "__main__":
     import pyaudio
