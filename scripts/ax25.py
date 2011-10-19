@@ -51,6 +51,43 @@ class Ax25(object):
         self.sync = False
         self.buf = deque()
 
+    def _write(self, data):
+        for c in data:
+            if c == HDLC_FLAG or c == HDLC_RESET or c == AX25_ESC:
+                self.stream.write(AX25_ESC)
+            self.crc_out = updcrc_ccitt(c, self.crc_out);
+            self.stream.write(c)
+
+    def sendCall(self, call, last=False):
+        call = call.upper()
+        if call.find('-') != -1:
+            call, ssid = call.split('-')
+        else:
+            ssid = '0'
+        call = call.ljust(6)
+        call = ''.join([chr((ord(c) << 1)) for c in call])
+        ssid = chr(0x60 | ((int(ssid) & 0x0f) << 1) | (0x01 if last else 0))
+        self._write(call + ssid)
+
+    def send(self, path, data):
+        self.crc_out = CRC_CCITT_INIT_VAL
+        self.stream.write(HDLC_FLAG)
+
+        last = len(path) - 1
+        for i, p in enumerate(path):
+            self.sendCall(p, i == last)
+
+        self._write(chr(AX25_CTRL_UI))
+        self._write(chr(AX25_PID_NOLAYER3))
+        self._write(data)
+
+        crcl = chr((self.crc_out & 0xff) ^ 0xff)
+        crch = chr((self.crc_out >> 8) ^ 0xff)
+        self._write(crcl)
+        self._write(crch)
+        self.stream.write(HDLC_FLAG)
+
+
     def _process(self, c):
         if not self.escape and c == HDLC_FLAG:
             msg = None
@@ -87,23 +124,33 @@ class Ax25(object):
         return msg
 
 if __name__ == "__main__":
-    import pyaudio
-    import afsk
-    p = pyaudio.PyAudio()
+    if 0:
+        import pyaudio
+        import afsk
+        p = pyaudio.PyAudio()
 
-    stream = p.open(format = pyaudio.paUInt8,
-        channels = 1,
-        rate = 9600,
-        input = True,
-        frames_per_buffer = 1024)
-    afsk = afsk.Afsk(stream)
-    ax25 = Ax25(afsk)
-    while 1:
-        m = ax25.recv()
-        print "AFSK1200: fm %s" % m['src']
-        print m['data']
+        stream = p.open(format = pyaudio.paUInt8,
+            channels = 1,
+            rate = 9600,
+            input = True,
+            output = True,
+            frames_per_buffer = 1024)
+        afsk = afsk.Afsk(stream)
+        ax25 = Ax25(afsk)
 
-    stream.close()
-    p.terminate()
+        while 1:
+            m = ax25.recv()
+            print "AFSK1200: fm %s" % m['src']
+            print m['data']
+        stream.close()
+        p.terminate()
+
+    else:
+        import sys
+        ax25 = Ax25(sys.stdout)
+        ax25.send(["iz5rqo", "apzbrt"], ">this is a test")
+        del ax25
+        ax25 = Ax25(sys.stdin)
+        print ax25.recv()
 
 
