@@ -124,7 +124,9 @@ class Ax25(object):
         return msg
 
 if __name__ == "__main__":
-    if 0:
+
+    teststr = ">this is a test" + AX25_ESC + HDLC_FLAG + HDLC_RESET + "test!"
+    if 1:
         import pyaudio
         import afsk
         p = pyaudio.PyAudio()
@@ -138,17 +140,19 @@ if __name__ == "__main__":
         afsk = afsk.Afsk(stream)
         ax25 = Ax25(afsk)
 
+        ax25.send(["apzbrt", "iz5rqo"], teststr)
         while 1:
             m = ax25.recv()
             print "AFSK1200: fm %s" % m['src']
             print m['data']
+            assert(teststr == m['data'])
         stream.close()
         p.terminate()
 
     else:
         import sys
         ax25 = Ax25(sys.stdout)
-        ax25.send(["iz5rqo", "apzbrt"], ">this is a test")
+        ax25.send(["apzbrt", "iz5rqo"], teststr)
         del ax25
         ax25 = Ax25(sys.stdin)
         print ax25.recv()
