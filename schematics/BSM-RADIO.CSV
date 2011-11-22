@@ -1,0 +1,71 @@
+BSM-RADIO CPU  Revised: Monday, November 21, 2011
+1          Revision: 0
+
+Develer
+Via Mugellese 1/A
+50013 Campi Bisenzio
+Firenze
+Italia
+
+Bill Of Materials       November 22,2011      10:33:05	Page1
+
+Item	Quantity	Reference	Part	case	voltage	1st	2st	2nd
+______________________________________________
+
+1	6	C1,C2,C5,C6,C7,C9	100nF	0603	25V			
+2	2	C3,C11	1uF	0603	25V			
+3	5	C4,C10,C12,C14,C16	220pF	0603	25V			
+4	2	C8,C13	10nF	0603	25V			
+5	2	C15,C19	3.9pF	0603	25V			
+6	1	C17	8.2pF	0603	25V			
+7	1	C18	5.6pF	0603	25V			
+8	2	C20,C21	6.8pF	0603	25V			
+9	2	C22,C23	22pF	0603	25V			
+10	2	C24,C25	15pF	0603	25V			
+11	1	C26	10uF	0805	10V			
+12	1	J1	ANTENNA_SMB	jack_smb				
+13	2	L1,L6	10uH	1210	16V			
+14	3	L2,L4,L5	27nH	0603				
+15	1	L3	22nH	0603				
+16	1	P1	PB15					
+17	1	P2	PB14					
+18	1	P3	PA1-ADC1					
+19	1	P4	PB11-RX3					
+20	1	P5	PA0-ADC0					
+21	1	P6	PA3-RX2-ADC3					
+22	2	P7,P21	PB13					
+23	1	P8	PB12					
+24	1	P9	PA2-TX2-ADC2					
+25	1	P10	PB10-TX3					
+26	1	P11	PB9					
+27	1	P12	PB8					
+28	1	P13	PB7					
+29	1	P14	PB6					
+30	1	P15	PB5					
+31	1	P16	PA8					
+32	1	P17	PA9-TX1					
+33	1	P18	PB1-ADC9					
+34	1	P19	PA10-RX1					
+35	1	P20	PB0-ADC8					
+36	1	P22	BOOT1					
+37	1	P23	RESET					
+38	1	P24	PB3-TDO					
+39	1	P25	PA13-TMS					
+40	1	P26	PA14-TCK					
+41	1	P27	PA15-TDI					
+42	1	P28	PA4-TRST					
+43	1	P29	Vdd					
+44	1	P30	ANTENNA					
+45	1	R1	56K	0603		5%	100ppm	
+46	4	R2,R8,R10,R11	100K	0603		5%	100ppm	
+47	4	R3,R4,R5,R6	33	0603		5%	100ppm	
+48	2	R7,R12	0	0603		5%	100ppm	
+49	1	R9	220	0603		5%	100ppm	
+50	1	TP1	GND					
+51	1	TP2	Vradio					
+52	1	U1	STM32F100C4T6B	LQFP48				
+53	1	U2	CC1101	PVQFN				
+54	1	Y1	32.768kHz	Cyl THD				
+55	1	Y2	8MHz	HC49				
+56	1	Y3	26MHz	HC49				
+57	1	Y4	26MHz	SMD5x3.2				
