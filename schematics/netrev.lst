@@ -1,0 +1,49 @@
+Cadence Design Systems, Inc. netrev 16.0 Sat Nov 26 18:30:47 2011
+(C) Copyright 2002 Cadence Design Systems, Inc.
+
+------ Directives ------
+
+RIPUP_ETCH FALSE;
+RIPUP_SYMBOLS ALWAYS;
+Missing symbol has error FALSE;
+SCHEMATIC_DIRECTORY 'bsm-radio';
+BOARD_DIRECTORY '';
+OLD_BOARD_NAME 'C:/src/bsm-2/schematics/bsm-radio.brd';
+NEW_BOARD_NAME 'C:/src/bsm-2/schematics/bsm-radio.brd';
+
+CmdLine: netrev -$ -i bsm-radio -y 1 C:/src/bsm-2/schematics/#Taaaaaa05156.tmp
+
+------ Preparing to read pst files ------
+
+
+#1   ERROR(24) File not found
+     Packager files not found
+
+#2   ERROR(102) Run stopped because errors were detected
+
+netrev run on Nov 26 18:30:47 2011
+
+   COMPILE 'logic'
+   CHECK_PIN_NAMES OFF
+   CROSS_REFERENCE OFF
+   FEEDBACK OFF
+   INCREMENTAL OFF
+   INTERFACE_TYPE PHYSICAL
+   MAX_ERRORS 500
+   MERGE_MINIMUM 5
+   NET_NAME_CHARS '#%&()*+-./:=>?@[]^_`|'
+   NET_NAME_LENGTH 24
+   OVERSIGHTS ON
+   REPLACE_CHECK OFF
+   SINGLE_NODE_NETS ON
+   SPLIT_MINIMUM 0
+   SUPPRESS   20
+   WARNINGS ON
+
+  2 errors detected
+ No oversight detected
+ No warning detected
+
+cpu time      0:01:11
+elapsed time  0:00:01
+
