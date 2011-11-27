@@ -1,4 +1,4 @@
-Cadence Design Systems, Inc. netrev 16.0 Sun Nov 27 09:58:02 2011
+Cadence Design Systems, Inc. netrev 16.0 Sun Nov 27 10:39:16 2011
 (C) Copyright 2002 Cadence Design Systems, Inc.
 
 ------ Directives ------
@@ -11,12 +11,12 @@ BOARD_DIRECTORY 'C:/src/bsm-2/schematics';
 OLD_BOARD_NAME 'C:/src/bsm-2/schematics/bsm-radio.brd';
 NEW_BOARD_NAME 'C:/src/bsm-2/schematics/bsm-radio.brd';
 
-CmdLine: netrev.exe -5 -y 1 -i C:\SRC\BSM-2\SCHEMATICS C:\src\bsm-2\schematics\bsm-radio.brd C:\src\bsm-2\schematics\bsm-radio.brd
+CmdLine: netrev.exe -5 -y 1 -u -i C:\SRC\BSM-2\SCHEMATICS C:\src\bsm-2\schematics\bsm-radio.brd C:\src\bsm-2\schematics\bsm-radio.brd
 
 ------ Preparing to read pst files ------
 
 Starting to read C:/SRC/BSM-2/SCHEMATICS/pstchip.dat 
-   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstchip.dat (00:00:00.26)
+   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstchip.dat (00:00:00.23)
 Starting to read C:/SRC/BSM-2/SCHEMATICS/pstxprt.dat 
    Finished reading C:/SRC/BSM-2/SCHEMATICS/pstxprt.dat (00:00:00.01)
 Starting to read C:/SRC/BSM-2/SCHEMATICS/pstxnet.dat 
@@ -27,235 +27,35 @@ Starting to read C:/SRC/BSM-2/SCHEMATICS/pstxnet.dat
 
 #1   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_100NF' not found in PSMPATH or must be "dbdoctor"ed.
+WARNING(SPMHNI-194): Symbol 'SMB_JACK_COASS' for device 'ANTENNA_SMB_0_SMB_JACK_COASS_AN' not found in PSMPATH or must be "dbdoctor"ed.
 
 #2   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_220PF' not found in PSMPATH or must be "dbdoctor"ed.
+WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_27NH' not found in PSMPATH or must be "dbdoctor"ed.
 
 #3   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_1UF' not found in PSMPATH or must be "dbdoctor"ed.
+WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_22NH' not found in PSMPATH or must be "dbdoctor"ed.
 
 #4   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_10NF' not found in PSMPATH or must be "dbdoctor"ed.
+ERROR(SPMHNI-196): Symbol 'CRYST_PTH_2X070MM' for device 'CRYSTAL/SM_2_CRYST_PTH_2X070MM_' has extra pin '3'.
 
-#5   WARNING(SPMHNI-192): Device/Symbol check warning detected.
+#1   ERROR(SPMHNI-191): Device/Symbol check error detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_3.9PF' not found in PSMPATH or must be "dbdoctor"ed.
+ERROR(SPMHNI-195): Symbol 'HC49UP' for device 'CRYSTAL/SM_0_HC49UP_8MHZ' is missing pin '3'.
 
-#6   WARNING(SPMHNI-192): Device/Symbol check warning detected.
+#2   ERROR(SPMHNI-191): Device/Symbol check error detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_8.2PF' not found in PSMPATH or must be "dbdoctor"ed.
+ERROR(SPMHNI-195): Symbol 'HC49UP' for device 'CRYSTAL/SM_0_HC49UP_26MHZ' is missing pin '3'.
 
-#7   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_5.6PF' not found in PSMPATH or must be "dbdoctor"ed.
-
-#8   WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_6.8PF' not found in PSMPATH or must be "dbdoctor"ed.
-
-#9   WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_22PF' not found in PSMPATH or must be "dbdoctor"ed.
-
-#10  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMC0603' for device 'C_1_SMC0603_15PF' not found in PSMPATH or must be "dbdoctor"ed.
-
-#11  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMC0805' for device 'C_2_SMC0805_10UF' not found in PSMPATH or must be "dbdoctor"ed.
-
-#12  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMB_JACK_COASS' for device 'ANTENNA_SMB_0_SMB_JACK_COASS_AN' not found in PSMPATH or must be "dbdoctor"ed.
-
-#13  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SML1206' for device 'L1_0_SML1206_10UH' not found in PSMPATH or must be "dbdoctor"ed.
-
-#14  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_27NH' not found in PSMPATH or must be "dbdoctor"ed.
-
-#15  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_22NH' not found in PSMPATH or must be "dbdoctor"ed.
-
-#16  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB15' not found in PSMPATH or must be "dbdoctor"ed.
-
-#17  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB10-TX3' not found in PSMPATH or must be "dbdoctor"ed.
-
-#18  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB9' not found in PSMPATH or must be "dbdoctor"ed.
-
-#19  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB8' not found in PSMPATH or must be "dbdoctor"ed.
-
-#20  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB6' not found in PSMPATH or must be "dbdoctor"ed.
-
-#21  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB7' not found in PSMPATH or must be "dbdoctor"ed.
-
-#22  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB5' not found in PSMPATH or must be "dbdoctor"ed.
-
-#23  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA8' not found in PSMPATH or must be "dbdoctor"ed.
-
-#24  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA9-TX1' not found in PSMPATH or must be "dbdoctor"ed.
-
-#25  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB1-ADC9' not found in PSMPATH or must be "dbdoctor"ed.
-
-#26  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA10-RX1' not found in PSMPATH or must be "dbdoctor"ed.
-
-#27  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB14' not found in PSMPATH or must be "dbdoctor"ed.
-
-#28  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB0-ADC8' not found in PSMPATH or must be "dbdoctor"ed.
-
-#29  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_ANTENNA' not found in PSMPATH or must be "dbdoctor"ed.
-
-#30  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB13' not found in PSMPATH or must be "dbdoctor"ed.
-
-#31  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_BOOT1' not found in PSMPATH or must be "dbdoctor"ed.
-
-#32  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_RESET' not found in PSMPATH or must be "dbdoctor"ed.
-
-#33  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB3-TDO' not found in PSMPATH or must be "dbdoctor"ed.
-
-#34  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA13-TMS' not found in PSMPATH or must be "dbdoctor"ed.
-
-#35  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA14-TCK' not found in PSMPATH or must be "dbdoctor"ed.
-
-#36  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA15-TDI' not found in PSMPATH or must be "dbdoctor"ed.
-
-#37  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA4-TRST' not found in PSMPATH or must be "dbdoctor"ed.
-
-#38  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA1-ADC1' not found in PSMPATH or must be "dbdoctor"ed.
-
-#39  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_VDD' not found in PSMPATH or must be "dbdoctor"ed.
-
-#40  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB11-RX3' not found in PSMPATH or must be "dbdoctor"ed.
-
-#41  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA0-ADC0' not found in PSMPATH or must be "dbdoctor"ed.
-
-#42  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA3-RX2-ADC3' not found in PSMPATH or must be "dbdoctor"ed.
-
-#43  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PB12' not found in PSMPATH or must be "dbdoctor"ed.
-
-#44  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_PA2-TX2-ADC2' not found in PSMPATH or must be "dbdoctor"ed.
-
-#45  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMR0603' for device 'R_0_SMR0603_56K' not found in PSMPATH or must be "dbdoctor"ed.
-
-#46  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMR0603' for device 'R_0_SMR0603_100K' not found in PSMPATH or must be "dbdoctor"ed.
-
-#47  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMR0603' for device 'R_0_SMR0603_220' not found in PSMPATH or must be "dbdoctor"ed.
-
-#48  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMR0603' for device 'R_0_SMR0603_33' not found in PSMPATH or must be "dbdoctor"ed.
-
-#49  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'SMR0603' for device 'R_0_SMR0603_0' not found in PSMPATH or must be "dbdoctor"ed.
-
-#50  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_VRADIO' not found in PSMPATH or must be "dbdoctor"ed.
-
-#51  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'BCON1' for device 'T POINT R_BCON1_GND' not found in PSMPATH or must be "dbdoctor"ed.
-
-#52  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'LQFP48' for device 'STM32F100C4T6B_10_LQFP48_STM32F' not found in PSMPATH or must be "dbdoctor"ed.
-
-#53  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'PVQFN' for device 'CC1101_9_PVQFN_CC1101' not found in PSMPATH or must be "dbdoctor"ed.
-
-#54  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'CRYST_PTH_2X070MM' for device 'CRYSTAL/SM_2_CRYST_PTH_2X070MM_' not found in PSMPATH or must be "dbdoctor"ed.
-
-#55  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'HC49UP' for device 'CRYSTAL/SM_0_HC49UP_8MHZ' not found in PSMPATH or must be "dbdoctor"ed.
-
-#56  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'CRYSTAL5X324PSMD' for device 'CRYSTAL1-4/SM_CRYSTAL5X324PSMD_' not found in PSMPATH or must be "dbdoctor"ed.
-
-#57  WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-WARNING(SPMHNI-194): Symbol 'HC49UP' for device 'CRYSTAL/SM_0_HC49UP_26MHZ' not found in PSMPATH or must be "dbdoctor"ed.
+Note: SECTION property definition created
 
 ------ Library Paths ------
 MODULEPATH =  . 
            C:/OrCAD/OrCAD_16.0/share/local/pcb/modules 
+           C:\src\cadlib\orcad\pcb_lib\ 
 
 PSMPATH =  . 
            symbols 
@@ -264,6 +64,7 @@ PSMPATH =  .
            C:/OrCAD/OrCAD_16.0/share/local/pcb/symbols 
            C:/OrCAD/OrCAD_16.0/share/pcb/pcb_lib/symbols 
            C:/OrCAD/OrCAD_16.0/share/pcb/allegrolib/symbols 
+           C:\src\cadlib\orcad\pcb_lib\ 
 
 PADPATH =  . 
            symbols 
@@ -278,7 +79,9 @@ PADPATH =  .
 ------ Summary Statistics ------
 
 
-netrev run on Nov 27 9:58:02 2011
+#3   Run stopped because errors were detected
+
+netrev run on Nov 27 10:39:16 2011
    DESIGN NAME : 'BSM-RADIO'
    PACKAGING ON Sep  6 2007 19:01:51
 
@@ -299,10 +102,10 @@ netrev run on Nov 27 9:58:02 2011
    SUPPRESS   20
    WARNINGS ON
 
- No error detected
+  3 errors detected
  No oversight detected
- 57 warnings detected
+  4 warnings detected
 
-cpu time      0:02:33
+cpu time      0:01:49
 elapsed time  0:00:01
 
