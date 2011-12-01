@@ -1,4 +1,4 @@
-Cadence Design Systems, Inc. netrev 16.0 Sun Nov 27 10:39:16 2011
+Cadence Design Systems, Inc. netrev 16.0 Thu Dec 01 14:31:05 2011
 (C) Copyright 2002 Cadence Design Systems, Inc.
 
 ------ Directives ------
@@ -11,46 +11,27 @@ BOARD_DIRECTORY 'C:/src/bsm-2/schematics';
 OLD_BOARD_NAME 'C:/src/bsm-2/schematics/bsm-radio.brd';
 NEW_BOARD_NAME 'C:/src/bsm-2/schematics/bsm-radio.brd';
 
-CmdLine: netrev.exe -5 -y 1 -u -i C:\SRC\BSM-2\SCHEMATICS C:\src\bsm-2\schematics\bsm-radio.brd C:\src\bsm-2\schematics\bsm-radio.brd
+CmdLine: netrev.exe -5 -y 1 -i C:\SRC\BSM-2\SCHEMATICS C:\src\bsm-2\schematics\bsm-radio.brd C:\src\bsm-2\schematics\bsm-radio.brd
 
 ------ Preparing to read pst files ------
 
 Starting to read C:/SRC/BSM-2/SCHEMATICS/pstchip.dat 
-   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstchip.dat (00:00:00.23)
+   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstchip.dat (00:00:00.16)
 Starting to read C:/SRC/BSM-2/SCHEMATICS/pstxprt.dat 
-   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstxprt.dat (00:00:00.01)
+   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstxprt.dat (00:00:00.00)
 Starting to read C:/SRC/BSM-2/SCHEMATICS/pstxnet.dat 
-   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstxnet.dat (00:00:00.01)
+   Finished reading C:/SRC/BSM-2/SCHEMATICS/pstxnet.dat (00:00:00.00)
 
 ------ Oversights/Warnings/Errors ------
 
 
 #1   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SMB_JACK_COASS' for device 'ANTENNA_SMB_0_SMB_JACK_COASS_AN' not found in PSMPATH or must be "dbdoctor"ed.
+WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_27NH' not found in PSMPATH or must be "dbdoctor"ed.
 
 #2   WARNING(SPMHNI-192): Device/Symbol check warning detected.
 
-WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_27NH' not found in PSMPATH or must be "dbdoctor"ed.
-
-#3   WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
 WARNING(SPMHNI-194): Symbol 'SML0603' for device 'INDUCTOR/SM_SML0603_22NH' not found in PSMPATH or must be "dbdoctor"ed.
-
-#4   WARNING(SPMHNI-192): Device/Symbol check warning detected.
-
-ERROR(SPMHNI-196): Symbol 'CRYST_PTH_2X070MM' for device 'CRYSTAL/SM_2_CRYST_PTH_2X070MM_' has extra pin '3'.
-
-#1   ERROR(SPMHNI-191): Device/Symbol check error detected.
-
-ERROR(SPMHNI-195): Symbol 'HC49UP' for device 'CRYSTAL/SM_0_HC49UP_8MHZ' is missing pin '3'.
-
-#2   ERROR(SPMHNI-191): Device/Symbol check error detected.
-
-ERROR(SPMHNI-195): Symbol 'HC49UP' for device 'CRYSTAL/SM_0_HC49UP_26MHZ' is missing pin '3'.
-
-
-Note: SECTION property definition created
 
 ------ Library Paths ------
 MODULEPATH =  . 
@@ -79,9 +60,7 @@ PADPATH =  .
 ------ Summary Statistics ------
 
 
-#3   Run stopped because errors were detected
-
-netrev run on Nov 27 10:39:16 2011
+netrev run on Dec 1 14:31:05 2011
    DESIGN NAME : 'BSM-RADIO'
    PACKAGING ON Sep  6 2007 19:01:51
 
@@ -102,10 +81,10 @@ netrev run on Nov 27 10:39:16 2011
    SUPPRESS   20
    WARNINGS ON
 
-  3 errors detected
+ No error detected
  No oversight detected
-  4 warnings detected
+  2 warnings detected
 
-cpu time      0:01:49
+cpu time      0:01:30
 elapsed time  0:00:01
 

@@ -1,5 +1,5 @@
 FILE_TYPE = EXPANDEDPARTLIST;
-{ Using PSTWRITER 16.0.0 s001Nov-27-2011 at 10:39:14 }
+{ Using PSTWRITER 16.0.0 s001Dec-01-2011 at 14:31:04 }
 DIRECTIVES
  PST_VERSION='PST_HDL_CENTRIC_VERSION_0';
  ROOT_DRAWING='BSM-RADIO';
@@ -927,23 +927,21 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- Y1 'CRYSTAL/SM_2_CRYST_PTH_2X070MM_':
- ROOM='CPU';
+ Y1 'CRYSTAL_0_CRYST2X070MM_32.768KH':;
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18105758@BSM-RADIO.CRYSTAL/SM_2.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18105758@\bsm-radio\.\crystal/sm_2.normal\(chips)',
- ROOM='CPU',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18309988@BSM-RADIO.CRYSTAL_0.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18309988@\bsm-radio\.\crystal_0.normal\(chips)',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
 PART_NAME
- Y2 'CRYSTAL/SM_0_HC49UP_8MHZ':
+ Y2 'CRYSTAL/SM_3_HC49UP_8MHZ':
  ROOM='CPU';
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18105715@BSM-RADIO.CRYSTAL/SM_0.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18105715@\bsm-radio\.\crystal/sm_0.normal\(chips)',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18105715@BSM-RADIO.CRYSTAL/SM_3.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18105715@\bsm-radio\.\crystal/sm_3.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -958,12 +956,12 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- Y4 'CRYSTAL/SM_0_HC49UP_26MHZ':
+ Y4 'CRYSTAL/SM_3_HC49UP_26MHZ':
  ROOM='Radio';
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18101995@BSM-RADIO.CRYSTAL/SM_0.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18101995@\bsm-radio\.\crystal/sm_0.normal\(chips)',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18101995@BSM-RADIO.CRYSTAL/SM_3.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18101995@\bsm-radio\.\crystal/sm_3.normal\(chips)',
  ROOM='Radio',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';

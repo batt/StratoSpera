@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Nov-27-2011 at 10:39:14}
+{ Using PSTWRITER 16.0.0 s001Dec-01-2011 at 14:31:04}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -988,7 +988,7 @@ primitive 'CC1101_9_PVQFN_CC1101';
     VALUE='CC1101';
   end_body;
 end_primitive;
-primitive 'CRYSTAL/SM_2_CRYST_PTH_2X070MM_';
+primitive 'CRYSTAL_0_CRYST2X070MM_32.768KH';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -996,14 +996,17 @@ primitive 'CRYSTAL/SM_2_CRYST_PTH_2X070MM_';
     '2':
       PIN_NUMBER='(2)';
       PINUSE='UNSPEC';
+    'GND':
+      PIN_NUMBER='(3)';
+      PINUSE='UNSPEC';
   end_pin;
   body
-    PART_NAME='CRYSTAL/SM_2';
-    JEDEC_TYPE='cryst_pth_2x070mm';
+    PART_NAME='crystal_0';
+    JEDEC_TYPE='cryst2x070mm';
     VALUE='32.768kHz';
   end_body;
 end_primitive;
-primitive 'CRYSTAL/SM_0_HC49UP_8MHZ';
+primitive 'CRYSTAL/SM_3_HC49UP_8MHZ';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -1013,8 +1016,7 @@ primitive 'CRYSTAL/SM_0_HC49UP_8MHZ';
       PINUSE='UNSPEC';
   end_pin;
   body
-    POWER_PINS='(3:3)';
-    PART_NAME='CRYSTAL/SM_0';
+    PART_NAME='CRYSTAL/SM_3';
     JEDEC_TYPE='hc49up';
     VALUE='8MHz';
   end_body;
@@ -1040,7 +1042,7 @@ primitive 'CRYSTAL1-4/SM_CRYSTAL5X324PSMD_';
     VALUE='26MHz';
   end_body;
 end_primitive;
-primitive 'CRYSTAL/SM_0_HC49UP_26MHZ';
+primitive 'CRYSTAL/SM_3_HC49UP_26MHZ';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -1050,8 +1052,7 @@ primitive 'CRYSTAL/SM_0_HC49UP_26MHZ';
       PINUSE='UNSPEC';
   end_pin;
   body
-    POWER_PINS='(3:3)';
-    PART_NAME='CRYSTAL/SM_0';
+    PART_NAME='CRYSTAL/SM_3';
     JEDEC_TYPE='hc49up';
     VALUE='26MHz';
   end_body;
