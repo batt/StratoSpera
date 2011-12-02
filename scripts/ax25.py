@@ -125,36 +125,38 @@ class Ax25(object):
 
 if __name__ == "__main__":
 
-    teststr = ">this is a test" + AX25_ESC + HDLC_FLAG + HDLC_RESET + "test!"
-    if 1:
-        import pyaudio
-        import afsk
-        p = pyaudio.PyAudio()
+    import sys
+    import pyaudio
+    import afsk
+    import time
 
-        stream = p.open(format = pyaudio.paUInt8,
-            channels = 1,
-            rate = 9600,
-            input = True,
-            output = True,
-            frames_per_buffer = 1024)
-        afsk = afsk.Afsk(stream)
-        ax25 = Ax25(afsk)
+    p = pyaudio.PyAudio()
 
-        ax25.send(["apzbrt", "iz5rqo"], teststr)
+    stream = p.open(format = pyaudio.paUInt8,
+        channels = 1,
+        rate = 9600,
+        input = True,
+        output = True,
+        frames_per_buffer = 1024)
+    afsk = afsk.Afsk(stream)
+    ax25 = Ax25(afsk)
+
+    if len(sys.argv) > 1:
+        sender = sys.argv[1]
+        assert(len(sender) <= 6)
+        assert(sender.isalnum())
+        sys.stderr.write("AX25 in send mode, sender [%s], reading from stdin...\n" % sender.upper())
+        data = sys.stdin.read()
+        sys.stderr.write("sending...\n")
+        ax25.send(["apzbrt", sender], data)
+        time.sleep(1)
+        sys.stderr.write("Done.\n")
+    else:
+        sys.stderr.write("AX25 in receive mode...\n")
         while 1:
             m = ax25.recv()
-            print "AFSK1200: fm %s" % m['src']
-            print m['data']
-            assert(teststr == m['data'])
-        stream.close()
-        p.terminate()
+            sys.stdout.write("AFSK1200: fm %s\n" % m['src'])
+            sys.stdout.write(m['data'])
 
-    else:
-        import sys
-        ax25 = Ax25(sys.stdout)
-        ax25.send(["apzbrt", "iz5rqo"], teststr)
-        del ax25
-        ax25 = Ax25(sys.stdin)
-        print ax25.recv()
-
-
+    stream.close()
+    p.terminate()
