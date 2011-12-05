@@ -36,11 +36,14 @@ SRC_LIST="
 	bertos/mware/formatwr.c
 	bertos/mware/hex.c
 	bertos/mware/sprintf.c
+	bertos/mware/config.c
+	bertos/mware/ini_reader.c
 	bertos/algo/crc_ccitt.c
 	bertos/net/ax25.c
 	bertos/net/afsk.c
 	bertos/cfg/kfile_debug.c
 	bertos/io/kfile.c
+	bertos/emul/kfile_posix.c
 	bsm-2/cutoff.c
 	bsm-2/status_mgr.c
 	bsm-2/landing_buz.c
