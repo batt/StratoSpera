@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Dec-01-2011 at 14:31:04}
+{ Using PSTWRITER 16.0.0 s001Dec-05-2011 at 08:16:26}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -165,7 +165,7 @@ primitive 'C_2_SMC0805_10UF';
     VALUE='10uF';
   end_body;
 end_primitive;
-primitive 'ANTENNA_SMB_0_SMB_JACK_COASS_AN';
+primitive 'ANTENNA_SMB_0_SMBCOASS_ANTENNA_';
   pin
     'SIGNAL':
       PIN_NUMBER='(1)';
@@ -185,7 +185,7 @@ primitive 'ANTENNA_SMB_0_SMB_JACK_COASS_AN';
   end_pin;
   body
     PART_NAME='ANTENNA_SMB_0';
-    JEDEC_TYPE='smb_jack_coass';
+    JEDEC_TYPE='smbcoass';
     VALUE='ANTENNA_SMB';
   end_body;
 end_primitive;
