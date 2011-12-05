@@ -181,6 +181,8 @@
     <File Name="bsm-2/testmode.c"/>
     <File Name="bsm-2/testmode.h"/>
     <File Name="bsm-2/status_test.c"/>
+    <File Name="bsm-2/config.c"/>
+    <File Name="bsm-2/config.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
@@ -1430,5 +1432,8 @@
     <File Name="scripts/repeater.py"/>
     <File Name="scripts/downloader.py"/>
     <File Name="scripts/restore.py"/>
+    <File Name="scripts/ax25.py"/>
+    <File Name="scripts/afsk.py"/>
+    <File Name="scripts/crc_ccitt.py"/>
   </VirtualDirectory>
 </CodeLite_Project>
