@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Dec-05-2011 at 08:16:26}
+{ Using PSTWRITER 16.0.0 s001Dec-07-2011 at 18:57:18}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -13,21 +13,6 @@ primitive 'C_1_SMC0603_100NF';
     PART_NAME='C_1';
     JEDEC_TYPE='smc0603';
     VALUE='100nF';
-  end_body;
-end_primitive;
-primitive 'C_1_SMC0603_220PF';
-  pin
-    '1':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-    '2':
-      PIN_NUMBER='(2)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='C_1';
-    JEDEC_TYPE='smc0603';
-    VALUE='220pF';
   end_body;
 end_primitive;
 primitive 'C_1_SMC0603_1UF';
@@ -45,7 +30,7 @@ primitive 'C_1_SMC0603_1UF';
     VALUE='1uF';
   end_body;
 end_primitive;
-primitive 'C_1_SMC0603_10NF';
+primitive 'C_1_SMC0603_1.5PF';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -57,10 +42,10 @@ primitive 'C_1_SMC0603_10NF';
   body
     PART_NAME='C_1';
     JEDEC_TYPE='smc0603';
-    VALUE='10nF';
+    VALUE='1.5pF';
   end_body;
 end_primitive;
-primitive 'C_1_SMC0603_3.9PF';
+primitive 'C_1_SMC0603_100PF';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -72,10 +57,10 @@ primitive 'C_1_SMC0603_3.9PF';
   body
     PART_NAME='C_1';
     JEDEC_TYPE='smc0603';
-    VALUE='3.9pF';
+    VALUE='100pF';
   end_body;
 end_primitive;
-primitive 'C_1_SMC0603_8.2PF';
+primitive 'C_1_SMC0603_12PF';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -87,10 +72,10 @@ primitive 'C_1_SMC0603_8.2PF';
   body
     PART_NAME='C_1';
     JEDEC_TYPE='smc0603';
-    VALUE='8.2pF';
+    VALUE='12pF';
   end_body;
 end_primitive;
-primitive 'C_1_SMC0603_5.6PF';
+primitive 'C_1_SMC0603_3.3PF';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -102,7 +87,22 @@ primitive 'C_1_SMC0603_5.6PF';
   body
     PART_NAME='C_1';
     JEDEC_TYPE='smc0603';
-    VALUE='5.6pF';
+    VALUE='3.3pF';
+  end_body;
+end_primitive;
+primitive 'C_1_SMC0603_NP';
+  pin
+    '1':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+    '2':
+      PIN_NUMBER='(2)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='C_1';
+    JEDEC_TYPE='smc0603';
+    VALUE='NP';
   end_body;
 end_primitive;
 primitive 'C_1_SMC0603_6.8PF';
@@ -165,6 +165,36 @@ primitive 'C_2_SMC0805_10UF';
     VALUE='10uF';
   end_body;
 end_primitive;
+primitive 'C_1_SMC0603_1PF';
+  pin
+    '1':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+    '2':
+      PIN_NUMBER='(2)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='C_1';
+    JEDEC_TYPE='smc0603';
+    VALUE='1pF';
+  end_body;
+end_primitive;
+primitive 'C_1_SMC0603_47PF';
+  pin
+    '1':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+    '2':
+      PIN_NUMBER='(2)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='C_1';
+    JEDEC_TYPE='smc0603';
+    VALUE='47pF';
+  end_body;
+end_primitive;
 primitive 'ANTENNA_SMB_0_SMBCOASS_ANTENNA_';
   pin
     'SIGNAL':
@@ -204,7 +234,7 @@ primitive 'L1_0_SML1206_10UH';
     VALUE='10uH';
   end_body;
 end_primitive;
-primitive 'INDUCTOR/SM_SML0603_27NH';
+primitive 'INDUCTOR/SM_SML0603_18NH';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -216,10 +246,10 @@ primitive 'INDUCTOR/SM_SML0603_27NH';
   body
     PART_NAME='INDUCTOR/SM';
     JEDEC_TYPE='sml0603';
-    VALUE='27nH';
+    VALUE='18nH';
   end_body;
 end_primitive;
-primitive 'INDUCTOR/SM_SML0603_22NH';
+primitive 'INDUCTOR/SM_SML0603_12NH';
   pin
     '1':
       PIN_NUMBER='(1)';
@@ -231,7 +261,22 @@ primitive 'INDUCTOR/SM_SML0603_22NH';
   body
     PART_NAME='INDUCTOR/SM';
     JEDEC_TYPE='sml0603';
-    VALUE='22nH';
+    VALUE='12nH';
+  end_body;
+end_primitive;
+primitive 'INDUCTOR/SM_SML0603_3.3NH';
+  pin
+    '1':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+    '2':
+      PIN_NUMBER='(2)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='INDUCTOR/SM';
+    JEDEC_TYPE='sml0603';
+    VALUE='3.3nH';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PB15';
