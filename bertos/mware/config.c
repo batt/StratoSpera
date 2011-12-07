@@ -62,16 +62,15 @@ void config_load(ConfigMetadata *cfg)
 		const ConfigEntry *e = &(cfg->table[i]);
         if (ini_getString(fd, cfg->name, e->name, e->default_val, input_string, sizeof(input_string)) != 0)
 			LOG_WARN("An error occurred while reading key \"%s\"\n", e->name);
-		e->setp(e, input_string, sizeof(input_string), true);
+		e->setp(e, input_string, true);
 	}
 
 	if (cfg->reload)
 		cfg->reload();
 }
 
-SetPRetVals config_setInt(const struct ConfigEntry *e, char *val, size_t len, bool use_default)
+SetPRetVals config_setInt(const struct ConfigEntry *e, char *val, bool use_default)
 {
-	(void)len;
 	long conv = 0;
 	char *endptr;
 	LOG_INFO("Value to be converted: %s\n", val);
@@ -125,13 +124,13 @@ static bool decode_boolArray(const char *str, size_t size, bool *array)
 	return true;
 }
 
-SetPRetVals config_setBoolArray(const struct ConfigEntry *e, char *val, size_t len, bool use_default)
+SetPRetVals config_setBoolArray(const struct ConfigEntry *e, char *val, bool use_default)
 {
 	bool *ba = (bool *)e->parms[1];
 	size_t sz = (size_t)e->parms[2];
 	bool tmp_array[sz];
 	bool ret = SRV_OK;
-	size_t val_len = strnlen(val, len);
+	size_t val_len = strlen(val);
 	size_t expected_len = sz * 2 - 1;
 
 	LOG_INFO("BoolArray val[%s]\n", val);
@@ -164,13 +163,13 @@ error:
  * \param val Configuration value to be written (0 terminated).
  * \param len Len available in the input string.
  */
-SetPRetVals config_setString(const struct ConfigEntry *e, char *val, size_t len, bool use_default)
+SetPRetVals config_setString(const struct ConfigEntry *e, char *val, bool use_default)
 {
 	size_t sz = (size_t)e->parms[2];
 	char *p = (char *)e->parms[1];
 	bool ret = SRV_OK;
 
-	size_t val_len = strnlen(val, len);
+	size_t val_len = strlen(val);
 
 	if (val_len > sz)
 		ret = SRV_OK_CLAMPED;
@@ -192,7 +191,7 @@ SetPRetVals config_setString(const struct ConfigEntry *e, char *val, size_t len,
 }
 
 
-SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, size_t len, bool use_default)
+SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, bool use_default)
 {
 	bool *b = (bool *)e->parms[1];
 	const char *val = _val;
@@ -200,18 +199,18 @@ SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, size_t len, 
 
 	do
 	{
-		if (strncasecmp(val, "true", len) == 0 ||
-		    strncasecmp(val, "1", len) == 0 ||
-		    strncasecmp(val, "on", len) == 0 ||
-		    strncasecmp(val, "enable", len) == 0)
+		if (strcasecmp(val, "true") == 0 ||
+		    strcasecmp(val, "1") == 0 ||
+		    strcasecmp(val, "on") == 0 ||
+		    strcasecmp(val, "enable") == 0)
 		{
 			*b = true;
 			break;
 		}
-		else if (strncasecmp(val, "false", len) == 0 ||
-		         strncasecmp(val, "0", len) == 0 ||
-		         strncasecmp(val, "off", len) == 0 ||
-		         strncasecmp(val, "disable", len) == 0)
+		else if (strcasecmp(val, "false") == 0 ||
+		         strcasecmp(val, "0") == 0 ||
+		         strcasecmp(val, "off") == 0 ||
+		         strcasecmp(val, "disable") == 0)
 		{
 			*b = false;
 			break;
@@ -220,10 +219,7 @@ SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, size_t len, 
 		{
 			ret = SRV_CONV_ERR;
 			if (use_default && val != e->default_val)
-			{
 				val = e->default_val;
-				len = strlen(e->default_val);
-			}
 			else
 				break;
 		}
@@ -233,7 +229,7 @@ SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, size_t len, 
 	return ret;
 }
 
-bool config_set(const char *name, const char *val, size_t len)
+bool config_set(const char *name, const char *val)
 {
 	const ConfigEntry *e = NULL;
 	ConfigMetadata *cfg;
@@ -253,7 +249,7 @@ bool config_set(const char *name, const char *val, size_t len)
 	return false;
 
 found:
-	if (e->setp(e, (char *)val, len, false) != SRV_CONV_ERR)
+	if (e->setp(e, (char *)val, false) != SRV_CONV_ERR)
 	{
 		if (cfg->reload)
 			cfg->reload();

@@ -50,11 +50,10 @@ typedef enum SetPRetVals
  *
  * \param e Entry to be modified.
  * \param val String containing the value to be set.
- * \param len Length of input string.
  * \param default_on_err true if have to use default value on converion errors.
  * \return true if the value \a val should be written to DLI, false otherwise
  */
-typedef SetPRetVals (*SetParamFunc_t) (const struct ConfigEntry *e, char *val, size_t len, bool default_on_err);
+typedef SetPRetVals (*SetParamFunc_t) (const struct ConfigEntry *e, char *val, bool default_on_err);
 
 /**
  * Metadata for a configuration fragment.
@@ -131,12 +130,11 @@ void config_init(KFile *fd);
 void config_register(ConfigMetadata *cfg);
 void config_load(ConfigMetadata *cfg);
 const ConfigEntry *config_findEntry(ConfigMetadata **cfg, const char *name);
-SetPRetVals config_setBoolArray(const struct ConfigEntry *e, char *val, size_t len, bool);
-SetPRetVals config_setString(const struct ConfigEntry *e, char *val, size_t len, bool);
-SetPRetVals config_setFloat(const struct ConfigEntry *a, char *b, size_t len, bool);
-SetPRetVals config_setInt(const struct ConfigEntry *a, char *b, size_t len, bool);
-SetPRetVals config_setBool(const struct ConfigEntry *a, char *b, size_t len, bool);
-
-bool config_set(const char *name, const char *val, size_t len);
+SetPRetVals config_setBoolArray(const struct ConfigEntry *e, char *val, bool use_default);
+SetPRetVals config_setString(const struct ConfigEntry *e, char *val, bool use_default);
+SetPRetVals config_setFloat(const struct ConfigEntry *a, char *b, bool use_default);
+SetPRetVals config_setInt(const struct ConfigEntry *a, char *b, bool use_default);
+SetPRetVals config_setBool(const struct ConfigEntry *a, char *b, bool use_default);
+bool config_set(const char *name, const char *val);
 
 #endif // CONFIG_H

@@ -87,28 +87,28 @@ int config_testRun(void)
 	ASSERT(test8 == true);
 	ASSERT(test9 == true);
 	ASSERT(test10 == false);
-	ASSERT(config_set("test0", "true", 4));
+	ASSERT(config_set("test0", "true"));
 	ASSERT(test0 == true);
-	ASSERT(!config_set("test0", "erro", 4));
+	ASSERT(!config_set("test0", "erro"));
 	ASSERT(test0 == true);
 
 	ASSERT(int0 == 1);
 	ASSERT(int1 == 0);
 	ASSERT(int2 == 100);
 	ASSERT(int3 == 50);
-	ASSERT(config_set("int0", "23", 2));
+	ASSERT(config_set("int0", "23"));
 	ASSERT(int0 == 23);
-	ASSERT(!config_set("int0", "error", 5));
+	ASSERT(!config_set("int0", "error"));
 	ASSERT(int0 == 23);
-	ASSERT(config_set("int0", "1200", 4));
+	ASSERT(config_set("int0", "1200"));
 	ASSERT(int0 == 100);
-	ASSERT(config_set("int0", "-111", 4));
+	ASSERT(config_set("int0", "-111"));
 	ASSERT(int0 == 0);
 
 	ASSERT(strcmp(string0, "string zero") == 0);
-	ASSERT(config_set("string0", "set", 3));
+	ASSERT(config_set("string0", "set"));
 	ASSERT(strcmp(string0, "set") == 0);
-	ASSERT(config_set("string0", "very very long string", 21));
+	ASSERT(config_set("string0", "very very long string"));
 	ASSERT(strcmp(string0, "very very l") == 0);
 
 	return 0;
