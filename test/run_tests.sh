@@ -38,6 +38,7 @@ SRC_LIST="
 	bertos/mware/sprintf.c
 	bertos/mware/config.c
 	bertos/mware/ini_reader.c
+	bertos/mware/strtod.c
 	bertos/algo/crc_ccitt.c
 	bertos/net/ax25.c
 	bertos/net/afsk.c
