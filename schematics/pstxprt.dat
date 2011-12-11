@@ -1,5 +1,5 @@
 FILE_TYPE = EXPANDEDPARTLIST;
-{ Using PSTWRITER 16.0.0 s001Dec-07-2011 at 19:23:20 }
+{ Using PSTWRITER 16.0.0 s001Dec-07-2011 at 22:02:14 }
 DIRECTIVES
  PST_VERSION='PST_HDL_CENTRIC_VERSION_0';
  ROOT_DRAWING='BSM-RADIO';
@@ -477,8 +477,8 @@ PART_NAME
  ROOM='Antenna';
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18329002@DISCRETE.INDUCTOR/SM.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18329002@discrete.\inductor/sm.normal\(chips)',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18342678@DISCRETE.INDUCTOR/SM.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18342678@discrete.\inductor/sm.normal\(chips)',
  ROOM='Antenna',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
