@@ -12,12 +12,7 @@
 #include <cfg/log.h>
 
 #define INT_VAR(var)   *((int *) (var))
-
-#if SIZEOF_PTR > SIZEOF_INT
-	#define CAST(a) (int)(long)(a)
-#else
-	#define CAST(a) (int)(a)
-#endif
+#define FLOAT_VAR(var)   *((float *) (var))
 
 static List config;
 static KFile *fd;
@@ -69,6 +64,7 @@ void config_load(ConfigMetadata *cfg)
 		cfg->reload();
 }
 
+
 SetPRetVals config_setInt(const struct ConfigEntry *e, char *val, bool use_default)
 {
 	long conv = 0;
@@ -85,22 +81,59 @@ SetPRetVals config_setInt(const struct ConfigEntry *e, char *val, bool use_defau
 			LOG_INFO("Using default value: %s\n", e->default_val);
 			conv = strtol(e->default_val, &endptr, 0);
 			ASSERT(*endptr == 0);
-			INT_VAR(e->parms[1]) = (int) conv;
+			INT_VAR(e->parms[1].p) = (int) conv;
 		}
 		LOG_INFO("Error in conversion\n");
 		return SRV_CONV_ERR;
 	}
 
 	/* Validate value limits */
-	INT_VAR(e->parms[1]) = (int) conv;
+	INT_VAR(e->parms[1].p) = (int) conv;
 	LOG_INFO("Value converted (long): %ld\n", conv);
-	LOG_INFO("Clamping value between [%d] and [%d]\n", CAST(e->parms[0]), CAST(e->parms[2]));
-	conv = MINMAX(CAST(e->parms[0]), (int)conv, CAST(e->parms[2]));
-	LOG_INFO("Value before %d, value after %ld\n", INT_VAR(e->parms[1]), conv);
+	LOG_INFO("Clamping value between [%d] and [%d]\n", e->parms[0].i, e->parms[2].i);
+	conv = MINMAX(e->parms[0].i, (int)conv, e->parms[2].i);
+	LOG_INFO("Value before %d, value after %ld\n", INT_VAR(e->parms[1].p), conv);
 
-	if (INT_VAR(e->parms[1]) != (int) conv)
+	if (INT_VAR(e->parms[1].p) != (int) conv)
 	{
-		INT_VAR(e->parms[1]) = (int) conv;
+		INT_VAR(e->parms[1].p) = (int) conv;
+		LOG_INFO("Value clamped\n");
+		return SRV_OK_CLAMPED;
+	}
+	return SRV_OK;
+}
+
+SetPRetVals config_setFloat(const struct ConfigEntry *e, char *val, bool use_default)
+{
+	float conv = 0.0;
+	char *endptr;
+	LOG_INFO("Value to be converted: %s\n", val);
+
+	conv = strtod(val, &endptr);
+
+	if (conv == 0.0 && endptr == val)
+	{
+		if (use_default)
+		{
+			LOG_INFO("Using default value: %s\n", e->default_val);
+			conv = strtod(e->default_val, &endptr);
+			ASSERT(*endptr == 0);
+			FLOAT_VAR(e->parms[1].p) = conv;
+		}
+		LOG_INFO("Error in conversion\n");
+		return SRV_CONV_ERR;
+	}
+
+	/* Validate value limits */
+	FLOAT_VAR(e->parms[1].p) = conv;
+	LOG_INFO("Value converted: %g\n", conv);
+	LOG_INFO("Clamping value between [%g] and [%g]\n", e->parms[0].f, e->parms[2].f);
+	conv = MINMAX(e->parms[0].f, conv, e->parms[2].f);
+	LOG_INFO("Value before %g, value after %g\n", FLOAT_VAR(e->parms[1].p), conv);
+
+	if (FLOAT_VAR(e->parms[1].p) != conv)
+	{
+		FLOAT_VAR(e->parms[1].p) = conv;
 		LOG_INFO("Value clamped\n");
 		return SRV_OK_CLAMPED;
 	}
@@ -126,8 +159,8 @@ static bool decode_boolArray(const char *str, size_t size, bool *array)
 
 SetPRetVals config_setBoolArray(const struct ConfigEntry *e, char *val, bool use_default)
 {
-	bool *ba = (bool *)e->parms[1];
-	size_t sz = (size_t)e->parms[2];
+	bool *ba = (bool *)e->parms[1].p;
+	size_t sz = (size_t)e->parms[2].i;
 	bool tmp_array[sz];
 	bool ret = SRV_OK;
 	size_t val_len = strlen(val);
@@ -165,8 +198,8 @@ error:
  */
 SetPRetVals config_setString(const struct ConfigEntry *e, char *val, bool use_default)
 {
-	size_t sz = (size_t)e->parms[2];
-	char *p = (char *)e->parms[1];
+	size_t sz = (size_t)e->parms[2].i;
+	char *p = (char *)e->parms[1].p;
 	bool ret = SRV_OK;
 
 	size_t val_len = strlen(val);
@@ -193,7 +226,7 @@ SetPRetVals config_setString(const struct ConfigEntry *e, char *val, bool use_de
 
 SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, bool use_default)
 {
-	bool *b = (bool *)e->parms[1];
+	bool *b = (bool *)e->parms[1].p;
 	const char *val = _val;
 	SetPRetVals ret = SRV_OK;
 
@@ -249,7 +282,7 @@ bool config_set(const char *name, const char *val)
 	return false;
 
 found:
-	if (e->setp(e, (char *)val, false) != SRV_CONV_ERR)
+	if (e->setp(e, CONST_CAST(char *, val), false) != SRV_CONV_ERR)
 	{
 		if (cfg->reload)
 			cfg->reload();

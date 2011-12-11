@@ -72,32 +72,38 @@ typedef struct ConfigMetadata
 	ReloadFunc_t reload;
 } ConfigMetadata;
 
+typedef union ConfigParam
+{
+	void *p;
+	int i;
+	float f;
+} ConfigParam;
+
 typedef struct ConfigEntry
 {
 	char name[CFG_NAME_MAX+1];
 	char default_val[MAX_VAL+1];
-	void *parms[MAX_PARMS];
+	ConfigParam parms[MAX_PARMS];
 	SetParamFunc_t setp;
 } ConfigEntry;
 
-
 #define CONF_INT(name, min, max, def) \
-	(VAR, int, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), (void *)min, &name, (void *)max, NULL, config_setInt)
+	(VAR, int, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.i = min}, {.p = &name}, {.i = max}, {.p = NULL}, config_setInt)
 
 #define CONF_BOOL(name, def) \
-	(VAR, bool, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), NULL, &name, NULL, NULL, config_setBool)
+	(VAR, bool, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.p = NULL}, {.p = &name}, {.p = NULL}, {.p = NULL}, config_setBool)
 
 #define CONF_BOOLARRAY(name, size, def) \
-	(ARRAY, bool, name, size, PP_STRINGIZE(name), def, NULL, name, (void *)size, NULL, config_setBoolArray)
+	(ARRAY, bool, name, size, PP_STRINGIZE(name), def, {.p = NULL}, {.p = name}, {.i = size}, {.p = NULL}, config_setBoolArray)
 
 #define CONF_STRING(name, size, def) \
-	(ARRAY, char, name, size, PP_STRINGIZE(name), def, NULL, name, (void *)size, NULL, config_setString)
+	(ARRAY, char, name, size, PP_STRINGIZE(name), def, {.p = NULL}, {.p = name}, {.i = size}, {.p = NULL}, config_setString)
 
 #define CONF_FLOAT(name, min, max, def) \
-	(VAR, float, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), (void *)min, &name, (void *)max, NULL, config_setFloat)
+	(VAR, float, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.f = min}, {.p = &name}, {.f = max}, {.p = NULL}, config_setFloat)
 
 #define CONF_INT_NODECLARE(name, var, min, max, def) \
-	(EMPTY, _, _, _, PP_STRINGIZE(name), PP_STRINGIZE(def), (void *)min, &var, (void *)max, NULL, config_setInt)
+	(EMPTY, _, _, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.i = min}, {.p = &var}, {.i = max}, {.p = NULL}, config_setInt)
 
 
 #define DECLARE_ARRAY(type, name, size, ...) static type name[size];

@@ -32,7 +32,9 @@ DECLARE_CONF(system, reload,
 	CONF_INT(int1, 0, 100, 50),
 	CONF_INT(int2, 0, 100, 50),
 	CONF_INT(int3, 0, 100, 50),
-	CONF_STRING(string0, 11, "zero")
+	CONF_STRING(string0, 11, "zero"),
+	CONF_FLOAT(float0, 0, 100, 50),
+	CONF_FLOAT(float1, 5e-37, -10e-37, +10e-37)
 );
 
 static void reload(void)
@@ -56,6 +58,8 @@ static void reload(void)
 	kprintf("int2 %d\n", int2);
 	kprintf("int3 %d\n", int3);
 	kprintf("string0 %s\n", string0);
+	kprintf("float0 %g\n", float0);
+	kprintf("float1 %g\n", float1);
 }
 
 
@@ -110,6 +114,18 @@ int config_testRun(void)
 	ASSERT(strcmp(string0, "set") == 0);
 	ASSERT(config_set("string0", "very very long string"));
 	ASSERT(strcmp(string0, "very very l") == 0);
+
+	ASSERT(float0 - 2.3 < 1e-6);
+	ASSERT(config_set("float0", "23"));
+	ASSERT(float0 - 23 < 1e-6);
+	ASSERT(!config_set("float0", "error"));
+	ASSERT(float0 - 23 < 1e-6);
+	ASSERT(config_set("float0", "1200"));
+	ASSERT(float0 - 100 < 1e-6);
+	ASSERT(config_set("float0", "-111"));
+	ASSERT(float0 - 0 < 1e-6);
+
+	ASSERT(float1 - -1.235e-37 < 1e-43);
 
 	return 0;
 }
