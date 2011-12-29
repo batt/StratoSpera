@@ -1,5 +1,5 @@
 FILE_TYPE = EXPANDEDPARTLIST;
-{ Using PSTWRITER 16.0.0 s001Dec-28-2011 at 22:28:07 }
+{ Using PSTWRITER 16.0.0 s001Dec-29-2011 at 15:30:53 }
 DIRECTIVES
  PST_VERSION='PST_HDL_CENTRIC_VERSION_0';
  ROOT_DRAWING='BSM-RADIO';
@@ -249,8 +249,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190798@BSM-RADIO.C_2.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190798@\bsm-radio\.\c_2.normal\(chips)',
- ROOM='VRadioFlt',
  VOLTAGE='10V',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -388,8 +388,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18192718@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18192718@\bsm-radio\.\l1_0.normal\(chips)',
- ROOM='CPU',
  VOLTAGE='16V',
+ ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -445,8 +445,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190812@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190812@\bsm-radio\.\l1_0.normal\(chips)',
- ROOM='VRadioFlt',
  VOLTAGE='16V',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
