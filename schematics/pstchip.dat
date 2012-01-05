@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Jan-05-2012 at 18:23:35}
+{ Using PSTWRITER 16.0.0 s001Jan-05-2012 at 22:56:38}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -433,18 +433,6 @@ primitive 'T POINT R_BCON1_PB0-ADC8';
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
     VALUE='PB0-ADC8';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_ANTENNA';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='ANTENNA';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PB13';

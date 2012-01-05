@@ -1,5 +1,5 @@
 FILE_TYPE = EXPANDEDPARTLIST;
-{ Using PSTWRITER 16.0.0 s001Jan-05-2012 at 18:23:35 }
+{ Using PSTWRITER 16.0.0 s001Jan-05-2012 at 22:56:38 }
 DIRECTIVES
  PST_VERSION='PST_HDL_CENTRIC_VERSION_0';
  ROOT_DRAWING='BSM-RADIO';
@@ -249,8 +249,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190798@BSM-RADIO.C_2.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190798@\bsm-radio\.\c_2.normal\(chips)',
- VOLTAGE='10V',
  ROOM='VRadioFlt',
+ VOLTAGE='10V',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -388,8 +388,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18192718@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18192718@\bsm-radio\.\l1_0.normal\(chips)',
- VOLTAGE='16V',
  ROOM='CPU',
+ VOLTAGE='16V',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -445,8 +445,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190812@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190812@\bsm-radio\.\l1_0.normal\(chips)',
- VOLTAGE='16V',
  ROOM='VRadioFlt',
+ VOLTAGE='16V',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -622,17 +622,6 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18252634@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18252634@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- P21 'T POINT R_BCON1_ANTENNA':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18273807@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18273807@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -907,15 +896,6 @@ SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18095347@BSM-RADIO.R_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18095347@\bsm-radio\.\r_0.normal\(chips)',
  ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- R7 'R_0_SMR0603_0':;
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18273982@BSM-RADIO.R_0.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18273982@\bsm-radio\.\r_0.normal\(chips)',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
