@@ -1,5 +1,5 @@
 FILE_TYPE = EXPANDEDPARTLIST;
-{ Using PSTWRITER 16.0.0 s001Jan-12-2012 at 13:06:20 }
+{ Using PSTWRITER 16.0.0 s001Jan-17-2012 at 22:59:35 }
 DIRECTIVES
  PST_VERSION='PST_HDL_CENTRIC_VERSION_0';
  ROOT_DRAWING='BSM-RADIO';
@@ -249,8 +249,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190798@BSM-RADIO.C_2.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190798@\bsm-radio\.\c_2.normal\(chips)',
- ROOM='VRadioFlt',
  VOLTAGE='10V',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -388,8 +388,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18192718@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18192718@\bsm-radio\.\l1_0.normal\(chips)',
- ROOM='CPU',
  VOLTAGE='16V',
+ ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -445,8 +445,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190812@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190812@\bsm-radio\.\l1_0.normal\(chips)',
- ROOM='VRadioFlt',
  VOLTAGE='16V',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -517,34 +517,12 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P110 'T POINT R_BCON1_PB9':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251338@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251338@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
  P12 'T POINT R_BCON1_PA14-TCK':
  ROOM='CPU';
 
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18257829@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18257829@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- P120 'T POINT R_BCON1_PB8':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251549@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251549@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -561,34 +539,12 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P130 'T POINT R_BCON1_PB6':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251977@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251977@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
  P14 'T POINT R_BCON1_PB3-TDO':
  ROOM='CPU';
 
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18257393@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18257393@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- P140 'T POINT R_BCON1_PB7':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251762@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251762@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -616,12 +572,34 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P18 'T POINT R_BCON1_PB1-ADC9':
+ P17 'T POINT R_BCON1_PB6':
  ROOM='CPU';
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18252413@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18252413@discrete.\t point r.normal\(chips)',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251977@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251977@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P18 'T POINT R_BCON1_PB7':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251762@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251762@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P19 'T POINT R_BCON1_PB8':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251549@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251549@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -638,18 +616,18 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P20 'T POINT R_BCON1_PB0-ADC8':
+ P20 'T POINT R_BCON1_PB9':
  ROOM='CPU';
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18252634@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18252634@discrete.\t point r.normal\(chips)',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18251338@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18251338@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
 PART_NAME
- P22 'T POINT R_BCON1_PB13':
+ P21 'T POINT R_BCON1_PB13':
  ROOM='CPU';
 
 SECTION_NUMBER 1
@@ -660,13 +638,90 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P24 'T POINT R_BCON1_RESET':
+ P22 'T POINT R_BCON1_RESET':
  ROOM='CPU';
 
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18255739@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18255739@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P23 'T POINT R_BCON1_PA0-ADC0':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18246124@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18246124@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P24 'T POINT R_BCON1_PA1-ADC1':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18245908@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18245908@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P25 'T POINT R_BCON1_PA2-TX2-ADC2':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18245692@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18245692@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P26 'T POINT R_BCON1_PB1-ADC9':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18252413@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18252413@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P27 'T POINT R_BCON1_PB0-ADC8':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18252634@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18252634@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P28 'T POINT R_BCON1_PA3-RX2-ADC3':
+ ROOM='CPU';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18245476@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18245476@discrete.\t point r.normal\(chips)',
+ ROOM='CPU',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P29 'T POINT R_BCON1_VDD':
+ ROOM='VRadioFlt';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18225781@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18225781@discrete.\t point r.normal\(chips)',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -682,12 +737,23 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P30 'T POINT R_BCON1_VDD':
+ P30 'T POINT R_BCON1_VRADIO':
  ROOM='VRadioFlt';
 
 SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18225781@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18225781@discrete.\t point r.normal\(chips)',
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18264580@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18264580@discrete.\t point r.normal\(chips)',
+ ROOM='VRadioFlt',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P31 'T POINT R_BCON1_GND':
+ ROOM='VRadioFlt';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18262972@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18262972@discrete.\t point r.normal\(chips)',
  ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -715,34 +781,12 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P50 'T POINT R_BCON1_PA0-ADC0':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18246124@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18246124@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
  P6 'T POINT R_BCON1_PB14':
  ROOM='CPU';
 
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18232426@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18232426@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- P60 'T POINT R_BCON1_PA3-RX2-ADC3':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18245476@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18245476@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -770,34 +814,12 @@ SECTION_NUMBER 1
  SECTION='';
 
 PART_NAME
- P80 'T POINT R_BCON1_PA1-ADC1':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18245908@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18245908@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
  P9 'T POINT R_BCON1_PA9-TX1':
  ROOM='CPU';
 
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18244081@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18244081@discrete.\t point r.normal\(chips)',
- ROOM='CPU',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- P90 'T POINT R_BCON1_PA2-TX2-ADC2':
- ROOM='CPU';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18245692@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18245692@discrete.\t point r.normal\(chips)',
  ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
@@ -918,28 +940,6 @@ SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18267724@BSM-RADIO.R_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18267724@\bsm-radio\.\r_0.normal\(chips)',
  ROOM='Radio',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- TP1 'T POINT R_BCON1_VRADIO':
- ROOM='VRadioFlt';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18264580@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18264580@discrete.\t point r.normal\(chips)',
- ROOM='VRadioFlt',
- PRIM_FILE='.\pstchip.dat',
- SECTION='';
-
-PART_NAME
- TP2 'T POINT R_BCON1_GND':
- ROOM='VRadioFlt';
-
-SECTION_NUMBER 1
- '@BSM-RADIO.BSM-RADIO(SCH_1):INS18262972@DISCRETE.T POINT R.NORMAL(CHIPS)':
- C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18262972@discrete.\t point r.normal\(chips)',
- ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 

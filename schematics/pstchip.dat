@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Jan-12-2012 at 13:06:20}
+{ Using PSTWRITER 16.0.0 s001Jan-17-2012 at 22:59:35}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -315,18 +315,6 @@ primitive 'T POINT R_BCON1_PA13-TMS';
     VALUE='PA13-TMS';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PB9';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PB9';
-  end_body;
-end_primitive;
 primitive 'T POINT R_BCON1_PA14-TCK';
   pin
     'TP':
@@ -337,18 +325,6 @@ primitive 'T POINT R_BCON1_PA14-TCK';
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
     VALUE='PA14-TCK';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_PB8';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PB8';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PA15-TDI';
@@ -363,18 +339,6 @@ primitive 'T POINT R_BCON1_PA15-TDI';
     VALUE='PA15-TDI';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PB6';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PB6';
-  end_body;
-end_primitive;
 primitive 'T POINT R_BCON1_PB3-TDO';
   pin
     'TP':
@@ -385,18 +349,6 @@ primitive 'T POINT R_BCON1_PB3-TDO';
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
     VALUE='PB3-TDO';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_PB7';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PB7';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PA4-TRST';
@@ -423,7 +375,7 @@ primitive 'T POINT R_BCON1_PB5';
     VALUE='PB5';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PB1-ADC9';
+primitive 'T POINT R_BCON1_PB6';
   pin
     'TP':
       PIN_NUMBER='(1)';
@@ -432,7 +384,31 @@ primitive 'T POINT R_BCON1_PB1-ADC9';
   body
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
-    VALUE='PB1-ADC9';
+    VALUE='PB6';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PB7';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PB7';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PB8';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PB8';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PB11-RX3';
@@ -447,7 +423,7 @@ primitive 'T POINT R_BCON1_PB11-RX3';
     VALUE='PB11-RX3';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PB0-ADC8';
+primitive 'T POINT R_BCON1_PB9';
   pin
     'TP':
       PIN_NUMBER='(1)';
@@ -456,7 +432,7 @@ primitive 'T POINT R_BCON1_PB0-ADC8';
   body
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
-    VALUE='PB0-ADC8';
+    VALUE='PB9';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PB13';
@@ -483,7 +459,7 @@ primitive 'T POINT R_BCON1_RESET';
     VALUE='RESET';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PB12';
+primitive 'T POINT R_BCON1_PA0-ADC0';
   pin
     'TP':
       PIN_NUMBER='(1)';
@@ -492,7 +468,67 @@ primitive 'T POINT R_BCON1_PB12';
   body
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
-    VALUE='PB12';
+    VALUE='PA0-ADC0';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PA1-ADC1';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PA1-ADC1';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PA2-TX2-ADC2';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PA2-TX2-ADC2';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PB1-ADC9';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PB1-ADC9';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PB0-ADC8';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PB0-ADC8';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_PA3-RX2-ADC3';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PA3-RX2-ADC3';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_VDD';
@@ -507,6 +543,42 @@ primitive 'T POINT R_BCON1_VDD';
     VALUE='Vdd';
   end_body;
 end_primitive;
+primitive 'T POINT R_BCON1_PB12';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='PB12';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_VRADIO';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='Vradio';
+  end_body;
+end_primitive;
+primitive 'T POINT R_BCON1_GND';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='bcon1';
+    VALUE='GND';
+  end_body;
+end_primitive;
 primitive 'T POINT R_BCON1_BOOT1';
   pin
     'TP':
@@ -519,18 +591,6 @@ primitive 'T POINT R_BCON1_BOOT1';
     VALUE='BOOT1';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PA0-ADC0';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PA0-ADC0';
-  end_body;
-end_primitive;
 primitive 'T POINT R_BCON1_PB14';
   pin
     'TP':
@@ -541,18 +601,6 @@ primitive 'T POINT R_BCON1_PB14';
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
     VALUE='PB14';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_PA3-RX2-ADC3';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PA3-RX2-ADC3';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_PB15';
@@ -579,18 +627,6 @@ primitive 'T POINT R_BCON1_PA8';
     VALUE='PA8';
   end_body;
 end_primitive;
-primitive 'T POINT R_BCON1_PA1-ADC1';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PA1-ADC1';
-  end_body;
-end_primitive;
 primitive 'T POINT R_BCON1_PA9-TX1';
   pin
     'TP':
@@ -601,18 +637,6 @@ primitive 'T POINT R_BCON1_PA9-TX1';
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
     VALUE='PA9-TX1';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_PA2-TX2-ADC2';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='PA2-TX2-ADC2';
   end_body;
 end_primitive;
 primitive 'R_0_SMR0603_56K';
@@ -688,30 +712,6 @@ primitive 'R_0_SMR0603_0';
     PART_NAME='R_0';
     JEDEC_TYPE='smr0603';
     VALUE='0';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_VRADIO';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='Vradio';
-  end_body;
-end_primitive;
-primitive 'T POINT R_BCON1_GND';
-  pin
-    'TP':
-      PIN_NUMBER='(1)';
-      PINUSE='UNSPEC';
-  end_pin;
-  body
-    PART_NAME='T POINT R';
-    JEDEC_TYPE='bcon1';
-    VALUE='GND';
   end_body;
 end_primitive;
 primitive 'STM32F100C4T6B_10_LQFP48_STM32F';
