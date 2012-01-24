@@ -1,5 +1,5 @@
 FILE_TYPE = EXPANDEDPARTLIST;
-{ Using PSTWRITER 16.0.0 s001Jan-24-2012 at 11:34:49 }
+{ Using PSTWRITER 16.0.0 s001Jan-24-2012 at 14:05:06 }
 DIRECTIVES
  PST_VERSION='PST_HDL_CENTRIC_VERSION_0';
  ROOT_DRAWING='BSM-RADIO';
@@ -249,8 +249,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190798@BSM-RADIO.C_2.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190798@\bsm-radio\.\c_2.normal\(chips)',
- ROOM='VRadioFlt',
  VOLTAGE='10V',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -388,8 +388,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18192718@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18192718@\bsm-radio\.\l1_0.normal\(chips)',
- ROOM='CPU',
  VOLTAGE='16V',
+ ROOM='CPU',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -445,8 +445,8 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18190812@BSM-RADIO.L1_0.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18190812@\bsm-radio\.\l1_0.normal\(chips)',
- ROOM='VRadioFlt',
  VOLTAGE='16V',
+ ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';
 
@@ -754,6 +754,28 @@ PART_NAME
 SECTION_NUMBER 1
  '@BSM-RADIO.BSM-RADIO(SCH_1):INS18262972@DISCRETE.T POINT R.NORMAL(CHIPS)':
  C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18262972@discrete.\t point r.normal\(chips)',
+ ROOM='VRadioFlt',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P32 'T POINT R_SCREW_M3_SCREW':
+ ROOM='VRadioFlt';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18373577@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18373577@discrete.\t point r.normal\(chips)',
+ ROOM='VRadioFlt',
+ PRIM_FILE='.\pstchip.dat',
+ SECTION='';
+
+PART_NAME
+ P33 'T POINT R_SCREW_M3_SCREW':
+ ROOM='VRadioFlt';
+
+SECTION_NUMBER 1
+ '@BSM-RADIO.BSM-RADIO(SCH_1):INS18373771@DISCRETE.T POINT R.NORMAL(CHIPS)':
+ C_PATH='@\bsm-radio\.\bsm-radio\(sch_1):ins18373771@discrete.\t point r.normal\(chips)',
  ROOM='VRadioFlt',
  PRIM_FILE='.\pstchip.dat',
  SECTION='';

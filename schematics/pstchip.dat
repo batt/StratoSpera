@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Jan-24-2012 at 11:34:49}
+{ Using PSTWRITER 16.0.0 s001Jan-24-2012 at 14:05:06}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -577,6 +577,18 @@ primitive 'T POINT R_BCON1_GND';
     PART_NAME='T POINT R';
     JEDEC_TYPE='bcon1';
     VALUE='GND';
+  end_body;
+end_primitive;
+primitive 'T POINT R_SCREW_M3_SCREW';
+  pin
+    'TP':
+      PIN_NUMBER='(1)';
+      PINUSE='UNSPEC';
+  end_pin;
+  body
+    PART_NAME='T POINT R';
+    JEDEC_TYPE='screw_m3';
+    VALUE='Screw';
   end_body;
 end_primitive;
 primitive 'T POINT R_BCON1_BOOT1';
