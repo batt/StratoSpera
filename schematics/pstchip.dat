@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Jan-20-2012 at 19:10:45}
+{ Using PSTWRITER 16.0.0 s001Jan-24-2012 at 09:14:47}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
@@ -714,7 +714,7 @@ primitive 'R_0_SMR0603_0';
     VALUE='0';
   end_body;
 end_primitive;
-primitive 'STM32F100C4T6B_10_LQFP48_STM32F';
+primitive 'STM32F100C4T6B_10_QUAD50M48WG90';
   pin
     'VBAT':
       PIN_NUMBER='(1)';
@@ -933,7 +933,7 @@ primitive 'STM32F100C4T6B_10_LQFP48_STM32F';
   end_pin;
   body
     PART_NAME='STM32F100C4T6B_10';
-    JEDEC_TYPE='lqfp48';
+    JEDEC_TYPE='quad50m48wg900';
     VALUE='STM32F100C4T6B';
   end_body;
 end_primitive;
