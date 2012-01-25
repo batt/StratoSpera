@@ -1,5 +1,5 @@
 FILE_TYPE=LIBRARY_PARTS;
-{ Using PSTWRITER 16.0.0 s001Jan-25-2012 at 16:35:38}
+{ Using PSTWRITER 16.0.0 s001Jan-25-2012 at 16:46:38}
 primitive 'C_1_SMC0603_100NF';
   pin
     '1':
