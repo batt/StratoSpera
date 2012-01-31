@@ -3,7 +3,7 @@ G04 Layout Name:  c:/src/bsm-2/schematics/bsm-radio.brd*
 G04 Film Name:    SolderMaskTop*
 G04 File Format:  Gerber RS274X*
 G04 File Origin:  16.0-s004*
-G04 Origin Date:  Mon Jan 30 17:24:18 2012*
+G04 Origin Date:  Tue Jan 31 10:15:02 2012*
 G04 *
 G04 Layer:  VIA CLASS/SOLDERMASK_TOP*
 G04 Layer:  PIN/SOLDERMASK_TOP*
@@ -20,12 +20,14 @@ G04 ================== end FILE IDENTIFICATION RECORD ====================*
 %IR0*IPPOS*OFA0.00000B0.00000*MIA0B0*SFA1.00000B1.00000*%
 %ADD16C,.05*%
 %ADD23R,.05X.05*%
+%ADD27R,.06X.06*%
 %ADD10C,.058*%
 %ADD28C,.095*%
 %ADD12R,.2165X.0787*%
-%ADD27R,.0945X.0945*%
 %ADD17R,.0984X.2559*%
+%ADD26O,.012X.08*%
 %ADD19O,.012X.071*%
+%ADD25O,.08X.012*%
 %ADD20O,.071X.012*%
 %ADD18R,.012X.071*%
 %ADD21R,.071X.012*%
@@ -35,8 +37,6 @@ G04 ================== end FILE IDENTIFICATION RECORD ====================*
 %ADD13R,.048X.074*%
 %ADD22R,.074X.048*%
 %ADD24R,.0472X.0708*%
-%ADD26O,.0118X.0787*%
-%ADD25O,.0787X.0118*%
 %LPD*%
 G75*
 G54D10*
