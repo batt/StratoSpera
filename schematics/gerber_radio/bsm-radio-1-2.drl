@@ -7,7 +7,7 @@ T04C.122
 T05C.02
 ;LEADER: 12 
 ;HEADER: 
-;CODE  : EIA 
+;CODE  : ASCII 
 ;FILE  : bsm-radio-1-2.drl for board bsm-radio.brd ... layers TOP and BOTTOM
 ;T01 Holesize 1. = 15.700000 Tolerance = +0.000000/-0.000000 PLATED MILS Quantity = 2
 ;T02 Holesize 2. = 37.000000 Tolerance = +0.000000/-0.000000 PLATED MILS Quantity = 31
