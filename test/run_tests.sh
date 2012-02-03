@@ -19,7 +19,9 @@ CC=gcc
 #FIXME: -Ibertos/emul should not be needed
 CFLAGS="-W -Wall -Wextra -Wundef -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wsign-compare -Wmissing-noreturn \
 -O0 -g3 -ggdb -Ibertos -Ibertos/emul -I. -Ibsm-2/ -std=gnu99 -fno-builtin -D_DEBUG -DARCH=(ARCH_EMUL|ARCH_UNITTEST) \
--DCPU_FREQ=(12288000UL) -ffunction-sections -fdata-sections -Wl,--gc-sections -lpulse-simple"
+-DCPU_FREQ=(12288000UL) -ffunction-sections -fdata-sections -Wl,--gc-sections"
+
+LIBS="-lpulse-simple -lm"
 
 CXX=g++
 CXXFLAGS="$CFLAGS"
@@ -72,7 +74,7 @@ for src in $TESTS; do
 	exe="$testdir/$name"
 
 	PREPARECMD="test/parsetest.py $src"
-	BUILDCMD="$CC -I$testdir $CFLAGS $src $SRC_LIST -o $exe"
+	BUILDCMD="$CC -I$testdir $CFLAGS $src $SRC_LIST -o $exe $LIBS"
 	export testdir name cfgdir
 
 	[ $VERBOSE -gt 0 ] && echo "Preparing $name..."
