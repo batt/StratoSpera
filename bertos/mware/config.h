@@ -141,6 +141,6 @@ SetPRetVals config_setString(const struct ConfigEntry *e, char *val, bool use_de
 SetPRetVals config_setFloat(const struct ConfigEntry *a, char *b, bool use_default);
 SetPRetVals config_setInt(const struct ConfigEntry *a, char *b, bool use_default);
 SetPRetVals config_setBool(const struct ConfigEntry *a, char *b, bool use_default);
-bool config_set(const char *name, const char *val);
+bool config_set(const char *module, const char *param, const char *val);
 
 #endif // CONFIG_H

@@ -91,38 +91,38 @@ int config_testRun(void)
 	ASSERT(test8 == true);
 	ASSERT(test9 == true);
 	ASSERT(test10 == false);
-	ASSERT(config_set("test0", "true"));
+	ASSERT(config_set("system", "test0", "true"));
 	ASSERT(test0 == true);
-	ASSERT(!config_set("test0", "erro"));
+	ASSERT(!config_set("system", "test0", "erro"));
 	ASSERT(test0 == true);
 
 	ASSERT(int0 == 1);
 	ASSERT(int1 == 0);
 	ASSERT(int2 == 100);
 	ASSERT(int3 == 50);
-	ASSERT(config_set("int0", "23"));
+	ASSERT(config_set("system", "int0", "23"));
 	ASSERT(int0 == 23);
-	ASSERT(!config_set("int0", "error"));
+	ASSERT(!config_set("system", "int0", "error"));
 	ASSERT(int0 == 23);
-	ASSERT(config_set("int0", "1200"));
+	ASSERT(config_set("system", "int0", "1200"));
 	ASSERT(int0 == 100);
-	ASSERT(config_set("int0", "-111"));
+	ASSERT(config_set("system", "int0", "-111"));
 	ASSERT(int0 == 0);
 
 	ASSERT(strcmp(string0, "string zero") == 0);
-	ASSERT(config_set("string0", "set"));
+	ASSERT(config_set("system", "string0", "set"));
 	ASSERT(strcmp(string0, "set") == 0);
-	ASSERT(config_set("string0", "very very long string"));
+	ASSERT(config_set("system", "string0", "very very long string"));
 	ASSERT(strcmp(string0, "very very l") == 0);
 
 	ASSERT(float0 - 2.3 < 1e-6);
-	ASSERT(config_set("float0", "23"));
+	ASSERT(config_set("system", "float0", "23"));
 	ASSERT(float0 - 23 < 1e-6);
-	ASSERT(!config_set("float0", "error"));
+	ASSERT(!config_set("system", "float0", "error"));
 	ASSERT(float0 - 23 < 1e-6);
-	ASSERT(config_set("float0", "1200"));
+	ASSERT(config_set("system", "float0", "1200"));
 	ASSERT(float0 - 100 < 1e-6);
-	ASSERT(config_set("float0", "-111"));
+	ASSERT(config_set("system", "float0", "-111"));
 	ASSERT(float0 - 0 < 1e-6);
 
 	ASSERT(float1 - -1.235e-37 < 1e-43);

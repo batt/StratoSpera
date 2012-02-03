@@ -262,19 +262,22 @@ SetPRetVals config_setBool(const struct ConfigEntry *e, char *_val, bool use_def
 	return ret;
 }
 
-bool config_set(const char *name, const char *val)
+bool config_set(const char *module, const char *param, const char *val)
 {
 	const ConfigEntry *e = NULL;
 	ConfigMetadata *cfg;
 
 	FOREACH_NODE(cfg, &config)
 	{
-		for (unsigned i = 0; i < cfg->tbl_size; i++)
+		if (strcmp(cfg->name, module) == 0)
 		{
-			if (strcmp(cfg->table[i].name, name) == 0)
+			for (unsigned i = 0; i < cfg->tbl_size; i++)
 			{
-				e = &cfg->table[i];
-				goto found;
+				if (strcmp(cfg->table[i].name, param) == 0)
+				{
+					e = &cfg->table[i];
+					goto found;
+				}
 			}
 		}
 	}
