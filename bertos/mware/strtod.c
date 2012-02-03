@@ -46,7 +46,7 @@
  *      bits of approximation between these implementations and the standard
  *      compliant ones.
  *  \li Infinity and NANs are not handled.
- *  \li Overflows are not cheked.
+ *  \li Overflows are not checked.
  *
  * \author Francesco Sacchi <batt@develer.com>
  *
