@@ -184,6 +184,7 @@
 #endif
 #endif
 
+#ifndef UINTPTR_MAX
 /*
  * uintptr_t: unsigned integer type large exactly as a pointer.
  */
@@ -195,6 +196,7 @@
 	typedef uint64_t uintptr_t;
 #else
 	#error "SIZEOF_PTR size not supported."
+#endif
 #endif
 
 #ifndef SIZEOF_SIZE_T
