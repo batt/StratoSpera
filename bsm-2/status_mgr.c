@@ -130,7 +130,7 @@ Bsm2Status status_currStatus(void)
 }
 
 #define NO_PULSE -1
-static mtime_t cam_pulse[] =
+static const mtime_t cam_pulse[] =
 {
 	NO_PULSE, // BSM2_NOFIX
 	NO_PULSE, // BSM2_GROUND_WAIT,
