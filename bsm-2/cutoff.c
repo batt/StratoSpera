@@ -46,6 +46,7 @@
 #include "hw/hw_pin.h"
 #include "cfg/cfg_afsk.h"
 
+#include <mware/config.h>
 #include <net/nmea.h>
 #include <cfg/compiler.h>
 #include <drv/timer.h>
@@ -61,21 +62,21 @@
 #if !(ARCH & ARCH_UNITTEST)
 
 	#ifdef DEMO_BOARD
-		#define CUTOFF_OFF(cfg)  do { PIOA_CODR = CUTOFF_PIN; } while (0)
-		#define CUTOFF_ON(cfg)   do { PIOA_SODR = CUTOFF_PIN; } while (0)
-		#define CUTOFF_INIT(cfg) do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
+		#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
 	#else
 		#include <drv/pwm.h>
 		static Pwm cutoff_pwm;
 
-		#define CUTOFF_OFF(cfg)  pwm_enable(&cutoff_pwm, false)
-		#define CUTOFF_ON(cfg) \
+		#define CUTOFF_OFF()  pwm_enable(&cutoff_pwm, false)
+		#define CUTOFF_ON() \
 			do { \
-				pwm_setDuty(&cutoff_pwm, (cfg)->pwm_duty); \
+				pwm_setDuty(&cutoff_pwm, pwm_duty); \
 				pwm_enable(&cutoff_pwm, true); \
 			} while (0)
 
-		#define CUTOFF_INIT(cfg) do { \
+		#define CUTOFF_INIT() do { \
 			pwm_init(&cutoff_pwm, CUTOFF1_PWM); \
 			pwm_setFrequency(&cutoff_pwm, CONFIG_AFSK_DAC_SAMPLERATE / 8); \
 		} while (0)
@@ -84,13 +85,44 @@
 	#undef LOG_INFO
 	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
-	#define CUTOFF_OFF(cfg)  do {  } while (0)
-	#define CUTOFF_ON(cfg)   do {  } while (0)
-	#define CUTOFF_INIT(cfg) do {  } while (0)
+	#define CUTOFF_OFF()  do {  } while (0)
+	#define CUTOFF_ON()   do {  } while (0)
+	#define CUTOFF_INIT() do {  } while (0)
 	#define testmode() false
 #endif
 
-static CutoffCfg cfg;
+static void cutoff_reload(void);
+
+DECLARE_CONF(cutoff, cutoff_reload,
+	CONF_INT(mission_timeout, 600, 86400, 8400), //seconds
+	CONF_INT(delta_altitude, 10, 5000, 500), //meters
+	CONF_INT(altitude_timeout, 0, 300, 30), //seconds
+	CONF_INT(start_latitude,   -90000000,  +90000000, 43606414), //micro degrees
+	CONF_INT(start_longitude, -180000000, +180000000, 11311832), //micro degrees
+	CONF_INT(dist_max_meters, 1000, 1000000, 80000), //meters
+	CONF_INT(dist_timeout, 0, 1800, 300), // seconds
+	CONF_INT(altmax_meters, 20, 500000, 50000), //meters
+	CONF_INT(altmax_timeout, 0, 1800, 300), //seconds
+	CONF_INT(pwm_duty, 0, 0xffff, 0x8000) // Number from 0 to 0xffff
+);
+
+static void cutoff_reload(void)
+{
+	LOG_INFO("Setting cutoff configuration\n");
+	LOG_INFO(" mission timeout: %ld seconds\n", (long)mission_timeout);
+	LOG_INFO(" max delta altitude: %ld m\n", (long)delta_altitude);
+	LOG_INFO(" delta altitude timeout: %ld seconds\n", (long)altitude_timeout);
+	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
+		(long)start_latitude/1000000, (long)ABS(start_latitude)%1000000,
+		(long)start_longitude/1000000, (long)ABS(start_longitude)%1000000);
+	LOG_INFO(" max distance from base: %ld meters\n", (long)dist_max_meters);
+	LOG_INFO(" max distance timeout: %ld seconds\n", (long)dist_timeout);
+	LOG_INFO(" max altitude: %ld meters\n", (long)altmax_meters);
+	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)altmax_timeout);
+	LOG_INFO(" pwm duty 0x%04X\n", pwm_duty);
+	cutoff_reset();
+}
+
 
 #define PI 3.14159265358979323846
 
@@ -140,19 +172,19 @@ static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 	if (status_currStatus() != BSM2_GROUND_WAIT
 		&& status_currStatus() != BSM2_NOFIX)
 	{
-		if (curr_alt > cfg.altmax_meters)
+		if (curr_alt > altmax_meters)
 		{
 			static bool logged = false;
 
 			if (maxalt_ok)
 			{
 				LOG_INFO("Altitude: %ldm; limit %ldm, starting %lds timeout\n",
-					(long)curr_alt, (long)cfg.altmax_meters, (long)cfg.altmax_timeout);
+					(long)curr_alt, (long)altmax_meters, (long)altmax_timeout);
 				maxalt_ok = false;
 				maxalt_ko_time = now;
 				logged = false;
 			}
-			else if (now - maxalt_ko_time > ms_to_ticks(cfg.altmax_timeout * 1000))
+			else if (now - maxalt_ko_time > ms_to_ticks(altmax_timeout * 1000))
 			{
 				if (!logged)
 				{
@@ -183,8 +215,8 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 	if (status_currStatus() != BSM2_GROUND_WAIT
 		&& status_currStatus() != BSM2_NOFIX)
 	{
-		float curr_dist = distance(cfg.start_latitude, cfg.start_longitude, lat, lon);
-		if (curr_dist > cfg.dist_max_meters)
+		float curr_dist = distance(start_latitude, start_longitude, lat, lon);
+		if (curr_dist > dist_max_meters)
 		{
 			static bool logged = false;
 
@@ -193,12 +225,12 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 				LOG_INFO("Current position %ld.%06ld %ld.%06ld, distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
 					(long)lat / 1000000, (long)ABS(lat) % 1000000,
 					(long)lon / 1000000, (long)ABS(lon) % 1000000,
-					curr_dist, (long)cfg.dist_max_meters, (long)cfg.dist_timeout);
+					curr_dist, (long)dist_max_meters, (long)dist_timeout);
 				dist_ok = false;
 				dist_ko_time = now;
 				logged = false;
 			}
-			else if (now - dist_ko_time > ms_to_ticks(cfg.dist_timeout * 1000))
+			else if (now - dist_ko_time > ms_to_ticks(dist_timeout * 1000))
 			{
 				if (!logged)
 				{
@@ -240,19 +272,19 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 	{
 		alt_max = MAX(alt_max, curr_alt);
 
-		if (alt_max - curr_alt > cfg.delta_altitude)
+		if (alt_max - curr_alt > delta_altitude)
 		{
 			static bool logged = false;
 
 			if (alt_ok)
 			{
 				LOG_INFO("Current altitude %ld, max altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
-					(long)curr_alt, (long)alt_max, (long)cfg.altitude_timeout);
+					(long)curr_alt, (long)alt_max, (long)altitude_timeout);
 				alt_ok = false;
 				logged = false;
 				alt_ko_time = now;
 			}
-			else if (now - alt_ko_time > ms_to_ticks(cfg.altitude_timeout * 1000))
+			else if (now - alt_ko_time > ms_to_ticks(altitude_timeout * 1000))
 			{
 				if (!logged)
 				{
@@ -275,7 +307,7 @@ static bool cutoff_checkTime(ticks_t now)
 {
 	static bool logged = false;
 
-	if (now - status_missionStartTicks() < ms_to_ticks(cfg.mission_timeout * 1000))
+	if (now - status_missionStartTicks() < ms_to_ticks(mission_timeout * 1000))
 	{
 		logged = false;
 		return true;
@@ -296,9 +328,9 @@ void cutoff_test_cut(bool on)
 	if (testmode())
 	{
 		if (on)
-			CUTOFF_ON(&cfg);
+			CUTOFF_ON();
 		else
-			CUTOFF_OFF(&cfg);
+			CUTOFF_OFF();
 	}
 }
 
@@ -314,9 +346,9 @@ static void cutoff_cut(void)
 				for (int i = 0; i < 3; i++)
 				{
 					LOG_INFO("Cutoff pulse %d\n", i+1);
-					CUTOFF_ON(&cfg);
+					CUTOFF_ON();
 					timer_delay(10000);
-					CUTOFF_OFF(&cfg);
+					CUTOFF_OFF();
 					LOG_INFO("Cutoff pulse %d done\n", i+1);
 					timer_delay(5000);
 				}
@@ -363,31 +395,15 @@ void cutoff_reset(void)
 	cut = false;
 }
 
-void cutoff_setCfg(CutoffCfg *_cfg)
+void cutoff_init(void)
 {
-	memcpy(&cfg, _cfg, sizeof(cfg));
-	LOG_INFO("Setting cutoff configuration\n");
-	LOG_INFO(" mission timeout: %ld seconds\n", (long)cfg.mission_timeout);
-	LOG_INFO(" max delta altitude: %ld m\n", (long)cfg.delta_altitude);
-	LOG_INFO(" delta altitude timeout: %ld seconds\n", (long)cfg.altitude_timeout);
-	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
-		(long)cfg.start_latitude/1000000, (long)ABS(cfg.start_latitude)%1000000,
-		(long)cfg.start_longitude/1000000, (long)ABS(cfg.start_longitude)%1000000);
-	LOG_INFO(" max distance from base: %ld meters\n", (long)cfg.dist_max_meters);
-	LOG_INFO(" max distance timeout: %ld seconds\n", (long)cfg.dist_timeout);
-	LOG_INFO(" max altitude: %ld meters\n", (long)cfg.altmax_meters);
-	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)cfg.altmax_timeout);
+	CUTOFF_INIT();
+	config_register(&cutoff);
+	config_load(&cutoff);
 
-	LOG_INFO(" pwm duty 0x%04X\n", cfg.pwm_duty);
-}
-
-
-void cutoff_init(CutoffCfg *cfg)
-{
-	cutoff_setCfg(cfg);
-	CUTOFF_INIT(cfg);
-	cutoff_reset();
-	//start process
-	LOG_INFO("Starting cutoff process\n");
-	proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+	#if !(ARCH & ARCH_UNITTEST)
+		//start process
+		LOG_INFO("Starting cutoff process\n");
+		proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+	#endif
 }

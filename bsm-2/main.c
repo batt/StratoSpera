@@ -30,6 +30,7 @@
 #include <drv/spi_dma_at91.h>
 
 #include <mware/ini_reader.h>
+#include <mware/config.h>
 
 #include <fs/fat.h>
 
@@ -83,6 +84,7 @@ static void init(void)
 	FatFile conf;
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
 	logging_init();
+	config_init(&conf.fd);
 
 	char inibuf[64];
 
@@ -129,30 +131,7 @@ static void init(void)
 
 	status_init(&status_cfg);
 
-	CutoffCfg cutoff_cfg;
-	ini_getString(&conf.fd, "cutoff", "mission_timeout", "8400", inibuf, sizeof(inibuf));
-	cutoff_cfg.mission_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "delta_altitude", "500", inibuf, sizeof(inibuf));
-	cutoff_cfg.delta_altitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altitude_timeout", "30", inibuf, sizeof(inibuf));
-	cutoff_cfg.altitude_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "start_latitude", "43606414", inibuf, sizeof(inibuf));
-	cutoff_cfg.start_latitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "start_longitude", "11311832", inibuf, sizeof(inibuf));
-	cutoff_cfg.start_longitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "dist_max_meters", "80000", inibuf, sizeof(inibuf));
-	cutoff_cfg.dist_max_meters = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
-	cutoff_cfg.dist_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altmax_meters", "50000", inibuf, sizeof(inibuf));
-	cutoff_cfg.altmax_meters = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altmax_timeout", "300", inibuf, sizeof(inibuf));
-	cutoff_cfg.altmax_timeout = atoi(inibuf);
-
-	ini_getString(&conf.fd, "cutoff", "pwm_duty", "32768", inibuf, sizeof(inibuf));
-	cutoff_cfg.pwm_duty = atoi(inibuf);
-
-	cutoff_init(&cutoff_cfg);
+	cutoff_init();
 
 	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
 	uint32_t buz_timeout_seconds = atoi(inibuf);
