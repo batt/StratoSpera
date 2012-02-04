@@ -40,19 +40,8 @@
 
 #include "adc_mgr.h"
 
-typedef struct SensorCalibrationPoint
-{
-	int x;
-	float y;
-} SensorCalibrationPoint;
-
-typedef struct SensorCalibrationSet
-{
-	SensorCalibrationPoint p1, p2;
-} SensorCalibrationSet;
-
 float sensor_read(AdcChannels channel);
-void sensor_setCalibration(AdcChannels channel, SensorCalibrationSet set);
+void sensor_init(void);
 
 #define sensor_press()  sensor_read(ADC_PRESS)
 
