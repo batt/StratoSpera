@@ -92,11 +92,7 @@ static void init(void)
 	LOG_INFO("Sensor calibration loaded\n");
 	status_init();
 	cutoff_init();
-
-	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
-	uint32_t buz_timeout_seconds = atoi(inibuf);
-
-	landing_buz_init(buz_timeout_seconds);
+	landing_buz_init();
 
 	RadioCfg radio_cfg;
 	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));

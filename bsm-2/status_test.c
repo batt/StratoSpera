@@ -37,7 +37,7 @@ int status_testSetup(void)
 	config_init(&kf.fd);
 
 	cutoff_init();
-	landing_buz_setCfg(9000);
+	landing_buz_init();
 	status_init();
 
 	return 0;

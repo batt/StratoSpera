@@ -44,7 +44,6 @@
 void landing_buz_start(void);
 void landing_buz_reset(void);
 bool landing_buz_check(ticks_t now);
-void landing_buz_setCfg(uint32_t buz_timeout_seconds);
-void landing_buz_init(uint32_t buz_timeout_seconds);
+void landing_buz_init(void);
 
 #endif
