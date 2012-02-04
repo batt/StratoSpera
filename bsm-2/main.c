@@ -88,49 +88,9 @@ static void init(void)
 
 	char inibuf[64];
 
-	/* Set ADC sensor calibration */
-	for (int i = 0; i < ADC_CHANNELS; i++)
-	{
-		char calib[16];
-		SensorCalibrationSet set;
-
-		snprintf(calib, sizeof(calib), "calib%02d", i);
-		calib[sizeof(calib) - 1] = '\0';
-
-		if (ini_getString(&conf.fd, calib, "p1x", "0", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p1.x = atoi(inibuf);
-
-		if (ini_getString(&conf.fd, calib, "p1y", "0", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p1.y = atoi(inibuf) / 1000.0;
-
-		if (ini_getString(&conf.fd, calib, "p2x", "1023", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p2.x = atoi(inibuf);
-
-		if (ini_getString(&conf.fd, calib, "p2y", "1023", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p2.y = atoi(inibuf) / 1000.0;
-
-		LOG_INFO("Calibration loaded for channel %d\n", i);
-		sensor_setCalibration(i, set);
-	}
-
-	StatusCfg status_cfg;
-	ini_getString(&conf.fd, "status", "ground_alt", "1500", inibuf, sizeof(inibuf));
-	status_cfg.ground_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "landing_alt", "3600", inibuf, sizeof(inibuf));
-	status_cfg.landing_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
-	status_cfg.tropopause_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "rate_up", "200", inibuf, sizeof(inibuf));
-	status_cfg.rate_up = atoi(inibuf) / 100.0;
-	ini_getString(&conf.fd, "status", "rate_down", "-200", inibuf, sizeof(inibuf));
-	status_cfg.rate_down = atoi(inibuf) / 100.0;
-
-	status_init(&status_cfg);
-
+	sensor_init();
+	LOG_INFO("Sensor calibration loaded\n");
+	status_init();
 	cutoff_init();
 
 	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
