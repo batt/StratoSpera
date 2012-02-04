@@ -102,8 +102,22 @@ typedef struct ConfigEntry
 #define CONF_FLOAT(name, min, max, def) \
 	(VAR, float, name, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.f = min}, {.p = &name}, {.f = max}, {.p = NULL}, config_setFloat)
 
+
 #define CONF_INT_NODECLARE(name, var, min, max, def) \
 	(EMPTY, _, _, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.i = min}, {.p = &var}, {.i = max}, {.p = NULL}, config_setInt)
+
+#define CONF_BOOL_NODECLARE(name, var, def) \
+	(EMPTY, _, _, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.p = NULL}, {.p = &var}, {.p = NULL}, {.p = NULL}, config_setBool)
+
+#define CONF_BOOLARRAY_NODECLARE(name, var, size, def) \
+	(EMPTY, _, _, _, PP_STRINGIZE(name), def, {.p = NULL}, {.p = var}, {.i = size}, {.p = NULL}, config_setBoolArray)
+
+#define CONF_STRING_NODECLARE(name, var, size, def) \
+	(EMPTY, _, _, _, PP_STRINGIZE(name), def, {.p = NULL}, {.p = var}, {.i = size}, {.p = NULL}, config_setString)
+
+#define CONF_FLOAT_NODECLARE(name, var, min, max, def) \
+	(EMPTY, _, _, _, PP_STRINGIZE(name), PP_STRINGIZE(def), {.f = min}, {.p = &var}, {.f = max}, {.p = NULL}, config_setFloat)
+
 
 
 #define DECLARE_ARRAY(type, name, size, ...) static type name[size];
