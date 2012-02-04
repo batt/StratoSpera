@@ -47,6 +47,7 @@
 #include "hw/hw_pin.h"
 
 #include <algo/moving_avg.h>
+#include <mware/config.h>
 
 #include <cfg/compiler.h>
 #include <cfg/module.h>
@@ -81,7 +82,16 @@
 
 static ticks_t mission_start_ticks;
 
-static StatusCfg cfg;
+static void status_reload(void);
+
+DECLARE_CONF(status, status_reload,
+	CONF_INT(ground_alt, 10, 9000, 1500), //meters
+	CONF_INT(tropopause_alt, 9000, 20000, 12500), //meters
+	CONF_INT(landing_alt, 10, 100000, 3600), //meters
+	CONF_FLOAT(rate_up, 0, +20, +2.00), // m/s
+	CONF_FLOAT(rate_down, -20, +0, -2.00) //  m/s (should be negative!)
+);
+
 static Bsm2Status curr_status;
 
 static const char *status_names[] =
@@ -183,8 +193,8 @@ static void status_reset(void)
 
 static VertDir vertical_dir(float rate)
 {
-	float up_limit = cfg.rate_up;
-	float down_limit = cfg.rate_down;
+	float up_limit = rate_up;
+	float down_limit = rate_down;
 
 	switch (curr_vdir)
 	{
@@ -210,29 +220,29 @@ static VertDir vertical_dir(float rate)
 	return curr_vdir;
 }
 
-static int32_t ground_alt(void)
+static int32_t GROUND_ALT(void)
 {
-	return cfg.ground_alt;
+	return ground_alt;
 }
 
 #define ALT_HIST  750
 
-static int32_t tropopause_alt(void)
+static int32_t TROPOPAUSE_ALT(void)
 {
 	if (curr_status == BSM2_STRATOPHERE_UP)
-		return cfg.tropopause_alt - ALT_HIST;
+		return tropopause_alt - ALT_HIST;
 	if (curr_status == BSM2_FALLING)
-		return cfg.tropopause_alt + ALT_HIST;
+		return tropopause_alt + ALT_HIST;
 	else
-		return cfg.tropopause_alt;
+		return tropopause_alt;
 }
 
-static int32_t landing_alt(void)
+static int32_t LANDING_ALT(void)
 {
 	if (curr_status == BSM2_LANDING)
-		return cfg.landing_alt + ALT_HIST;
+		return landing_alt + ALT_HIST;
 	else
-		return cfg.landing_alt;
+		return landing_alt;
 }
 
 void status_check(bool fix, int32_t curr_alt, float curr_press)
@@ -264,7 +274,7 @@ void status_check(bool fix, int32_t curr_alt, float curr_press)
 		// In order to compute ascent rate, at low altitudes we use the
 		// pressure sensor which is more accurate than the GPS.
 		float rate;
-		if (curr_alt >= ground_alt())
+		if (curr_alt >= GROUND_ALT())
 			rate = MOVING_AVG_GET(&alt_delta, float) / STATUS_CHECK_INTERVAL;
 		else
 			// If pressure decreases of 1 mBar we have gained ~9 meters in height.
@@ -273,37 +283,37 @@ void status_check(bool fix, int32_t curr_alt, float curr_press)
 		//LOG_INFO("Ascent rate %.2f m/s\n", rate);
 
 		if (vertical_dir(rate) == HOVERING
-			&& curr_alt < ground_alt())
+			&& curr_alt < GROUND_ALT())
 		{
 			status_set(BSM2_GROUND_WAIT);
 		}
 		else if (vertical_dir(rate) == HOVERING
-			&& curr_alt >= ground_alt())
+			&& curr_alt >= GROUND_ALT())
 		{
 			status_set(BSM2_HOVERING);
 		}
 		else if (vertical_dir(rate) == UP
-			&& curr_alt < tropopause_alt())
+			&& curr_alt < TROPOPAUSE_ALT())
 		{
 			status_set(BSM2_TAKEOFF);
 		}
 		else if (vertical_dir(rate) == UP
-			&& curr_alt >= tropopause_alt())
+			&& curr_alt >= TROPOPAUSE_ALT())
 		{
 			status_set(BSM2_STRATOPHERE_UP);
 		}
 		else if (vertical_dir(rate) == DOWN
-			&& curr_alt >= tropopause_alt())
+			&& curr_alt >= TROPOPAUSE_ALT())
 		{
 			status_set(BSM2_STRATOPHERE_FALL);
 		}
 		else if (vertical_dir(rate) == DOWN
-			&& curr_alt < landing_alt())
+			&& curr_alt < LANDING_ALT())
 		{
 			status_set(BSM2_LANDING);
 		}
 		else if (vertical_dir(rate) == DOWN
-			&& curr_alt < tropopause_alt())
+			&& curr_alt < TROPOPAUSE_ALT())
 		{
 			status_set(BSM2_FALLING);
 		}
@@ -355,26 +365,28 @@ ticks_t status_missionStartTicks(void)
 	return mission_start_ticks;
 }
 
-void status_setCfg(StatusCfg *_cfg)
+static void status_reload(void)
 {
-	memcpy(&cfg, _cfg, sizeof(cfg));
-	ASSERT(cfg.rate_up > 0);
-	ASSERT(cfg.rate_down < 0);
 	LOG_INFO("Setting status configuration\n");
-	LOG_INFO(" max ground altitude: %ld m\n", (long)cfg.ground_alt);
-	LOG_INFO(" tropopause altitude: %ld m\n", (long)cfg.tropopause_alt);
-	LOG_INFO(" landing altitude: %ld m\n", (long)cfg.landing_alt);
-	LOG_INFO(" ascent rate (UP): %.2f m/s\n", cfg.rate_up);
-	LOG_INFO(" descent rate (DOWN): %.2f m/s\n", cfg.rate_down);
+	LOG_INFO(" max ground altitude: %ld m\n", (long)ground_alt);
+	LOG_INFO(" tropopause altitude: %ld m\n", (long)tropopause_alt);
+	LOG_INFO(" landing altitude: %ld m\n", (long)landing_alt);
+	LOG_INFO(" ascent rate (UP): %.2f m/s\n", rate_up);
+	LOG_INFO(" descent rate (DOWN): %.2f m/s\n", rate_down);
+	status_reset();
 }
 
-void status_init(StatusCfg *cfg)
+void status_init(void)
 {
-	status_setCfg(cfg);
+	config_register(&status);
+	config_load(&status);
+
 	CAMPULSE_INIT();
 	status_missionStart();
-	LOG_INFO("Starting status check process\n");
-	proc_new(status_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
-	LOG_INFO("Starting camera communication process\n");
-	proc_new(camera_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	#if !(ARCH & ARCH_UNITTEST)
+		LOG_INFO("Starting status check process\n");
+		proc_new(status_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+		LOG_INFO("Starting camera communication process\n");
+		proc_new(camera_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	#endif
 }
