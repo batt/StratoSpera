@@ -13,6 +13,8 @@
 #include <net/afsk.h>
 #include <net/ax25.h>
 
+#include <mware/config.h>
+
 #include <cfg/compiler.h>
 
 #include <string.h>
@@ -41,7 +43,13 @@ static AX25Call ax25_path[2]=
 {
 	AX25_CALL("APZBRT", 0),
 };
-static ticks_t aprs_interval;
+
+static void radio_reload(void);
+
+DECLARE_CONF(radio, radio_reload,
+	CONF_INT(aprs_interval, 1, 3600, 15),
+	CONF_STRING(send_call, 7, "STSP")
+);
 
 static Semaphore radio_sem;
 static char radio_msg[100];
@@ -135,7 +143,7 @@ static void NORETURN radio_process(void)
 		else
 			delay = aprs_interval;
 
-		if (timer_clock() - start > delay)
+		if (timer_clock() - start > (delay * 1000))
 		{
 			start += delay;
 			radio_sendTelemetry();
@@ -143,17 +151,22 @@ static void NORETURN radio_process(void)
 	}
 }
 
-void radio_init(RadioCfg *cfg)
+static void radio_reload(void)
 {
 	LOG_INFO("Setting radio configuration\n");
-	LOG_INFO(" APRS messages interval %ld seconds\n", cfg->aprs_interval);
-	LOG_INFO(" Send CALL [%.6s]\n", cfg->send_call);
-
-	aprs_interval = ms_to_ticks(cfg->aprs_interval * 1000);
-	memcpy(ax25_path[1].call, cfg->send_call, sizeof(ax25_path[1].call));
+	LOG_INFO(" APRS messages interval %d seconds\n", aprs_interval);
+	LOG_INFO(" Source CALL [%.6s]\n", send_call);
+	memset(ax25_path[1].call, 0, sizeof(ax25_path[1].call));
+	strncpy(ax25_path[1].call, send_call, sizeof(ax25_path[1].call));
 	ax25_path[1].ssid = 0;
+}
 
+void radio_init(void)
+{
 	sem_init(&radio_sem);
+	config_register(&radio);
+	config_load(&radio);
+
 	afsk_init(&afsk, ADC_RADIO_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
 	radio_initialized = true;
