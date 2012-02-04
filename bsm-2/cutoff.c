@@ -97,8 +97,8 @@ DECLARE_CONF(cutoff, cutoff_reload,
 	CONF_INT(mission_timeout, 600, 86400, 8400), //seconds
 	CONF_INT(delta_altitude, 10, 5000, 500), //meters
 	CONF_INT(altitude_timeout, 0, 300, 30), //seconds
-	CONF_INT(start_latitude,   -90000000,  +90000000, 43606414), //micro degrees
-	CONF_INT(start_longitude, -180000000, +180000000, 11311832), //micro degrees
+	CONF_FLOAT(start_latitude,   -90,  +90, 43.606414), //decimal degrees
+	CONF_FLOAT(start_longitude, -180, +180, 11.311832), //decimal degrees
 	CONF_INT(dist_max_meters, 1000, 1000000, 80000), //meters
 	CONF_INT(dist_timeout, 0, 1800, 300), // seconds
 	CONF_INT(altmax_meters, 20, 500000, 50000), //meters
@@ -112,9 +112,7 @@ static void cutoff_reload(void)
 	LOG_INFO(" mission timeout: %ld seconds\n", (long)mission_timeout);
 	LOG_INFO(" max delta altitude: %ld m\n", (long)delta_altitude);
 	LOG_INFO(" delta altitude timeout: %ld seconds\n", (long)altitude_timeout);
-	LOG_INFO(" base coordinates: %02ld.%.06ld %03ld.%.06ld\n",
-		(long)start_latitude/1000000, (long)ABS(start_latitude)%1000000,
-		(long)start_longitude/1000000, (long)ABS(start_longitude)%1000000);
+	LOG_INFO(" base coordinates: %8.06f %9.06f\n", start_latitude, start_longitude);
 	LOG_INFO(" max distance from base: %ld meters\n", (long)dist_max_meters);
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)dist_timeout);
 	LOG_INFO(" max altitude: %ld meters\n", (long)altmax_meters);
@@ -145,12 +143,8 @@ INLINE float rad2deg(float rad)
  * computation even at small distances, unlike calculations based on the
  * spherical law of cosines.
  */
-static float distance(udegree_t _lat1, udegree_t _lon1, udegree_t _lat2, udegree_t _lon2)
+static float distance(float lat1, float lon1, float lat2, float lon2)
 {
-	float lat1 = _lat1 / 1000000.0;
-	float lon1 = _lon1 / 1000000.0;
-	float lat2 = _lat2 / 1000000.0;
-	float lon2 = _lon2 / 1000000.0;
 	const float PLANET_RADIUS = 6371000;
 	float d_lat = deg2rad(lat2 - lat1);
 	float d_lon = deg2rad(lon2 - lon1);
@@ -215,17 +209,15 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 	if (status_currStatus() != BSM2_GROUND_WAIT
 		&& status_currStatus() != BSM2_NOFIX)
 	{
-		float curr_dist = distance(start_latitude, start_longitude, lat, lon);
+		float curr_dist = distance(start_latitude, start_longitude, lat / 1e6, lon / 1e6);
 		if (curr_dist > dist_max_meters)
 		{
 			static bool logged = false;
 
 			if (dist_ok)
 			{
-				LOG_INFO("Current position %ld.%06ld %ld.%06ld, distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
-					(long)lat / 1000000, (long)ABS(lat) % 1000000,
-					(long)lon / 1000000, (long)ABS(lon) % 1000000,
-					curr_dist, (long)dist_max_meters, (long)dist_timeout);
+				LOG_INFO("Current position %8.06f %9.06f, distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
+					lat / 1e6, lon / 1e6, curr_dist, (long)dist_max_meters, (long)dist_timeout);
 				dist_ok = false;
 				dist_ko_time = now;
 				logged = false;
