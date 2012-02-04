@@ -49,7 +49,10 @@ static SpiDmaAt91 spi_dma;
 static Sd sd;
 static FATFS fs;
 
-static ticks_t log_interval;
+DECLARE_CONF(system_cfg, NULL,
+	CONF_INT(log_interval, 1, 600, 3),
+	CONF_BOOL(test_mode, false)
+);
 
 static void init(void)
 {
@@ -84,24 +87,19 @@ static void init(void)
 	FatFile conf;
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
 	logging_init();
+
 	config_init(&conf.fd);
-
-	char inibuf[64];
-
 	sensor_init();
 	LOG_INFO("Sensor calibration loaded\n");
 	status_init();
 	cutoff_init();
 	landing_buz_init();
 	radio_init();
-
-	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
-	log_interval = ms_to_ticks(atoi(inibuf) * 1000);
-
-	ini_getString(&conf.fd, "system", "test_mode", "0", inibuf, sizeof(inibuf));
+	config_register(&system_cfg);
+	config_load(&system_cfg);
 	kfile_close(&conf.fd);
 
-	if (atoi(inibuf) != 0)
+	if (test_mode)
 			testmode_run();
 
 	ledr(false);
@@ -140,10 +138,10 @@ int main(void)
 			status_missionStart();
 		}
 
-		if (timer_clock() - log_start > log_interval)
+		if (timer_clock() - log_start > ms_to_ticks(log_interval * 1000))
 		{
 			char msg[128];
-			log_start += log_interval;
+			log_start += ms_to_ticks(log_interval * 1000);
 			//monitor_report();
 
 			measures_logFormat(msg, sizeof(msg));
