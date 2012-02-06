@@ -211,8 +211,6 @@ int uplink_testRun(void)
 {
 	test_commands();
 	test_configs();
-	/*char msg[] = "cfg cutoff mission_timeout=6090 delta_altitude=500 altitude_timeout=30 start_latitude=43.606414 start_longitude=11.311832 dist_max_meters=50000 dist_timeout=300 altmax_meters=31000 altmax_timeout=60 pwm_duty=65535";
-	uplink_parse(msg, strlen(msg));*/
 
 	return 0;
 }
