@@ -51,6 +51,7 @@ SRC_LIST="
 	bsm-2/cutoff.c
 	bsm-2/status_mgr.c
 	bsm-2/landing_buz.c
+	bsm-2/uplink.c
 "
 
 buildout='/dev/null'
