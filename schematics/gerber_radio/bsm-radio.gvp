@@ -6,5 +6,5 @@
 (define-layer! 2 (cons 'filename "TOP.art")(cons 'visible #t)(cons 'color #(0 65535 0)))
 (define-layer! 1 (cons 'filename "SilkScreenTOP.art")(cons 'visible #t)(cons 'color #(0 0 0)))
 (define-layer! 0 (cons 'filename "BoardOutline.art")(cons 'visible #t)(cons 'color #(63934 59701 1917)))
-(define-layer! -1 (cons 'filename "/home/asterix/src/bsm-2/schematics/gerber_radio")(cons 'visible #f)(cons 'color #(65535 65535 65535)))
+(define-layer! -1 (cons 'filename "./")(cons 'visible #f)(cons 'color #(65535 65535 65535)))
 (set-render-type! 0)
