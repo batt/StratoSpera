@@ -94,7 +94,7 @@
 static void cutoff_reload(void);
 
 DECLARE_CONF(cutoff, cutoff_reload,
-	CONF_INT(mission_timeout, 600, 86400, 8400), //seconds
+	CONF_INT(mission_timeout, 10, 86400, 8400), //seconds
 	CONF_INT(delta_altitude, 10, 5000, 500), //meters
 	CONF_INT(altitude_timeout, 0, 300, 30), //seconds
 	CONF_FLOAT(start_latitude,   -90,  +90, 43.606414), //decimal degrees
