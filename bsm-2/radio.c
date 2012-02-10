@@ -5,6 +5,7 @@
 #include "logging.h"
 #include "gps.h"
 #include "testmode.h"
+#include "uplink.h"
 
 #include <kern/proc.h>
 #include <kern/sem.h>
@@ -14,12 +15,14 @@
 #include <net/ax25.h>
 
 #include <mware/config.h>
+#include <mware/find_token.h>
 
 #include <cfg/compiler.h>
 
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #define LOG_LEVEL LOG_LVL_INFO
 #include <cfg/log.h>
@@ -37,6 +40,31 @@ static void ax25_log(struct AX25Msg *msg)
 	if (!testmode())
 		logging_msg("%.*s\n", msg->len, msg->info);
 	kprintf("%.*s\n", msg->len, msg->info);
+
+	#define CMD_STR "{{>"
+	#define CMD_LEN (sizeof(CMD_STR) - 1)
+
+	if (msg->len > CMD_LEN && memcmp(msg->info, CMD_STR, CMD_LEN))
+	{
+		const char *buf = (const char *)msg->info + CMD_LEN;
+		const char *end = buf + msg->len - CMD_LEN;
+		char msg_num[6];
+		bool res = false;
+		static long last_seq = 0;
+
+		buf = find_token(buf, end - buf, msg_num, sizeof(msg_num), "| ,;:\t\n-");
+		long seqn = strtol(buf, NULL, 0);
+		buf = find_token(buf, end - buf, msg_num, sizeof(msg_num), "| ,;:\t\n-");
+		long sign = strtol(buf, NULL, 0);
+		#warning "TODO: check msg signature!"
+		if (sign && seqn > last_seq)
+		{
+			res = uplink_parse(buf, end - buf);
+			last_seq = seqn;
+		}
+		radio_printf("CMD%d:%s", seqn, res ? "OK" : "ERR");
+	}
+
 }
 
 static AX25Call ax25_path[2]=
