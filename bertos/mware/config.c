@@ -8,7 +8,7 @@
 #include <stdio.h> // snprintf
 #include <mware/ini_reader.h>
 
-#define LOG_LEVEL   LOG_LVL_INFO
+#define LOG_LEVEL   LOG_LVL_WARN
 #include <cfg/log.h>
 
 #define INT_VAR(var)   *((int *) (var))
