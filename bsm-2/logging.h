@@ -68,12 +68,12 @@ do \
 	time_t tim; \
 	tim = gps_time(); \
 	t = gmtime(&tim); \
-	char buf[16]; \
-	snprintf(buf, sizeof(buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec); \
-	kprintf("%s", buf); \
-	kprintf(fmt, ##__VA_ARGS__); \
+	extern char logging_buf[16]; \
 	sem_obtain(&log_sem); \
-	kfile_printf(&msgfile.fd, "%s", buf); \
+	snprintf(logging_buf, sizeof(logging_buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec); \
+	kprintf("%s", logging_buf); \
+	kprintf(fmt, ##__VA_ARGS__); \
+	kfile_printf(&msgfile.fd, "%s", logging_buf); \
 	kfile_printf(&msgfile.fd, fmt, ##__VA_ARGS__); \
 	kfile_flush(&msgfile.fd); \
 	sem_release(&log_sem); \

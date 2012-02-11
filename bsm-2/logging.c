@@ -46,6 +46,7 @@
 
 FatFile logfile, msgfile;
 Semaphore log_sem;
+char logging_buf[16];
 
 static bool logopen, msgopen;
 
