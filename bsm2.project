@@ -181,6 +181,9 @@
     <File Name="bsm-2/testmode.c"/>
     <File Name="bsm-2/testmode.h"/>
     <File Name="bsm-2/status_test.c"/>
+    <File Name="bsm-2/uplink.c"/>
+    <File Name="bsm-2/uplink.h"/>
+    <File Name="bsm-2/uplink_test.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">

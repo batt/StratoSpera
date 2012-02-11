@@ -11,6 +11,7 @@
 #include "status_mgr.h"
 #include "radio.h"
 #include "testmode.h"
+#include "uplink.h"
 
 #include "hw/hw_pin.h"
 #include "hw/hw_led.h"
@@ -89,6 +90,7 @@ static void init(void)
 	logging_init();
 
 	config_init(&conf.fd);
+	uplink_init();
 	sensor_init();
 	LOG_INFO("Sensor calibration loaded\n");
 	status_init();
