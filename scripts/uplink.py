@@ -27,7 +27,7 @@ class AudioThread(threading.Thread):
 	def __init__(self, queue, terminate):
 		threading.Thread.__init__(self)
 		self.p = pyaudio.PyAudio()
-		self.stream = self.p.open(format = pyaudio.paUInt8, channels = 1, rate = 9600, output = True, frames_per_buffer = 1024)
+		self.stream = self.p.open(format = pyaudio.paUInt8, channels = 1, rate = 9600, output = True, frames_per_buffer = 0)
 		self.afsk = afsk.Afsk(self.stream)
 		self.modem = ax25.Ax25(self.afsk)
 		self.queue = queue

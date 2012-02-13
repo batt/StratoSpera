@@ -137,7 +137,7 @@ if __name__ == "__main__":
         rate = 9600,
         input = True,
         output = True,
-        frames_per_buffer = 1024)
+        frames_per_buffer = 0)
     afsk = afsk.Afsk(stream)
     ax25 = Ax25(afsk)
 
