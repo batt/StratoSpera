@@ -50,13 +50,14 @@ class Ax25(object):
         self.crc_in = CRC_CCITT_INIT_VAL;
         self.sync = False
         self.buf = deque()
+        self.outbuf = []
 
     def _write(self, data):
         for c in data:
             if c == HDLC_FLAG or c == HDLC_RESET or c == AX25_ESC:
-                self.stream.write(AX25_ESC)
+		        self.outbuf.append(AX25_ESC)
             self.crc_out = updcrc_ccitt(c, self.crc_out);
-            self.stream.write(c)
+            self.outbuf.append(c)
 
     def sendCall(self, call, last=False):
         call = call.upper()
@@ -71,7 +72,7 @@ class Ax25(object):
 
     def send(self, path, data):
         self.crc_out = CRC_CCITT_INIT_VAL
-        self.stream.write(HDLC_FLAG)
+        self.outbuf.append(HDLC_FLAG)
 
         last = len(path) - 1
         for i, p in enumerate(path):
@@ -85,7 +86,9 @@ class Ax25(object):
         crch = chr((self.crc_out >> 8) ^ 0xff)
         self._write(crcl)
         self._write(crch)
-        self.stream.write(HDLC_FLAG)
+        self.outbuf.append(HDLC_FLAG)
+        self.stream.write(''.join(self.outbuf))
+        self.outbuf = []
 
 
     def _process(self, c):
