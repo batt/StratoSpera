@@ -79,6 +79,7 @@ class Hdlc(object):
 class Afsk(object):
     def __init__(self, stream, preamble_len=500, trailer_len=50):
         self.stream = stream
+        self.outbuf = []
 
         #RX section
         assert(SAMPLERATE == 9600)
@@ -109,7 +110,7 @@ class Afsk(object):
             self.phase_inc = self.switchTone()
 
         for i in range(SAMPLE_PER_BIT):
-            self.stream.write(self.dds_table[self.phase_acc])
+            self.outbuf.append(self.dds_table[self.phase_acc])
             self.phase_acc += self.phase_inc
             self.phase_acc %= SIN_LEN
 
@@ -138,6 +139,7 @@ class Afsk(object):
             self.sendChar(c, stuff=False)
 
     def write(self, data):
+        self.outbuf = []
         for c in data:
             if c == AX25_ESC and not self.escape:
                 self.escape = True
@@ -154,6 +156,7 @@ class Afsk(object):
                 self.sendChar(c)
 
             self.escape = False
+        self.stream.write(''.join(self.outbuf))
 
     def _processSample(self, sample):
         sample = ord(sample) - 127
