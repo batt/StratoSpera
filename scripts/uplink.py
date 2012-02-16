@@ -8,10 +8,10 @@ import hmac
 import sys
 import pyaudio
 import threading
-import collections
 import cmd
+import Queue
 
-data = collections.deque()
+data = Queue.Queue()
 
 def sendMsg(msg):
 	msg = "%x>" % config_uplink.seq + msg.strip()
@@ -20,7 +20,7 @@ def sendMsg(msg):
 	d = h.digest()
 	msg = "{{>%x>%s" %  (ord(d[7]) | (ord(d[13]) << 8), msg)
 	sys.stdout.write(msg + '\n')
-	data.append(msg)
+	data.put(msg)
 
 
 class AudioThread(threading.Thread):
@@ -35,8 +35,8 @@ class AudioThread(threading.Thread):
 
 	def run(self):
 		while not self.terminate.is_set():
-			if len(self.queue) > 0:
-				self.modem.send(["apzbrt", config_uplink.sender], self.queue.popleft())
+			if not self.queue.empty():
+				self.modem.send(["apzbrt", config_uplink.sender], self.queue.get())
 			else:
 				self.stream.write(chr(128) * 128)
 
