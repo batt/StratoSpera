@@ -218,12 +218,12 @@ static void NORETURN radio_process(void)
 		{
 			/* When we are at ground or with no fix, relax timings in order to
 			 * save radio battery */
-			delay = aprs_interval * 4;
+			delay = ms_to_ticks(aprs_interval * 4000);
 		}
 		else
-			delay = aprs_interval;
+			delay = ms_to_ticks(aprs_interval * 1000);
 
-		if (timer_clock() - start > (delay * 1000))
+		if (timer_clock() - start > delay)
 		{
 			start += delay;
 			radio_sendTelemetry();
