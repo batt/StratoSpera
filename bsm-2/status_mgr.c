@@ -75,10 +75,17 @@
 	#include "logging.h"
 	#undef LOG_INFO
 	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
+	#define RESET() \
+		do { \
+			RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST); \
+		} while(0)
+
 #else
 	#define CAMPULSE_OFF()  do {  } while (0)
 	#define CAMPULSE_ON()   do {  } while (0)
 	#define CAMPULSE_INIT() do {  } while (0)
+	#define RESET() do { LOG_INFO("********RESET********\n"); } while(0)
+
 #endif
 
 static ticks_t mission_start_ticks;
@@ -388,9 +395,9 @@ static bool board_reset(long code)
 {
 	if (code == 0xdead)
 	{
-		radio_printf("Resetting board, bye bye!");
+		radio_printf("Resetting board, bye bye!\n");
 		timer_delay(1000);
-		RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+		RESET();
 	}
 	LOG_INFO ("Wrong reset code: %lx\n", code);
 	return false;

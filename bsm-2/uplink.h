@@ -52,9 +52,19 @@ typedef struct UplinkCmd
 
 void uplink_RegisterCommandPrivate(UplinkCmd *cmd);
 
-#define uplink_registerCmd(str, callback) \
-	static UplinkCmd PP_CAT(_uplink_cmd_, __LINE__) = { .name = str, .cmd = callback }; \
-	uplink_RegisterCommandPrivate(&PP_CAT(_uplink_cmd_, __LINE__));
+#if !(ARCH & ARCH_UNITTEST)
+	#define uplink_registerCmd(str, callback) \
+		do { \
+			static UplinkCmd PP_CAT(_uplink_cmd_, __LINE__) = { .name = str, .cmd = callback }; \
+			uplink_RegisterCommandPrivate(&PP_CAT(_uplink_cmd_, __LINE__)); \
+		} while (0)
+#else
+	#define uplink_registerCmd(str, callback) \
+		do { \
+			(void)callback; \
+			LOG_INFO("Registering command '%s'\n", str); \
+		} while(0)
+#endif
 
 bool uplink_parse(const char *buf, size_t len);
 void uplink_init(void);
