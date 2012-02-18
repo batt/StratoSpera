@@ -132,7 +132,8 @@
 	 */
 	#define DB(x) x
 
-	#include <cpu/attr.h>        /* CPU_HARVARD */
+	#include <cpu/attr.h> /* CPU_HARVARD */
+	#include <stdarg.h>   /* va_list */
 
 	/* These are implemented in drv/kdebug.c */
 	void kdbg_init(void);
@@ -144,6 +145,7 @@
 	#if CPU_HARVARD
 		#include <cpu/pgm.h>
 		void kputs_P(const char *PROGMEM str);
+		void kvprintf_P(const char *PROGMEM fmt, va_list ap);
 		void kprintf_P(const char *PROGMEM fmt, ...) FORMAT(__printf__, 1, 2);
 		int __bassert_P(const char *PROGMEM cond, const char *PROGMEM file, int line);
 		void __trace_P(const char *func);
@@ -151,6 +153,7 @@
 		int __invalid_ptr_P(void *p, const char *PROGMEM name, const char *PROGMEM file, int line);
 		int __check_wall_P(long *wall, int size, const char * PGM_ATTR name, const char * PGM_ATTR file, int line);
 		#define kputs(str)  kputs_P(PSTR(str))
+		#define kvprintf(fmt, ap)  kvprintf_P(PSTR(fmt) , ap)
 		#define kprintf(fmt, ...)  kprintf_P(PSTR(fmt) ,## __VA_ARGS__)
 		#define __bassert(cond, file, line)  __bassert_P(PSTR(cond), PSTR(file), (line))
 		#define __trace(func)  __trace_P(func)
@@ -159,6 +162,7 @@
 		#define __check_wall(wall, size, name, file, line)  __check_wall_P(wall, size, PSTR(name), PSTR(file), (line))
 	#else /* !CPU_HARVARD */
 		void kputs(const char *str);
+		void kvprintf(const char * fmt, va_list ap);
 		void kprintf(const char *fmt, ...) FORMAT(__printf__, 1, 2);
 		int __bassert(const char *cond, const char *file, int line);
 		void __trace(const char *func);
@@ -311,6 +315,7 @@
 	INLINE int kputnum(UNUSED_ARG(int, num)) { return 0; }
 	INLINE void kputs(UNUSED_ARG(const char *, str)) { /* nop */ }
 	INLINE void kdump(UNUSED_ARG(const void *, buf), UNUSED_ARG(size_t, len)) { /* nop */ }
+	INLINE void kvprintf(UNUSED_ARG(const void *, fmt), UNUSED_ARG(va_list, ap)) { /* nop */ }
 
 	#if defined(__cplusplus) && COMPILER_VARIADIC_MACROS
 		/* G++ can't inline functions with variable arguments... */
