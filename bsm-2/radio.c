@@ -116,8 +116,15 @@ static void radio_uplinkDecoder(const void *msg, size_t len)
 static void ax25_log(struct AX25Msg *msg)
 {
 	if (!testmode())
-		logging_msg("%.*s\n", msg->len, msg->info);
-	kprintf("%.*s\n", msg->len, msg->info);
+		logging_msg("RADIO:%.6s-%d>%.6s-%d:%.*s\n",
+			msg->src.call, msg->src.ssid,
+			msg->dst.call, msg->dst.ssid,
+			msg->len, msg->info);
+	else
+		kprintf("RADIO:%.6s-%d>%.6s-%d:%.*s\n",
+			msg->src.call, msg->src.ssid,
+			msg->dst.call, msg->dst.ssid,
+			msg->len, msg->info);
 
 	radio_uplinkDecoder(msg->info, msg->len);
 }
