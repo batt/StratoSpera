@@ -42,6 +42,7 @@
 #include "sensors.h"
 #include "radio.h"
 #include "testmode.h"
+#include "uplink.h"
 
 #include "hw/hw_pin.h"
 #include "cfg/cfg_afsk.h"
@@ -326,26 +327,40 @@ void cutoff_test_cut(bool on)
 	}
 }
 
+static bool cutoff_procedure(long code)
+{
+	if (code == 0xdead)
+	{
+		LOG_INFO("---CUTOFF ACTIVATED---\n");
+		#if !(ARCH & ARCH_UNITTEST)
+			radio_printf("---CUTOFF ACTIVATED---");
+			for (int i = 0; i < 3; i++)
+			{
+				radio_printf("CUTOFF pulse %d", i+1);
+				CUTOFF_ON();
+				timer_delay(10000);
+				CUTOFF_ON();
+				radio_printf("CUTOFF pulse done");
+				timer_delay(5000);
+			}
+		#endif
+		LOG_INFO("Cutoff procedure finished.\n");
+		return true;
+	}
+	else
+	{
+		LOG_INFO("Wrong cutoff code: %lx\n", code);
+		return false;
+	}
+}
+
 static bool cut = false;
 static void cutoff_cut(void)
 {
 		if (!cut && !testmode())
 		{
 			cut = true;
-			LOG_INFO("---CUTOFF ACTIVATED---\n");
-			#if !(ARCH & ARCH_UNITTEST)
-				radio_printf("---CUTOFF ACTIVATED---");
-				for (int i = 0; i < 3; i++)
-				{
-					LOG_INFO("Cutoff pulse %d\n", i+1);
-					CUTOFF_ON();
-					timer_delay(10000);
-					CUTOFF_OFF();
-					LOG_INFO("Cutoff pulse %d done\n", i+1);
-					timer_delay(5000);
-				}
-				LOG_INFO("Cutoff procedure finished.\n");
-			#endif
+			cutoff_procedure(0xdead);
 		}
 }
 
@@ -387,11 +402,20 @@ void cutoff_reset(void)
 	cut = false;
 }
 
+static bool cmd_cutoff_reset(long l)
+{
+	(void)l;
+	cutoff_reset();
+	return true;
+}
+
 void cutoff_init(void)
 {
 	CUTOFF_INIT();
 	config_register(&cutoff);
 	config_load(&cutoff);
+	uplink_registerCmd("cutoff", cutoff_procedure);
+	uplink_registerCmd("cutoff_reset", cmd_cutoff_reset);
 
 	#if !(ARCH & ARCH_UNITTEST)
 		//start process

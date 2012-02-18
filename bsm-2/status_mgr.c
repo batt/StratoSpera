@@ -43,6 +43,7 @@
 #include "radio.h"
 #include "testmode.h"
 #include "sensors.h"
+#include "uplink.h"
 
 #include "hw/hw_pin.h"
 
@@ -376,10 +377,27 @@ static void status_reload(void)
 	status_reset();
 }
 
+static bool mission_start(long l)
+{
+	(void)l;
+	status_missionStart();
+	return true;
+}
+
+static bool board_reset(long l)
+{
+	(void)l;
+	RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+	return true;
+}
+
 void status_init(void)
 {
 	config_register(&status);
 	config_load(&status);
+
+	uplink_registerCmd("mission_start", mission_start);
+	uplink_registerCmd("reset", board_reset);
 
 	CAMPULSE_INIT();
 	status_missionStart();

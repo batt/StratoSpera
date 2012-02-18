@@ -120,7 +120,7 @@ bool uplink_parse(const char *buf, size_t len)
 					found = true;
 					find_token(buf, end - buf, val, MAX_LEN, " \t)");
 					LOG_INFO("Executing command '%s', val '%s'\n", module, val);
-					cmd->cmd(strtol(val, NULL, 0));
+					err = !cmd->cmd(strtol(val, NULL, 0));
 					LOG_INFO("Command '%s' done.\n", module);
 					break;
 				}

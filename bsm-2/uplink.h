@@ -40,7 +40,7 @@
 #include <cfg/compiler.h>
 #include <struct/list.h>
 
-typedef void (*uplink_cmd_hook_t)(long);
+typedef bool (*uplink_cmd_hook_t)(long);
 
 typedef struct UplinkCmd
 {
