@@ -38,24 +38,9 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include <kern/sem.h>
-#include <io/kfile.h>
-#include <fs/fat.h>
-
 #include <stdarg.h>
 
-#define logging_data(fmt, ...) \
-do \
-{ \
-	extern Semaphore log_sem; \
-	extern FatFile logfile; \
-	sem_obtain(&log_sem); \
-	kfile_printf(&logfile.fd, fmt, ##__VA_ARGS__); \
-	kfile_flush(&logfile.fd); \
-	sem_release(&log_sem); \
-} while (0)
-
-
+int logging_data(const char *fmt, ...);
 int logging_vmsg(const char *fmt, va_list ap);
 int logging_msg(const char *fmt, ...);
 void logging_rotate(void);

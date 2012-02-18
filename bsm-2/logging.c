@@ -47,9 +47,10 @@
 #include <time.h>
 #include <stdarg.h>
 
-FatFile logfile, msgfile;
-Semaphore log_sem;
-char logging_buf[16];
+static FatFile logfile;
+static FatFile msgfile;
+static Semaphore log_sem;
+static char logging_buf[16];
 
 static bool logopen, msgopen;
 
@@ -136,6 +137,18 @@ int logging_msg(const char *fmt, ...)
 	int len = logging_vmsg(fmt, ap);
 	va_end(ap);
 
+	return len;
+}
+
+int logging_data(const char *fmt, ...)
+{
+	sem_obtain(&log_sem);
+	va_list ap;
+	va_start(ap, fmt);
+	int len = kfile_vprintf(&logfile.fd, fmt, ap);
+	va_end(ap);
+	kfile_flush(&logfile.fd);
+	sem_release(&log_sem);
 	return len;
 }
 
