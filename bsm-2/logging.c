@@ -54,13 +54,14 @@ static char logging_buf[16];
 
 static bool logopen, msgopen;
 
-static void rotate_file(FatFile *f, const char *prefix)
+static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 {
 	char name[13];
-	ASSERT(strlen(prefix) == 3);
+	ASSERT(strlen(prefix) <= 3);
+	ASSERT(strlen(ext) <= 3);
 	for (int i = 0; i < 100000; i++)
 	{
-		snprintf(name, sizeof(name), "%s%05d.csv", prefix, i);
+		snprintf(name, sizeof(name), "%s%05d.%s", prefix, i, ext);
 		if (fatfile_open(f, name, FA_OPEN_EXISTING | FA_WRITE) != FR_OK)
 		{
 			kprintf("Logging on file %s\n", name);
@@ -84,7 +85,7 @@ void logging_rotate(void)
 		kfile_close(&logfile.fd);
 		logopen = false;
 	}
-	rotate_file(&logfile, "log");
+	rotate_file(&logfile, "log", "csv");
 	logopen = true;
 
 	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt (m);"
@@ -97,7 +98,7 @@ void logging_rotate(void)
 		kfile_close(&msgfile.fd);
 		msgopen = false;
 	}
-	rotate_file(&msgfile, "msg");
+	rotate_file(&msgfile, "msg", "txt");
 	msgopen = true;
 
 	sem_release(&log_sem);
