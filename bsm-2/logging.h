@@ -39,11 +39,17 @@
 #define LOGGING_H
 
 #include <stdarg.h>
+#include "cfg/cfg_arch.h"
 
 int logging_data(const char *fmt, ...);
 int logging_vmsg(const char *fmt, va_list ap);
 int logging_msg(const char *fmt, ...);
 void logging_rotate(void);
 void logging_init(void);
+
+#if !(ARCH & ARCH_UNITTEST)
+	#undef LOG_PRINT
+	#define LOG_PRINT(str_level, str,...) logging_msg("%s: " str, str_level, ## __VA_ARGS__)
+#endif
 
 #endif

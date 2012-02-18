@@ -52,16 +52,13 @@
 #define LOG_LEVEL     LOG_LVL_INFO
 #define LOG_VERBOSITY LOG_FMT_VERBOSE
 #include <cfg/log.h>
+#include "logging.h"
 
 #include <math.h>
 
 #if !(ARCH & ARCH_UNITTEST)
 	#define BUZ_START() buz_repeat_start(1000, 3000)
 	#define BUZ_STOP() 	buz_repeat_stop();
-
-	#include "logging.h"
-	#undef LOG_INFO
-	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
 	#define BUZ_START() /**/
 	#define BUZ_STOP()  /**/

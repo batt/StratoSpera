@@ -56,9 +56,12 @@
 #define LOG_LEVEL     LOG_LVL_INFO
 #define LOG_VERBOSITY LOG_FMT_VERBOSE
 #include <cfg/log.h>
+#include "logging.h"
 
 #include <math.h>
 #include <string.h>
+
+
 
 #if !(ARCH & ARCH_UNITTEST)
 
@@ -82,9 +85,6 @@
 			pwm_setFrequency(&cutoff_pwm, CONFIG_AFSK_DAC_SAMPLERATE / 8); \
 		} while (0)
 	#endif
-	#include "logging.h"
-	#undef LOG_INFO
-	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
 	#define CUTOFF_OFF()  do {  } while (0)
 	#define CUTOFF_ON()   do {  } while (0)

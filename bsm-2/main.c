@@ -5,7 +5,6 @@
 #include "gps.h"
 #include "adc_mgr.h"
 #include "sensors.h"
-#include "logging.h"
 #include "measures.h"
 #include "hadarp.h"
 #include "status_mgr.h"
@@ -45,6 +44,7 @@
 
 #define LOG_LEVEL LOG_LVL_INFO
 #include <cfg/log.h>
+#include "logging.h"
 
 static SpiDmaAt91 spi_dma;
 static Sd sd;

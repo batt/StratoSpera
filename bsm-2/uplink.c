@@ -60,12 +60,7 @@
 
 #define LOG_LEVEL     LOG_LVL_INFO
 #include <cfg/log.h>
-
-#if !(ARCH & ARCH_UNITTEST)
-	#include "logging.h"
-	#undef LOG_INFO
-	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
-#endif
+#include "logging.h"
 
 #define MAX_LEN 33
 static char module[MAX_LEN];
