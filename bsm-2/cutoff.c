@@ -331,22 +331,22 @@ static bool cutoff_procedure(long code)
 {
 	if (code == 0xdead)
 	{
-		LOG_INFO("---CUTOFF ACTIVATED---\n");
 		#if !(ARCH & ARCH_UNITTEST)
-			radio_printf("---CUTOFF ACTIVATED---");
+			radio_printf("---CUTOFF ACTIVATED---\n");
 			for (int i = 0; i < 3; i++)
 			{
-				LOG_INFO("CUTOFF pulse %d\n", i+1);
-				radio_printf("CUTOFF pulse %d", i+1);
+				radio_printf("CUTOFF pulse %d\n", i+1);
 				CUTOFF_ON();
 				timer_delay(10000);
 				CUTOFF_ON();
-				LOG_INFO("CUTOFF pulse done\n");
-				radio_printf("CUTOFF pulse done");
+				radio_printf("CUTOFF pulse done\n");
 				timer_delay(5000);
 			}
+			radio_printf("Cutoff procedure finished.\n");
+		#else
+			LOG_INFO("---CUTOFF ACTIVATED---\n");
 		#endif
-		LOG_INFO("Cutoff procedure finished.\n");
+
 		return true;
 	}
 	else

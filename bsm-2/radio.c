@@ -6,6 +6,7 @@
 #include "gps.h"
 #include "testmode.h"
 #include "uplink.h"
+#include "logging.h"
 
 #include <cpu/byteorder.h>
 #include <kern/proc.h>
@@ -105,7 +106,7 @@ static void radio_uplinkDecoder(const void *msg, size_t len)
 				LOG_INFO("Seq number check OK\n");
 				res = uplink_parse(buf, end - buf);
 				last_seq = seqn;
-				radio_printf(">%lX:%s", seqn, res ? "OK" : "ERR");
+				radio_printf(">%lX:%s\n", seqn, res ? "OK" : "ERR");
 			}
 			else
 				LOG_INFO("Seq number check FAIL\n");

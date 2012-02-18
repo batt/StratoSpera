@@ -130,10 +130,7 @@ static void status_set(Bsm2Status new_status)
 	ASSERT(new_status < BSM2_CNT);
 	if (new_status != curr_status)
 	{
-		LOG_INFO("Changing status to %s\n", status_names[new_status]);
-		#if !(ARCH & ARCH_UNITTEST)
-			radio_printf("Changing status to %s", status_names[new_status]);
-		#endif
+		radio_printf("Changing status to %s\n", status_names[new_status]);
 	}
 
 	curr_status = new_status;
@@ -348,10 +345,7 @@ static void NORETURN status_process(void)
 
 void status_missionStartAt(ticks_t ticks)
 {
-	LOG_INFO("Mission start at %ld\n", (long)ticks);
-	#if !(ARCH & ARCH_UNITTEST)
-		radio_printf("Mission start");
-	#endif
+	radio_printf("Mission start at %ld\n", (long)ticks);
 	mission_start_ticks = ticks;
 	status_reset();
 	landing_buz_reset();
