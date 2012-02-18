@@ -272,6 +272,7 @@ INLINE size_t kfile_write(struct KFile *fd, const void *buf, size_t size)
 }
 
 int kfile_printf(struct KFile *fd, const char *format, ...);
+int kfile_vprintf(struct KFile *fd, const char *format, va_list ap);
 int kfile_print(struct KFile *fd, const char *s);
 
 /**
