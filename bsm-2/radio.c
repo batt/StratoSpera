@@ -245,6 +245,12 @@ static void radio_reload(void)
 	mac_set_key(&hmac.m, (const uint8_t *)sign_key, strlen(sign_key));
 }
 
+static bool radio_ping(long l)
+{
+	radio_printf("PONG %ld\n", l);
+	return true;
+}
+
 void radio_init(void)
 {
 	sem_init(&radio_sem);
@@ -258,6 +264,7 @@ void radio_init(void)
 	afsk_init(&afsk, ADC_RADIO_CH, 0);
 	ax25_init(&ax25, &afsk.fd, ax25_log);
 	radio_initialized = true;
+	uplink_registerCmd("ping", radio_ping);
 
 	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 }
