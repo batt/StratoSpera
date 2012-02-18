@@ -176,7 +176,7 @@ int radio_printf(const char * fmt, ...)
 	sprintf(radio_msg, ">%sh", time);
 
 	va_start(ap, fmt);
-	result = vsnprintf(&radio_msg[8], sizeof(radio_msg), fmt, ap);
+	result = vsnprintf(&radio_msg[8], sizeof(radio_msg) - 8, fmt, ap);
 	va_end(ap);
 
 	radio_send(radio_msg, strnlen(radio_msg, sizeof(radio_msg)));
