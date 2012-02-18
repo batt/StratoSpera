@@ -36,6 +36,7 @@
  */
 
 #include "logging.h"
+#include "gps.h"
 
 #include <kern/sem.h>
 #include <io/kfile.h>
@@ -43,6 +44,8 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+#include <stdarg.h>
 
 FatFile logfile, msgfile;
 Semaphore log_sem;
@@ -97,6 +100,43 @@ void logging_rotate(void)
 	msgopen = true;
 
 	sem_release(&log_sem);
+}
+
+int logging_vmsg(const char *fmt, va_list ap)
+{
+	struct tm *t;
+	time_t tim;
+
+	sem_obtain(&log_sem);
+	tim = gps_time();
+	t = gmtime(&tim);
+
+	snprintf(logging_buf, sizeof(logging_buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec);
+	kprintf("%s", logging_buf);
+
+	va_list aq;
+	va_copy(aq, ap);
+	kvprintf(fmt, ap);
+	va_end(aq);
+
+	kfile_printf(&msgfile.fd, "%s", logging_buf);
+	va_copy(aq, ap);
+	int len = kfile_vprintf(&msgfile.fd, fmt, ap);
+	va_end(aq);
+	kfile_flush(&msgfile.fd);
+	sem_release(&log_sem);
+
+	return len;
+}
+
+int logging_msg(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	int len = logging_vmsg(fmt, ap);
+	va_end(ap);
+
+	return len;
 }
 
 void logging_init(void)

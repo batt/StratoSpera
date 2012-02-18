@@ -38,14 +38,11 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include "gps.h"
-
 #include <kern/sem.h>
 #include <io/kfile.h>
 #include <fs/fat.h>
 
-#include <time.h>
-#include <stdio.h>
+#include <stdarg.h>
 
 #define logging_data(fmt, ...) \
 do \
@@ -59,26 +56,8 @@ do \
 } while (0)
 
 
-#define logging_msg(fmt, ...) \
-do \
-{ \
-	extern Semaphore log_sem; \
-	extern FatFile msgfile; \
-	struct tm *t; \
-	time_t tim; \
-	tim = gps_time(); \
-	t = gmtime(&tim); \
-	extern char logging_buf[16]; \
-	sem_obtain(&log_sem); \
-	snprintf(logging_buf, sizeof(logging_buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec); \
-	kprintf("%s", logging_buf); \
-	kprintf(fmt, ##__VA_ARGS__); \
-	kfile_printf(&msgfile.fd, "%s", logging_buf); \
-	kfile_printf(&msgfile.fd, fmt, ##__VA_ARGS__); \
-	kfile_flush(&msgfile.fd); \
-	sem_release(&log_sem); \
-} while (0)
-
+int logging_vmsg(const char *fmt, va_list ap);
+int logging_msg(const char *fmt, ...);
 void logging_rotate(void);
 void logging_init(void);
 
