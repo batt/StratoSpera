@@ -146,8 +146,8 @@ void radio_time(char *time_str, size_t size)
 	sem_obtain(&radio_sem);
 	time_t tim = gps_time();
 	/* Avoid sending two messages with the same timestamp */
-	if (tim == prev_t)
-		tim++;
+	if (tim <= prev_t)
+		tim = prev_t + 1;
 
 	struct tm t;
 	gmtime_r(&tim, &t);
