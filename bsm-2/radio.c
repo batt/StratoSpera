@@ -160,14 +160,17 @@ void radio_time(char *time_str, size_t size)
 
 int radio_printf(const char * fmt, ...)
 {
+	int result;
+	va_list ap;
+	va_start(ap, fmt);
+	logging_vmsg(fmt, ap);
+	va_end(ap);
+
 	if (!radio_initialized)
 	{
 		LOG_WARN("Radio not yet initialized\n");
 		return EOF;
 	}
-
-	int result;
-	va_list ap;
 
 	char time[7];
 	radio_time(time, sizeof(time));
