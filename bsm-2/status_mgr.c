@@ -384,11 +384,16 @@ static bool mission_start(long l)
 	return true;
 }
 
-static bool board_reset(long l)
+static bool board_reset(long code)
 {
-	(void)l;
-	RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
-	return true;
+	if (code == 0xdead)
+	{
+		radio_printf("Resetting board, bye bye!");
+		timer_delay(1000);
+		RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+	}
+	LOG_INFO ("Wrong reset code: %lx\n", code);
+	return false;
 }
 
 void status_init(void)
