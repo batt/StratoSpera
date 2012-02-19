@@ -159,7 +159,7 @@ if __name__ == "__main__":
         while 1:
             m = ax25.recv()
             sys.stdout.write("AFSK1200: fm %s\n" % m['src'])
-            sys.stdout.write(m['data'] + '\n')
+            sys.stdout.write(m['data'].strip() + '\n')
             sys.stdout.flush()
 
     stream.close()
