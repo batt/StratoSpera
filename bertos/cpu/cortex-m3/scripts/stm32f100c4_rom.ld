@@ -26,29 +26,28 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2010 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 2012 Develer S.r.l. (http://www.develer.com/)
  *
  * -->
  *
- * \author Stefano Fedrigo <aleph@develer.com>
+ * \author Daniele Basile <asterix@develer.com>
  *
- * \brief Script for STM32F101C4 cpu.
+ * \brief Script for STM32F100C4 Cortex-M3 board.
  *
  */
-
 
 /*
  * Define stack size here
  * Variable used in the cortex-m3_rom.ld file
  */
-STACK_SIZE = 0x200;
+STACK_SIZE = 0x400;
 
 /*
- * Define memory configuration for STM32F101C4
+ * Define memory configuration for STM32F100RB
  */
 MEMORY
 {
-	rom(rx) : org = 0x00000000, len = 16k
+	rom(rx) : org = 0x00000000, len = 16K
 	ram(rwx) : org = 0x20000000, len = 4k
 }
 

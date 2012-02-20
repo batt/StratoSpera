@@ -205,12 +205,36 @@
 		#define CPU_CM3_LM3S8962    0
 	#endif
 
+	#if defined (__ARM_STM32F100RB__)
+		#define CPU_CM3_STM32       1
+		#define CPU_CM3_STM32F100RB 1
+		#define CPU_NAME            "STM32F100RB"
+	#else
+		#define CPU_CM3_STM32F100RB 0
+	#endif
+
+	#if defined (__ARM_STM32F100C4__)
+		#define CPU_CM3_STM32       1
+		#define CPU_CM3_STM32F100C4 1
+		#define CPU_NAME            "STM32F100C4"
+	#else
+		#define CPU_CM3_STM32F100C4 0
+	#endif
+
 	#if defined (__ARM_STM32F101C4__)
 		#define CPU_CM3_STM32       1
 		#define CPU_CM3_STM32F101C4 1
 		#define CPU_NAME            "STM32F101C4"
 	#else
 		#define CPU_CM3_STM32F101C4 0
+	#endif
+
+	#if defined (__ARM_STM32F102C4__)
+		#define CPU_CM3_STM32       1
+		#define CPU_CM3_STM32F102C4 1
+		#define CPU_NAME            "STM32F102C4"
+	#else
+		#define CPU_CM3_STM32F102C4 0
 	#endif
 
 	#if defined (__ARM_STM32F103RB__)
@@ -230,6 +254,7 @@
 	#endif
 
 
+	// AT91SAM3N products serie
 	#if defined (__ARM_SAM3N4__)
 		#define CPU_CM3_SAM3    1
 		#define CPU_CM3_SAM3N   1
@@ -245,6 +270,7 @@
 		#define CPU_CM3_SAM3N4  0
 	#endif
 
+	// AT91SAM3S products serie
 	#if defined (__ARM_SAM3S4__)
 		#define CPU_CM3_SAM3    1
 		#define CPU_CM3_SAM3S   1
@@ -258,6 +284,7 @@
 		#define CPU_CM3_SAM3S4  0
 	#endif
 
+	// AT91SAM3U products serie
 	#if defined (__ARM_SAM3U4__)
 		#define CPU_CM3_SAM3    1
 		#define CPU_CM3_SAM3U   1
@@ -271,6 +298,7 @@
 		#define CPU_CM3_SAM3U4  0
 	#endif
 
+	// AT91SAM3X products serie
 	#if defined (__ARM_SAM3X8__)
 		#define CPU_CM3_SAM3    1
 		#define CPU_CM3_SAM3X   1
@@ -291,7 +319,8 @@
 		#define CPU_CM3_STM32       0
 		#define CPU_CM3_SAM3        0
 	#elif defined (CPU_CM3_STM32)
-		#if CPU_CM3_STM32F101C4 + CPU_CM3_STM32F103RB + CPU_CM3_STM32F103RE + 0 != 1
+		#if CPU_CM3_STM32F100RB + CPU_CM3_STM32F100C4 + CPU_CM3_STM32F101C4 + CPU_CM3_STM32F103RB + CPU_CM3_STM32F103RE + \
+			CPU_CM3_STM32F102C4 + 0 != 1
 			#error STM32 Cortex-M3 CPU configuration error
 		#endif
 		#define CPU_CM3_LM3S        0
@@ -324,9 +353,11 @@
 	#define CPU_CM3_LM3S8962 0
 
 	#define CPU_CM3_STM32 0
+	#define CPU_CM3_STM32F100RB 0
+	#define CPU_CM3_STM32F100C4 0
 	#define CPU_CM3_STM32F103RB 0
 	#define CPU_CM3_STM32F101C4 0
-        #define CPU_CM3_STM32F103RE 0
+	#define CPU_CM3_STM32F103RE 0
 
 	#define CPU_CM3_SAM3 0
 	#define CPU_CM3_SAM3N 0

@@ -30,26 +30,26 @@
  *
  * -->
  *
- * \author Stefano Fedrigo <aleph@develer.com>
+ * \author Andrea Scalise <andreascalo@gmail.com>
+ * \Signed-off-by Matteo Silvestri <matteosilv@gmail.com>
  *
- * \brief Script for STM32F101C4 cpu.
+ * \brief Script for STM32VLDiscovery Cortex-M3 board.
  *
  */
-
 
 /*
  * Define stack size here
  * Variable used in the cortex-m3_rom.ld file
  */
-STACK_SIZE = 0x200;
+STACK_SIZE = 0x400;
 
 /*
- * Define memory configuration for STM32F101C4
+ * Define memory configuration for STM32F100RB
  */
 MEMORY
 {
-	rom(rx) : org = 0x00000000, len = 16k
-	ram(rwx) : org = 0x20000000, len = 4k
+	rom(rx) : org = 0x00000000, len = 128k
+	ram(rwx) : org = 0x20000000, len = 8k
 }
 
 INCLUDE "bertos/cpu/cortex-m3/scripts/cortex-m3_rom.ld"
