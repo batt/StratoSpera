@@ -45,22 +45,20 @@
 #include <cfg/module.h>
 #include <drv/timer.h>
 #include <drv/buzzer.h>
+#include <mware/config.h>
 
 #include <kern/proc.h>
 
 #define LOG_LEVEL     LOG_LVL_INFO
 #define LOG_VERBOSITY LOG_FMT_VERBOSE
 #include <cfg/log.h>
+#include "logging.h"
 
 #include <math.h>
 
 #if !(ARCH & ARCH_UNITTEST)
 	#define BUZ_START() buz_repeat_start(1000, 3000)
 	#define BUZ_STOP() 	buz_repeat_stop();
-
-	#include "logging.h"
-	#undef LOG_INFO
-	#define LOG_INFO(...) logging_msg(__VA_ARGS__)
 #else
 	#define BUZ_START() /**/
 	#define BUZ_STOP()  /**/
@@ -77,13 +75,24 @@ void landing_buz_start(void)
 	}
 }
 
-static ticks_t buz_time;
+static void landing_buz_reload(void);
+
+DECLARE_CONF(landing_buz, landing_buz_reload,
+	CONF_INT(buz_timeout, 5, 86400, 9000) // seconds
+);
+
+static void landing_buz_reload(void)
+{
+	LOG_INFO("Buzzer timeout: %ld seconds\n", (long)buz_timeout);
+	landing_buz_reset();
+}
+
 
 bool landing_buz_check(ticks_t now)
 {
 	static bool logging = false;
 
-	if (now - status_missionStartTicks() > buz_time)
+	if (now - status_missionStartTicks() > (buz_timeout * 1000))
 	{
 		if (!logging)
 		{
@@ -119,17 +128,14 @@ void landing_buz_reset(void)
 	BUZ_STOP();
 }
 
-void landing_buz_setCfg(uint32_t buz_timeout_seconds)
+void landing_buz_init(void)
 {
-	buz_time = ms_to_ticks(buz_timeout_seconds * 1000);
-	LOG_INFO("Buzzer timeout: %ld seconds\n", (long)buz_timeout_seconds);
-}
-
-void landing_buz_init(uint32_t buz_timeout_seconds)
-{
-	MOD_CHECK(buzzer);
-	landing_buz_setCfg(buz_timeout_seconds);
+	config_register(&landing_buz);
+	config_load(&landing_buz);
 	landing_buz_reset();
-	LOG_INFO("Starting landing buzzer control process:\n");
-	proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
+	#if !(ARCH & ARCH_UNITTEST)
+		MOD_CHECK(buzzer);
+		LOG_INFO("Starting landing buzzer control process:\n");
+		proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
+	#endif
 }

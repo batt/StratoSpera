@@ -21,7 +21,10 @@ bsm-2_USER_CSRC = \
 	$(bsm-2_SRC_PATH)/landing_buz.c \
 	$(bsm-2_SRC_PATH)/radio.c \
 	$(bsm-2_SRC_PATH)/testmode.c \
+	$(bsm-2_SRC_PATH)/uplink.c \
 	bertos/mware/ini_reader.c \
+	bertos/mware/config.c \
+	bertos/mware/find_token.c \
 	bertos/drv/kbd.c \
 	bertos/kern/signal.c \
 	bertos/kern/sem.c \

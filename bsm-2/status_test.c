@@ -1,6 +1,16 @@
+/*
+ * $test$: cp bertos/cfg/cfg_kfile.h $cfgdir/
+ * $test$: echo "#undef CONFIG_KFILE_GETS" >> $cfgdir/cfg_kfile.h
+ * $test$: echo "#define CONFIG_KFILE_GETS 1" >> $cfgdir/cfg_kfile.h
+ */
+
 #include "status_mgr.h"
 #include "cutoff.h"
 #include "landing_buz.h"
+
+#include <fs/fat.h>
+#include <emul/kfile_posix.h>
+#include <mware/config.h>
 
 #include <cfg/debug.h>
 #include <cfg/test.h>
@@ -10,32 +20,25 @@
 #include <stdlib.h>
 #include <math.h>
 
+static const char ini_file[] = "conf.ini";
+static KFilePosix kf;
+
+
 int status_testSetup(void)
 {
 	kdbg_init();
 
-	CutoffCfg cutoff_cfg;
-	cutoff_cfg.altitude_timeout = 30;
-	cutoff_cfg.delta_altitude = 500;
-	cutoff_cfg.dist_max_meters = 50000;
-	cutoff_cfg.dist_timeout = 300;
-	cutoff_cfg.altmax_meters = 31000;
-	cutoff_cfg.altmax_timeout = 60;
-	cutoff_cfg.mission_timeout = 6090;
-	cutoff_cfg.start_latitude = 43606414;
-	cutoff_cfg.start_longitude = 11311832;
-	cutoff_setCfg(&cutoff_cfg);
+	if (!kfile_posix_init(&kf, ini_file, "r"))
+	{
+		kprintf("No test file found\n");
+		return -1;
+	}
 
-	landing_buz_setCfg(9000);
+	config_init(&kf.fd);
 
-	StatusCfg status_cfg;
-	status_cfg.ground_alt = 1500;
-	status_cfg.landing_alt = 3600;
-	status_cfg.rate_down = -3;
-	status_cfg.rate_up = 3;
-	status_cfg.tropopause_alt = 12500;
-
-	status_setCfg(&status_cfg);
+	cutoff_init();
+	landing_buz_init();
+	status_init();
 
 	return 0;
 }

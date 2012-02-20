@@ -32,7 +32,7 @@ def parse_loop():
 	os.system("mkdir -p " + config.logdir)
 	os.system("touch " + logfile)
 	#start aprs_decoder
-	os.system("./aprs_decoder >%s&" % logfile)
+	os.system("python ax25.py >%s&" % logfile)
 
 	try:
 		#start web updaters
@@ -83,7 +83,7 @@ def parse_loop():
 	except KeyboardInterrupt:
 		print "\nCTRL-C pressed, exit"
 	finally:
-		os.system("killall aprs_decoder")
+		os.system("kill `ps ax | grep ax25.py | head -n1 | cut -f2 -d' '`")
 
 def auth_test(start):
 	min = start

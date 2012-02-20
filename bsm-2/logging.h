@@ -38,48 +38,18 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include "gps.h"
+#include <stdarg.h>
+#include "cfg/cfg_arch.h"
 
-#include <kern/sem.h>
-#include <io/kfile.h>
-#include <fs/fat.h>
-
-#include <time.h>
-#include <stdio.h>
-
-#define logging_data(fmt, ...) \
-do \
-{ \
-	extern Semaphore log_sem; \
-	extern FatFile logfile; \
-	sem_obtain(&log_sem); \
-	kfile_printf(&logfile.fd, fmt, ##__VA_ARGS__); \
-	kfile_flush(&logfile.fd); \
-	sem_release(&log_sem); \
-} while (0)
-
-
-#define logging_msg(fmt, ...) \
-do \
-{ \
-	extern Semaphore log_sem; \
-	extern FatFile msgfile; \
-	struct tm *t; \
-	time_t tim; \
-	tim = gps_time(); \
-	t = gmtime(&tim); \
-	char buf[16]; \
-	snprintf(buf, sizeof(buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec); \
-	kprintf("%s", buf); \
-	kprintf(fmt, ##__VA_ARGS__); \
-	sem_obtain(&log_sem); \
-	kfile_printf(&msgfile.fd, "%s", buf); \
-	kfile_printf(&msgfile.fd, fmt, ##__VA_ARGS__); \
-	kfile_flush(&msgfile.fd); \
-	sem_release(&log_sem); \
-} while (0)
-
+int logging_data(const char *fmt, ...);
+int logging_vmsg(const char *fmt, va_list ap);
+int logging_msg(const char *fmt, ...);
 void logging_rotate(void);
 void logging_init(void);
+
+#if !(ARCH & ARCH_UNITTEST)
+	#undef LOG_PRINT
+	#define LOG_PRINT(str_level, str,...) logging_msg("%s: " str, str_level, ## __VA_ARGS__)
+#endif
 
 #endif

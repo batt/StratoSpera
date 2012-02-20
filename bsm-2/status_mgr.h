@@ -4,15 +4,6 @@
 #include <cfg/compiler.h>
 #include <drv/timer.h>
 
-typedef struct StatusCfg
-{
-	int32_t ground_alt;     // meters
-	int32_t tropopause_alt; // meters
-	int32_t landing_alt;    // meters
-	float rate_up;  // m/s
-	float rate_down; // m/s (should be negative!)
-} StatusCfg;
-
 typedef enum VertDir
 {
 	HOVERING,
@@ -43,7 +34,6 @@ mtime_t status_missionTime(void);
 Bsm2Status status_currStatus(void);
 void status_setTestStatus(Bsm2Status new_status);
 void status_check(bool fix, int32_t curr_alt, float curr_press);
-void status_setCfg(StatusCfg *_cfg);
-void status_init(StatusCfg *cfg);
+void status_init(void);
 
 #endif

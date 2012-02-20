@@ -113,7 +113,7 @@ void kputchar(char c)
 }
 
 
-static void PGM_FUNC(kvprintf)(const char * PGM_ATTR fmt, va_list ap)
+void PGM_FUNC(kvprintf)(const char * PGM_ATTR fmt, va_list ap)
 {
 #if CONFIG_PRINTF
 	/* Mask serial TX intr */

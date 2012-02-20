@@ -5,12 +5,12 @@
 #include "gps.h"
 #include "adc_mgr.h"
 #include "sensors.h"
-#include "logging.h"
 #include "measures.h"
 #include "hadarp.h"
 #include "status_mgr.h"
 #include "radio.h"
 #include "testmode.h"
+#include "uplink.h"
 
 #include "hw/hw_pin.h"
 #include "hw/hw_led.h"
@@ -30,6 +30,7 @@
 #include <drv/spi_dma_at91.h>
 
 #include <mware/ini_reader.h>
+#include <mware/config.h>
 
 #include <fs/fat.h>
 
@@ -43,12 +44,16 @@
 
 #define LOG_LEVEL LOG_LVL_INFO
 #include <cfg/log.h>
+#include "logging.h"
 
 static SpiDmaAt91 spi_dma;
 static Sd sd;
 static FATFS fs;
 
-static ticks_t log_interval;
+DECLARE_CONF(system_cfg, NULL,
+	CONF_INT(log_interval, 1, 600, 3),
+	CONF_BOOL(test_mode, false)
+);
 
 static void init(void)
 {
@@ -84,96 +89,19 @@ static void init(void)
 	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
 	logging_init();
 
-	char inibuf[64];
-
-	/* Set ADC sensor calibration */
-	for (int i = 0; i < ADC_CHANNELS; i++)
-	{
-		char calib[16];
-		SensorCalibrationSet set;
-
-		snprintf(calib, sizeof(calib), "calib%02d", i);
-		calib[sizeof(calib) - 1] = '\0';
-
-		if (ini_getString(&conf.fd, calib, "p1x", "0", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p1.x = atoi(inibuf);
-
-		if (ini_getString(&conf.fd, calib, "p1y", "0", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p1.y = atoi(inibuf) / 1000.0;
-
-		if (ini_getString(&conf.fd, calib, "p2x", "1023", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p2.x = atoi(inibuf);
-
-		if (ini_getString(&conf.fd, calib, "p2y", "1023", inibuf, sizeof(inibuf)) != 0)
-			continue;
-		set.p2.y = atoi(inibuf) / 1000.0;
-
-		LOG_INFO("Calibration loaded for channel %d\n", i);
-		sensor_setCalibration(i, set);
-	}
-
-	StatusCfg status_cfg;
-	ini_getString(&conf.fd, "status", "ground_alt", "1500", inibuf, sizeof(inibuf));
-	status_cfg.ground_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "landing_alt", "3600", inibuf, sizeof(inibuf));
-	status_cfg.landing_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "tropopause_alt", "12500", inibuf, sizeof(inibuf));
-	status_cfg.tropopause_alt = atoi(inibuf);
-	ini_getString(&conf.fd, "status", "rate_up", "200", inibuf, sizeof(inibuf));
-	status_cfg.rate_up = atoi(inibuf) / 100.0;
-	ini_getString(&conf.fd, "status", "rate_down", "-200", inibuf, sizeof(inibuf));
-	status_cfg.rate_down = atoi(inibuf) / 100.0;
-
-	status_init(&status_cfg);
-
-	CutoffCfg cutoff_cfg;
-	ini_getString(&conf.fd, "cutoff", "mission_timeout", "8400", inibuf, sizeof(inibuf));
-	cutoff_cfg.mission_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "delta_altitude", "500", inibuf, sizeof(inibuf));
-	cutoff_cfg.delta_altitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altitude_timeout", "30", inibuf, sizeof(inibuf));
-	cutoff_cfg.altitude_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "start_latitude", "43606414", inibuf, sizeof(inibuf));
-	cutoff_cfg.start_latitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "start_longitude", "11311832", inibuf, sizeof(inibuf));
-	cutoff_cfg.start_longitude = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "dist_max_meters", "80000", inibuf, sizeof(inibuf));
-	cutoff_cfg.dist_max_meters = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "dist_timeout", "300", inibuf, sizeof(inibuf));
-	cutoff_cfg.dist_timeout = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altmax_meters", "50000", inibuf, sizeof(inibuf));
-	cutoff_cfg.altmax_meters = atoi(inibuf);
-	ini_getString(&conf.fd, "cutoff", "altmax_timeout", "300", inibuf, sizeof(inibuf));
-	cutoff_cfg.altmax_timeout = atoi(inibuf);
-
-	ini_getString(&conf.fd, "cutoff", "pwm_duty", "32768", inibuf, sizeof(inibuf));
-	cutoff_cfg.pwm_duty = atoi(inibuf);
-
-	cutoff_init(&cutoff_cfg);
-
-	ini_getString(&conf.fd, "landing_buz", "buz_timeout", "9000", inibuf, sizeof(inibuf));
-	uint32_t buz_timeout_seconds = atoi(inibuf);
-
-	landing_buz_init(buz_timeout_seconds);
-
-	RadioCfg radio_cfg;
-	ini_getString(&conf.fd, "logging", "aprs_interval", "60", inibuf, sizeof(inibuf));
-	radio_cfg.aprs_interval = atoi(inibuf);
-	ini_getString(&conf.fd, "logging", "send_call", "STSP3", inibuf, sizeof(inibuf));
-	strncpy(radio_cfg.send_call, inibuf, sizeof(radio_cfg.send_call));
-	radio_cfg.send_call[sizeof(radio_cfg.send_call) - 1] = '\0';
-	radio_init(&radio_cfg);
-
-	ini_getString(&conf.fd, "logging", "log_interval", "3", inibuf, sizeof(inibuf));
-	log_interval = ms_to_ticks(atoi(inibuf) * 1000);
-
-	ini_getString(&conf.fd, "system", "test_mode", "0", inibuf, sizeof(inibuf));
+	config_init(&conf.fd);
+	uplink_init();
+	sensor_init();
+	LOG_INFO("Sensor calibration loaded\n");
+	status_init();
+	cutoff_init();
+	landing_buz_init();
+	radio_init();
+	config_register(&system_cfg);
+	config_load(&system_cfg);
 	kfile_close(&conf.fd);
 
-	if (atoi(inibuf) != 0)
+	if (test_mode)
 			testmode_run();
 
 	ledr(false);
@@ -212,10 +140,10 @@ int main(void)
 			status_missionStart();
 		}
 
-		if (timer_clock() - log_start > log_interval)
+		if (timer_clock() - log_start > ms_to_ticks(log_interval * 1000))
 		{
 			char msg[128];
-			log_start += log_interval;
+			log_start += ms_to_ticks(log_interval * 1000);
 			//monitor_report();
 
 			measures_logFormat(msg, sizeof(msg));

@@ -19,7 +19,9 @@ CC=gcc
 #FIXME: -Ibertos/emul should not be needed
 CFLAGS="-W -Wall -Wextra -Wundef -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wsign-compare -Wmissing-noreturn \
 -O0 -g3 -ggdb -Ibertos -Ibertos/emul -I. -Ibsm-2/ -std=gnu99 -fno-builtin -D_DEBUG -DARCH=(ARCH_EMUL|ARCH_UNITTEST) \
--DCPU_FREQ=(12288000UL) -ffunction-sections -fdata-sections -Wl,--gc-sections -lpulse-simple"
+-DCPU_FREQ=(12288000UL) -ffunction-sections -fdata-sections -Wl,--gc-sections"
+
+LIBS="-lpulse-simple -lm"
 
 CXX=g++
 CXXFLAGS="$CFLAGS"
@@ -36,14 +38,20 @@ SRC_LIST="
 	bertos/mware/formatwr.c
 	bertos/mware/hex.c
 	bertos/mware/sprintf.c
+	bertos/mware/config.c
+	bertos/mware/ini_reader.c
+	bertos/mware/strtod.c
+	bertos/mware/find_token.c
 	bertos/algo/crc_ccitt.c
 	bertos/net/ax25.c
 	bertos/net/afsk.c
 	bertos/cfg/kfile_debug.c
 	bertos/io/kfile.c
+	bertos/emul/kfile_posix.c
 	bsm-2/cutoff.c
 	bsm-2/status_mgr.c
 	bsm-2/landing_buz.c
+	bsm-2/uplink.c
 "
 
 buildout='/dev/null'
@@ -68,7 +76,7 @@ for src in $TESTS; do
 	exe="$testdir/$name"
 
 	PREPARECMD="test/parsetest.py $src"
-	BUILDCMD="$CC -I$testdir $CFLAGS $src $SRC_LIST -o $exe"
+	BUILDCMD="$CC -I$testdir $CFLAGS $src $SRC_LIST -o $exe $LIBS"
 	export testdir name cfgdir
 
 	[ $VERBOSE -gt 0 ] && echo "Preparing $name..."

@@ -36,6 +36,7 @@
  */
 
 #include "logging.h"
+#include "gps.h"
 
 #include <kern/sem.h>
 #include <io/kfile.h>
@@ -43,19 +44,24 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+#include <stdarg.h>
 
-FatFile logfile, msgfile;
-Semaphore log_sem;
+static FatFile logfile;
+static FatFile msgfile;
+static Semaphore log_sem;
+static char logging_buf[16];
 
 static bool logopen, msgopen;
 
-static void rotate_file(FatFile *f, const char *prefix)
+static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 {
 	char name[13];
-	ASSERT(strlen(prefix) == 3);
+	ASSERT(strlen(prefix) <= 3);
+	ASSERT(strlen(ext) <= 3);
 	for (int i = 0; i < 100000; i++)
 	{
-		snprintf(name, sizeof(name), "%s%05d.csv", prefix, i);
+		snprintf(name, sizeof(name), "%s%05d.%s", prefix, i, ext);
 		if (fatfile_open(f, name, FA_OPEN_EXISTING | FA_WRITE) != FR_OK)
 		{
 			kprintf("Logging on file %s\n", name);
@@ -79,7 +85,7 @@ void logging_rotate(void)
 		kfile_close(&logfile.fd);
 		logopen = false;
 	}
-	rotate_file(&logfile, "log");
+	rotate_file(&logfile, "log", "csv");
 	logopen = true;
 
 	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt (m);"
@@ -92,10 +98,59 @@ void logging_rotate(void)
 		kfile_close(&msgfile.fd);
 		msgopen = false;
 	}
-	rotate_file(&msgfile, "msg");
+	rotate_file(&msgfile, "msg", "txt");
 	msgopen = true;
 
 	sem_release(&log_sem);
+}
+
+int logging_vmsg(const char *fmt, va_list ap)
+{
+	struct tm *t;
+	time_t tim;
+
+	sem_obtain(&log_sem);
+	tim = gps_time();
+	t = gmtime(&tim);
+
+	snprintf(logging_buf, sizeof(logging_buf), "%02d:%02d:%02d-",t->tm_hour, t->tm_min, t->tm_sec);
+	kprintf("%s", logging_buf);
+
+	va_list aq;
+	va_copy(aq, ap);
+	kvprintf(fmt, ap);
+	va_end(aq);
+
+	kfile_printf(&msgfile.fd, "%s", logging_buf);
+	va_copy(aq, ap);
+	int len = kfile_vprintf(&msgfile.fd, fmt, ap);
+	va_end(aq);
+	kfile_flush(&msgfile.fd);
+	sem_release(&log_sem);
+
+	return len;
+}
+
+int logging_msg(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	int len = logging_vmsg(fmt, ap);
+	va_end(ap);
+
+	return len;
+}
+
+int logging_data(const char *fmt, ...)
+{
+	sem_obtain(&log_sem);
+	va_list ap;
+	va_start(ap, fmt);
+	int len = kfile_vprintf(&logfile.fd, fmt, ap);
+	va_end(ap);
+	kfile_flush(&logfile.fd);
+	sem_release(&log_sem);
+	return len;
 }
 
 void logging_init(void)

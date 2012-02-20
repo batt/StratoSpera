@@ -75,7 +75,7 @@ void testmode_run(void)
 			if (status >= BSM2_CNT)
 				status = 0;
 
-			radio_printf("TEST MODE");
+			radio_printf("TEST MODE\n");
 			radio_sendTelemetry();
 
 			timer_delay(5000);

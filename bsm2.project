@@ -181,6 +181,9 @@
     <File Name="bsm-2/testmode.c"/>
     <File Name="bsm-2/testmode.h"/>
     <File Name="bsm-2/status_test.c"/>
+    <File Name="bsm-2/uplink.c"/>
+    <File Name="bsm-2/uplink.h"/>
+    <File Name="bsm-2/uplink_test.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="bertos">
     <VirtualDirectory Name="cpu">
@@ -1023,6 +1026,11 @@
       <File Name="bertos/mware/observer.c"/>
       <File Name="bertos/mware/ini_reader_test.c"/>
       <File Name="bertos/mware/except.h"/>
+      <File Name="bertos/mware/strtod_test.c"/>
+      <File Name="bertos/mware/strtod.c"/>
+      <File Name="bertos/mware/config.c"/>
+      <File Name="bertos/mware/config.h"/>
+      <File Name="bertos/mware/config_test.c"/>
     </VirtualDirectory>
     <VirtualDirectory Name="hw">
       <File Name="bertos/hw/hw_phase.c"/>
@@ -1430,5 +1438,8 @@
     <File Name="scripts/repeater.py"/>
     <File Name="scripts/downloader.py"/>
     <File Name="scripts/restore.py"/>
+    <File Name="scripts/ax25.py"/>
+    <File Name="scripts/afsk.py"/>
+    <File Name="scripts/crc_ccitt.py"/>
   </VirtualDirectory>
 </CodeLite_Project>
