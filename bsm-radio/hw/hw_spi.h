@@ -39,8 +39,6 @@
 #ifndef HW_SPI_H
 #define HW_SPI_H
 
-#warning TODO:This is an example implentation, you must implement it!
-
 #include <cfg/macros.h>
 
 /**
@@ -55,9 +53,6 @@
 #define SCK      /* pin */   ///Connect to SCK pin of Flash memory.
 #define MOSI     /* pin */   ///Connect to SI pin of Flash memory.
 #define MISO     /* pin */   ///Connect to SO pin of Flash memory.
-#define SPI_PORT /* pin */   ///Micro pin PORT register.
-#define SPI_PIN  /* pin */   ///Micro pin PIN register.
-#define SPI_DDR  /* pin */   ///Micro pin DDR register.
 /*\}*/
 
 /**

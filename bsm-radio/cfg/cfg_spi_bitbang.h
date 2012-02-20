@@ -45,7 +45,7 @@
  * $WIZ$ type = "enum"
  * $WIZ$ value_list = "ordet_bit_list"
  */
-#define CONFIG_SPI_DATAORDER  SPI_LSB_FIRST
+#define CONFIG_SPI_DATAORDER  SPI_MSB_FIRST
 
 #endif /* CFG_SPI_BITBANG_H */
 
