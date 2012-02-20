@@ -10,3 +10,6 @@ msg/
 BACKUP*
 layout.log
 scripts/webserver/maps
+openocd.tmp
+tags
+flash.log
