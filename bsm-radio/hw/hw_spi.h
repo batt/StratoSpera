@@ -45,6 +45,7 @@
 
 #include <drv/gpio_stm32.h>
 #include <drv/clock_stm32.h>
+#include <drv/timer.h>
 
 #define GPIO_BASE       ((struct stm32_gpio *)GPIOA_BASE)
 /**
@@ -71,6 +72,7 @@
 #define SCK_PULSE()\
 	do {\
 			SCK_ACTIVE();\
+			timer_udelay(1);\
 			SCK_INACTIVE();\
 	} while (0)
 
