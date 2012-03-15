@@ -62,7 +62,7 @@
 #define MOSI_HIGH()      stm32_gpioPinWrite(GPIO_BASE, MOSI, 1)
 
 #define SS_ACTIVE()      stm32_gpioPinWrite(GPIO_BASE, CS, 0)
-#define SS_INACTIVE()    stm32_gpioPinWrite(GPIO_BASE, CS, 0)
+#define SS_INACTIVE()    stm32_gpioPinWrite(GPIO_BASE, CS, 1)
 
 #define SCK_INACTIVE()   stm32_gpioPinWrite(GPIO_BASE, SCK, 0)
 #define SCK_ACTIVE()     stm32_gpioPinWrite(GPIO_BASE, SCK, 1)
