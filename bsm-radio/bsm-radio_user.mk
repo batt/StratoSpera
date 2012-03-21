@@ -10,6 +10,7 @@ bsm-radio_PROGRAMMER_PORT = none
 # Files included by the user.
 bsm-radio_USER_CSRC = \
 	$(bsm-radio_SRC_PATH)/main.c \
+	$(bsm-radio_HW_PATH)/hw/hw_cc1101.c \
 	#
 
 # Files included by the user.

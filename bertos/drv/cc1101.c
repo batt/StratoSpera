@@ -30,68 +30,99 @@
  * All Rights Reserved.
  * -->
  *
- * \brief BSM-RADIO main.
+ * \brief Texas radio chip CC1101 interface.
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#include "hw/hw_cc1101.h"
+#include "cc1101.h"
 
-#include <cfg/debug.h>
+#include "hw/hw_spi.h"
 
-#include <cpu/irq.h>
 #include <cpu/types.h>
-#include <cpu/power.h>
 
 #include <drv/timer.h>
 #include <drv/spi_bitbang.h>
 
-
-#define CC1101_REG_MARCSTATE    0x35
-
-#define CC1101_READ_BIT     0x1
-#define CC1101_WRITE_BIT    0x0
-#define CC1101_BURTS_BIT    0x2
-
-#define STATUS_RDY(status)               (((status) & 0x80) >> 7)
-#define STATUS_STATE(status)             (((status) & 0x70) >> 4)
-#define STATUS_FIFO_AVAIL(status)        ((status) & 0xF)
-
-#define UNPACK_STATUS(status) \
-	STATUS_RDY(status), \
-	STATUS_STATE(status), \
-	STATUS_FIFO_AVAIL(status)
-
-
-static void cc1101_init(void)
+uint8_t cc1101_read(uint8_t addr)
 {
-	uint8_t data = 0x3; //CC1101_READ_BIT | CC1101_BURTS_BIT | CC1101_REG_MARCSTATE;
-	while(STATUS_RDY(spi_sendRecv(data)))
-		cpu_relax();
+
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
+
+    uint8_t x = spi_sendRecv(addr);
+
+	SS_INACTIVE();
+    return x;
 }
 
-static void init(void)
+uint8_t cc1101_write(uint8_t addr, uint8_t data)
 {
-	IRQ_ENABLE;
-	kdbg_init();
-	timer_init();
-	spi_init();
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
 
-	cc1101_init();
-	cc1101_setup(ping_low_baud);
+    uint8_t x = spi_sendRecv(addr);
+    x = spi_sendRecv(data);
+
+	SS_INACTIVE();
+    return x;
 }
 
-int main(void)
+uint8_t cc1101_strobe(uint8_t addr)
 {
-	init();
-	while (1)
-	{
-		uint8_t data = 0xF5; //CC1101_READ_BIT | CC1101_BURTS_BIT | CC1101_REG_MARCSTATE;
-		uint8_t recv = spi_sendRecv(data);
-		kprintf("Sent %0x, state %x\n", data, recv & 0x1F);
-		timer_delay(500);
-	}
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
 
-	return 0;
+    uint8_t x = spi_sendRecv(addr);
+
+	SS_INACTIVE();
+    return x;
 }
 
+void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len)
+{
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
+
+    spi_sendRecv(addr | 0xc0);
+	spi_read(buf, len);
+
+	SS_INACTIVE();
+}
+
+void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
+{
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
+
+    spi_sendRecv(addr | 0x40);
+	spi_write(buf, len);
+
+	SS_INACTIVE();
+}
+
+void cc1101_powerOnReset(void)
+{
+	SS_INACTIVE();
+	timer_udelay(1);
+	SS_ACTIVE();
+	timer_udelay(1);
+	SS_INACTIVE();
+	timer_udelay(41);
+	SS_ACTIVE();
+
+	while(!IS_MISO_HIGH());
+	timer_udelay(50);
+
+    spi_sendRecv(CC1101_SRES);
+
+	while(!IS_MISO_HIGH());
+	timer_udelay(50);
+
+	SS_INACTIVE();
+}
+
+void cc1101_setup(const Setting* settings)
+{
+	cc1101_write(settings->addr, settings->data);
+}

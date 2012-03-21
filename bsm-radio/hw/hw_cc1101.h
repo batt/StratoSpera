@@ -26,72 +26,20 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2012 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 2006 Develer S.r.l. (http://www.develer.com/)
  * All Rights Reserved.
  * -->
  *
- * \brief BSM-RADIO main.
+ * \brief AFSK modem hardware-specific definitions.
  *
- * \author Daniele Basile <asterix@develer.com>
+ * \author Francesco Sacchi <batt@develer.com>
  */
 
-#include "hw/hw_cc1101.h"
+#ifndef HW_CC1101_H
+#define HW_CC1101_H
 
-#include <cfg/debug.h>
+#include <drv/cc1101.h>
 
-#include <cpu/irq.h>
-#include <cpu/types.h>
-#include <cpu/power.h>
+extern const Setting ping_low_baud[];
 
-#include <drv/timer.h>
-#include <drv/spi_bitbang.h>
-
-
-#define CC1101_REG_MARCSTATE    0x35
-
-#define CC1101_READ_BIT     0x1
-#define CC1101_WRITE_BIT    0x0
-#define CC1101_BURTS_BIT    0x2
-
-#define STATUS_RDY(status)               (((status) & 0x80) >> 7)
-#define STATUS_STATE(status)             (((status) & 0x70) >> 4)
-#define STATUS_FIFO_AVAIL(status)        ((status) & 0xF)
-
-#define UNPACK_STATUS(status) \
-	STATUS_RDY(status), \
-	STATUS_STATE(status), \
-	STATUS_FIFO_AVAIL(status)
-
-
-static void cc1101_init(void)
-{
-	uint8_t data = 0x3; //CC1101_READ_BIT | CC1101_BURTS_BIT | CC1101_REG_MARCSTATE;
-	while(STATUS_RDY(spi_sendRecv(data)))
-		cpu_relax();
-}
-
-static void init(void)
-{
-	IRQ_ENABLE;
-	kdbg_init();
-	timer_init();
-	spi_init();
-
-	cc1101_init();
-	cc1101_setup(ping_low_baud);
-}
-
-int main(void)
-{
-	init();
-	while (1)
-	{
-		uint8_t data = 0xF5; //CC1101_READ_BIT | CC1101_BURTS_BIT | CC1101_REG_MARCSTATE;
-		uint8_t recv = spi_sendRecv(data);
-		kprintf("Sent %0x, state %x\n", data, recv & 0x1F);
-		timer_delay(500);
-	}
-
-	return 0;
-}
-
+#endif /* HW_CC1101_H */
