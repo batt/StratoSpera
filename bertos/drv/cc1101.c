@@ -26,67 +26,103 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2008 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 2012 Develer S.r.l. (http://www.develer.com/)
  * All Rights Reserved.
  * -->
  *
- * \brief Hardware macro definition.
- *
+ * \brief Texas radio chip CC1101 interface.
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#ifndef HW_SPI_H
-#define HW_SPI_H
+#include "cc1101.h"
 
-#include <cfg/macros.h>
+#include "hw/hw_spi.h"
 
-#include <io/stm32.h>
+#include <cpu/types.h>
 
-#include <drv/gpio_stm32.h>
-#include <drv/clock_stm32.h>
 #include <drv/timer.h>
+#include <drv/spi_bitbang.h>
 
-#define GPIO_BASE       ((struct stm32_gpio *)GPIOA_BASE)
-/**
- * SPI pin definition.
- */
-#define CS       BV(4)  //PA4
-#define SCK      BV(5)  //PA5
-#define MOSI     BV(7)  //PA7
-#define MISO     BV(6)  //PA6
-/*\}*/
+uint8_t cc1101_read(uint8_t addr)
+{
 
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
 
-#define MOSI_LOW()       stm32_gpioPinWrite(GPIO_BASE, MOSI, 0)
-#define MOSI_HIGH()      stm32_gpioPinWrite(GPIO_BASE, MOSI, 1)
+    uint8_t x = spi_sendRecv(addr);
 
-#define SS_ACTIVE()      stm32_gpioPinWrite(GPIO_BASE, CS, 0)
-#define SS_INACTIVE()    stm32_gpioPinWrite(GPIO_BASE, CS, 1)
+	SS_INACTIVE();
+    return x;
+}
 
-#define SCK_INACTIVE()   stm32_gpioPinWrite(GPIO_BASE, SCK, 0)
-#define SCK_ACTIVE()     stm32_gpioPinWrite(GPIO_BASE, SCK, 1)
+uint8_t cc1101_write(uint8_t addr, uint8_t data)
+{
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
 
-#define IS_MISO_HIGH()	 stm32_gpioPinRead(GPIO_BASE, MISO)
+    uint8_t x = spi_sendRecv(addr);
+    x = spi_sendRecv(data);
 
-#define SCK_PULSE()\
-	do {\
-			SCK_ACTIVE();\
-			timer_udelay(1);\
-			SCK_INACTIVE();\
-	} while (0)
+	SS_INACTIVE();
+    return x;
+}
 
+uint8_t cc1101_strobe(uint8_t addr)
+{
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
 
-#define SPI_HW_INIT() \
-	do { \
-		/* Enable clocking on GPIOA */	\
-		RCC->APB2ENR |= RCC_APB2_GPIOA;			\
-		stm32_gpioPinConfig(GPIO_BASE, CS | SCK | MOSI, GPIO_MODE_OUT_PP, GPIO_SPEED_50MHZ); \
-		stm32_gpioPinConfig(GPIO_BASE, MISO, GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ); \
-		SS_INACTIVE(); \
-		MOSI_LOW(); \
-		SCK_INACTIVE(); \
-	} while(0)
+    uint8_t x = spi_sendRecv(addr);
 
-#endif /* HW_SPI_H */
+	SS_INACTIVE();
+    return x;
+}
 
+void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len)
+{
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
+
+    spi_sendRecv(addr | 0xc0);
+	spi_read(buf, len);
+
+	SS_INACTIVE();
+}
+
+void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
+{
+	SS_ACTIVE();
+	while(!IS_MISO_HIGH());
+
+    spi_sendRecv(addr | 0x40);
+	spi_write(buf, len);
+
+	SS_INACTIVE();
+}
+
+void cc1101_powerOnReset(void)
+{
+	SS_INACTIVE();
+	timer_udelay(1);
+	SS_ACTIVE();
+	timer_udelay(1);
+	SS_INACTIVE();
+	timer_udelay(41);
+	SS_ACTIVE();
+
+	while(!IS_MISO_HIGH());
+	timer_udelay(50);
+
+    spi_sendRecv(CC1101_SRES);
+
+	while(!IS_MISO_HIGH());
+	timer_udelay(50);
+
+	SS_INACTIVE();
+}
+
+void cc1101_setup(const Setting* settings)
+{
+	cc1101_write(settings->addr, settings->data);
+}

@@ -22,6 +22,7 @@ bsm-radio_WIZARD_CSRC = \
 	bertos/cpu/cortex-m3/drv/timer_cm3.c \
 	bertos/drv/spi_bitbang.c \
 	bertos/drv/timer.c \
+	bertos/drv/cc1101.c \
 	bertos/io/kfile.c \
 	bertos/mware/event.c \
 	bertos/mware/formatwr.c \
