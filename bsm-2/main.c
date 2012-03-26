@@ -11,6 +11,7 @@
 #include "radio.h"
 #include "testmode.h"
 #include "uplink.h"
+#include "custom/custom.h"
 
 #include "hw/hw_pin.h"
 #include "hw/hw_led.h"
@@ -105,6 +106,9 @@ static void init(void)
 			testmode_run();
 
 	ledr(false);
+	#if !HADARP_ENABLED
+		custom_init();
+	#endif
 }
 
 int main(void)

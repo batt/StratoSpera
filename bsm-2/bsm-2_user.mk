@@ -8,7 +8,7 @@ bsm-2_PROGRAMMER_TYPE = jtag-tiny
 bsm-2_PROGRAMMER_PORT = none
 
 # Files included by the user.
-bsm-2_USER_CSRC = \
+bsm-2_CORE_CSRC = \
 	$(bsm-2_SRC_PATH)/main.c \
 	$(bsm-2_SRC_PATH)/gps.c \
 	$(bsm-2_SRC_PATH)/adc_mgr.c \
@@ -39,6 +39,8 @@ bsm-2_USER_CSRC = \
 	bertos/drv/mma845x.c \
 	bertos/cpu/arm/drv/pwm_at91.c \
 	#
+
+bsm-2_USER_CSRC = $(bsm-2_CORE_CSRC) $(custom_CSRC)
 
 # Files included by the user.
 bsm-2_USER_PCSRC = \
@@ -72,3 +74,5 @@ bsm-2_USER_CPPFLAGS = \
 	-fwrapv \
 	#-DDEMO_BOARD \
 	#
+
+include custom/custom.mk

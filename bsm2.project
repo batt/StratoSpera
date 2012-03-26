@@ -1442,4 +1442,9 @@
     <File Name="scripts/afsk.py"/>
     <File Name="scripts/crc_ccitt.py"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="custom">
+    <File Name="custom/custom.mk"/>
+    <File Name="custom/custom.c"/>
+    <File Name="custom/custom.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>
