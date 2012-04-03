@@ -63,13 +63,6 @@
 	STATUS_FIFO_AVAIL(status)
 
 
-static void cc1101_init(void)
-{
-	uint8_t data = 0x3; //CC1101_READ_BIT | CC1101_BURTS_BIT | CC1101_REG_MARCSTATE;
-	while(STATUS_RDY(spi_sendRecv(data)))
-		cpu_relax();
-}
-
 static void init(void)
 {
 	IRQ_ENABLE;
@@ -77,8 +70,11 @@ static void init(void)
 	timer_init();
 	spi_init();
 
-	cc1101_init();
+	kputs("qui\n");
+	cc1101_powerOnReset();
+	kputs("cc1101 reseted!\n");
 	cc1101_setup(ping_low_baud);
+	kputs("cc1101 started!\n");
 }
 
 int main(void)
@@ -86,10 +82,24 @@ int main(void)
 	init();
 	while (1)
 	{
-		uint8_t data = 0xF5; //CC1101_READ_BIT | CC1101_BURTS_BIT | CC1101_REG_MARCSTATE;
-		uint8_t recv = spi_sendRecv(data);
-		kprintf("Sent %0x, state %x\n", data, recv & 0x1F);
-		timer_delay(500);
+		cc1101_strobe(CC1101_SIDLE);
+		uint8_t pt = 0xc0;
+		cc1101_writeBurst(CC1101_PATABLE, &pt, 1);
+		timer_delay(1);
+		uint8_t status = cc1101_strobe(CC1101_SFTX);
+		timer_delay(1);
+		cc1101_writeBurst(CC1101_TXFIFO, "Mabcd", 5);
+		kprintf("trasmit %d %d %d!\n", UNPACK_STATUS(status));
+
+		timer_delay(1);
+		status = cc1101_strobe(CC1101_STX);
+		kprintf("tx %d %d %d!\n", UNPACK_STATUS(status));
+
+		timer_delay(120);
+
+		status = cc1101_strobe(CC1101_SIDLE);
+		timer_delay(200);
+		kprintf("Idle %d %d %d!\n", UNPACK_STATUS(status));
 	}
 
 	return 0;

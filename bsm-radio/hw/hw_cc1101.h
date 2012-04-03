@@ -41,5 +41,6 @@
 #include <drv/cc1101.h>
 
 extern const Setting ping_low_baud[];
+extern const Setting ping_low_baud_868[];
 
 #endif /* HW_CC1101_H */

@@ -41,4 +41,5 @@ bsm-radio_USER_CPPAFLAGS = \
 bsm-radio_USER_CPPFLAGS = \
 	-fno-strict-aliasing \
 	-fwrapv \
+	-Os
 	#

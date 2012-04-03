@@ -40,15 +40,24 @@
 #include "hw/hw_spi.h"
 
 #include <cpu/types.h>
+#include <cpu/power.h>
 
 #include <drv/timer.h>
 #include <drv/spi_bitbang.h>
+
+
+#define WAIT_SO_LOW()  \
+	do { \
+		while(IS_MISO_HIGH()) \
+			cpu_relax(); \
+	} while(0)
+
 
 uint8_t cc1101_read(uint8_t addr)
 {
 
 	SS_ACTIVE();
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 
     uint8_t x = spi_sendRecv(addr);
 
@@ -59,7 +68,7 @@ uint8_t cc1101_read(uint8_t addr)
 uint8_t cc1101_write(uint8_t addr, uint8_t data)
 {
 	SS_ACTIVE();
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 
     uint8_t x = spi_sendRecv(addr);
     x = spi_sendRecv(data);
@@ -71,7 +80,7 @@ uint8_t cc1101_write(uint8_t addr, uint8_t data)
 uint8_t cc1101_strobe(uint8_t addr)
 {
 	SS_ACTIVE();
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 
     uint8_t x = spi_sendRecv(addr);
 
@@ -82,7 +91,7 @@ uint8_t cc1101_strobe(uint8_t addr)
 void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len)
 {
 	SS_ACTIVE();
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 
     spi_sendRecv(addr | 0xc0);
 	spi_read(buf, len);
@@ -93,7 +102,7 @@ void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len)
 void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
 {
 	SS_ACTIVE();
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 
     spi_sendRecv(addr | 0x40);
 	spi_write(buf, len);
@@ -103,6 +112,9 @@ void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
 
 void cc1101_powerOnReset(void)
 {
+	SCK_ACTIVE();
+	MOSI_LOW();
+
 	SS_INACTIVE();
 	timer_udelay(1);
 	SS_ACTIVE();
@@ -111,12 +123,12 @@ void cc1101_powerOnReset(void)
 	timer_udelay(41);
 	SS_ACTIVE();
 
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 	timer_udelay(50);
 
     spi_sendRecv(CC1101_SRES);
 
-	while(!IS_MISO_HIGH());
+	WAIT_SO_LOW();
 	timer_udelay(50);
 
 	SS_INACTIVE();
@@ -124,5 +136,6 @@ void cc1101_powerOnReset(void)
 
 void cc1101_setup(const Setting* settings)
 {
-	cc1101_write(settings->addr, settings->data);
+	for (int i = 0; settings[i].addr != 0xFF && settings[i].data != 0xFF; i++)
+		cc1101_write(settings[i].addr, settings[i].data);
 }
