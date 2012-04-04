@@ -17,10 +17,8 @@ class WebServer(CGIHTTPRequestHandler):
 
 	def do_GET(self):
 		path = self.translate_path(self.path)
-		print self.path
 		if self.path.startswith("/maps") and not os.path.exists(path):
 			url = "http://" + random.choice("abc") + ".tile.opencyclemap.org/cycle" + self.path.replace("/maps", "")
-			print "download", url
 			
 			u = urllib.urlopen(url)
 			if u.getcode() != 404:
