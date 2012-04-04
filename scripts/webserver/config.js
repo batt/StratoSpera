@@ -24,5 +24,5 @@ stsp_config = {
 
 	//Set to true to have OpenCycle maps as the default map
 	//if set to false, the default will be Google Maps classic
-	opencycle_default: false,
+	opencycle_default: true,
 };
