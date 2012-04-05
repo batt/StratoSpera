@@ -60,14 +60,53 @@ static void NORETURN custom_process(void)
 		timer_delay(1000);
 		DIGITAL_WRITE(AUX_OUT, LOW);
 		timer_delay(1000);
+
+		/* Write on the serial port */
+		uint8_t buf[] = {0, 1, 2, 3, 4, 5};
+		kfile_write(&ser.fd, buf, 6);
+
+		/* Read 6 bytes, this function will block until all 6 bytes
+		 * have been correctly received or there is a timeout. */
+		uint8_t ret[6];
+		int n = kfile_read(&ser.fd, ret, 6);
+
+		if (n != 6)
+		{
+			LOG_INFO("Error receiving from the serial port, error code %d\n", kfile_error(&ser.fd));
+
+			/* Always remember to clear errors! */
+			kfile_clearerr(&ser.fd);
+		}
+
+		/* Put a single byte on the serial port */
+		kfile_putc('a', &ser.fd);
+
+		/* Read a single char from the serial port */
+		int c = kfile_getc(&ser.fd);
+
+		/* kfile_getc() returns EOF on errors */
+		if (c == EOF)
+		{
+			LOG_INFO("Error receiving from the serial port, error code %d\n", kfile_error(&ser.fd));
+
+			/* Always remember to clear errors! */
+			kfile_clearerr(&ser.fd);
+		}
+
+		/* You can also use a printf-like API */
+		kfile_printf(&ser.fd, "Writing on the serial port usign printf format: %d\n", 123);
 	}
 }
 
+#define RXTIMEOUT 1000 // 1 second
+#define TXTIMEOUT 1000 // 1 second
 
 void custom_init(void)
 {
 	ser_init(&ser, SER_UART1);
 	ser_setbaudrate(&ser, 9600);
+	/* Set timeouts for serial port */
+	ser_settimeouts(&ser, RXTIMEOUT, TXTIMEOUT);
 	PIN_MODE(AUX_OUT, OUTPUT);
 
 	Process *p = proc_new(custom_process, NULL, KERN_MINSTACKSIZE * 5, NULL);

@@ -3,7 +3,7 @@
 #Sender callsign, leave empty in order to log everything
 sender = ""
 #Directory where messages will be logged, do not add / at the end!
-logdir = "msg"
+logdir = "webserver/msg"
 #Base url for remote logging
 #base_url = "http://www.develer.com/~batt/stratospera/bsm-2/"
 base_url = "http://83.149.158.210/~batt/stratospera/bsm-2/"
