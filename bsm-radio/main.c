@@ -36,6 +36,7 @@
  */
 
 #include "hw/hw_cc1101.h"
+#include "hw/hw_spi.h"
 
 #include <cfg/debug.h>
 
@@ -70,36 +71,48 @@ static void init(void)
 	timer_init();
 	spi_init();
 
-	kputs("qui\n");
-	cc1101_powerOnReset();
+	//cc1101_powerOnReset();
 	kputs("cc1101 reseted!\n");
-	cc1101_setup(ping_low_baud);
+	cc1101_setup(ping_low_baud_868);
 	kputs("cc1101 started!\n");
 }
 
 int main(void)
 {
 	init();
+	uint8_t status = 0;
 	while (1)
 	{
-		cc1101_strobe(CC1101_SIDLE);
+		status = cc1101_strobe(CC1101_SIDLE);
+		kprintf("idle %d %d %d\n", UNPACK_STATUS(status));
+
 		uint8_t pt = 0xc0;
-		cc1101_writeBurst(CC1101_PATABLE, &pt, 1);
-		timer_delay(1);
-		uint8_t status = cc1101_strobe(CC1101_SFTX);
-		timer_delay(1);
-		cc1101_writeBurst(CC1101_TXFIFO, "Mabcd", 5);
-		kprintf("trasmit %d %d %d!\n", UNPACK_STATUS(status));
+		cc1101_write(CC1101_PATABLE, 0xc0);
+		timer_delay(10);
 
-		timer_delay(1);
+		status = cc1101_strobe(CC1101_SFTX);
+		kprintf("ffifo %d %d %d\n", UNPACK_STATUS(status));
+
+		status = cc1101_write(CC1101_TXFIFO, 0x61);
+		kprintf("f1 %d %d %d\n", UNPACK_STATUS(status));
+		status = cc1101_write(CC1101_TXFIFO, 0x61);
+		kprintf("f2 %d %d %d\n", UNPACK_STATUS(status));
+		status = cc1101_write(CC1101_TXFIFO, 0x61);
+		kprintf("f3 %d %d %d\n", UNPACK_STATUS(status));
+		status = cc1101_write(CC1101_TXFIFO, 0x61);
+		kprintf("f4 %d %d %d\n", UNPACK_STATUS(status));
+		status = cc1101_write(CC1101_TXFIFO, 0x61);
+		kprintf("f5 %d %d %d\n", UNPACK_STATUS(status));
+
+		timer_delay(100);
+
 		status = cc1101_strobe(CC1101_STX);
-		kprintf("tx %d %d %d!\n", UNPACK_STATUS(status));
-
-		timer_delay(120);
+		kprintf("stx %d %d %d\n", UNPACK_STATUS(status));
+		timer_delay(200);
 
 		status = cc1101_strobe(CC1101_SIDLE);
-		timer_delay(200);
-		kprintf("Idle %d %d %d!\n", UNPACK_STATUS(status));
+		kprintf("idle %d %d %d\n", UNPACK_STATUS(status));
+		timer_delay(500);
 	}
 
 	return 0;

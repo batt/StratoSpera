@@ -126,6 +126,8 @@
 #define CC1101_PATABLE      0x3E
 #define CC1101_TXFIFO       0x3F
 #define CC1101_RXFIFO       0x3F
+#define CC1101_TXFIFO       0x3F
+#define CC1101_RXFIFO       0x3F
 
 #include <cpu/types.h>
 

@@ -45,6 +45,14 @@
 #include <drv/timer.h>
 #include <drv/spi_bitbang.h>
 
+#define STATUS_RDY(status)               (((status) & 0x80) >> 7)
+#define STATUS_STATE(status)             (((status) & 0x70) >> 4)
+#define STATUS_FIFO_AVAIL(status)        ((status) & 0xF)
+
+#define UNPACK_STATUS(status) \
+	STATUS_RDY(status), \
+	STATUS_STATE(status), \
+	STATUS_FIFO_AVAIL(status)
 
 #define WAIT_SO_LOW()  \
 	do { \
@@ -112,19 +120,21 @@ void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
 
 void cc1101_powerOnReset(void)
 {
-	SCK_ACTIVE();
-	MOSI_LOW();
-
+	STROBE_ON();
 	SS_INACTIVE();
 	timer_udelay(1);
+	STROBE_OFF();
+
 	SS_ACTIVE();
 	timer_udelay(1);
 	SS_INACTIVE();
+	STROBE_ON();
+
 	timer_udelay(41);
 	SS_ACTIVE();
 
+	STROBE_OFF();
 	WAIT_SO_LOW();
-	timer_udelay(50);
 
     spi_sendRecv(CC1101_SRES);
 
@@ -136,6 +146,34 @@ void cc1101_powerOnReset(void)
 
 void cc1101_setup(const Setting* settings)
 {
+	uint8_t x = 0;
+
+
+
+	do
+	{
+		SS_ACTIVE();
+		WAIT_SO_LOW();
+
+		x = spi_sendRecv(CC1101_SNOP);
+
+		SS_INACTIVE();
+
+		kprintf("%d\n", STATUS_RDY(x));
+
+	} while (STATUS_RDY(x));
+
 	for (int i = 0; settings[i].addr != 0xFF && settings[i].data != 0xFF; i++)
-		cc1101_write(settings[i].addr, settings[i].data);
+	{
+
+		SS_ACTIVE();
+		WAIT_SO_LOW();
+
+	    x = spi_sendRecv(settings[i].addr);
+		x = spi_sendRecv(settings[i].data);
+
+		SS_INACTIVE();
+
+		kprintf("setup %d %d %d\n", UNPACK_STATUS(x));
+	}
 }
