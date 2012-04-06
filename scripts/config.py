@@ -7,6 +7,7 @@ logdir = "webserver/msg"
 #Base url for remote logging
 #base_url = "http://www.develer.com/~batt/stratospera/bsm-2/"
 base_url = "http://83.149.158.210/~batt/stratospera/bsm-2/"
+msg_url = base_url + "/msg/"
 add_cgi = "add.cgi"
 msg_index = "msg_index"
 #password used to sign messages sent to server
@@ -20,4 +21,4 @@ start_lat = 43.606414
 start_lon = 11.311832
 
 add_url = base_url + add_cgi
-msg_index_url = base_url + msg_index
+msg_index_url = msg_url + msg_index

@@ -25,6 +25,6 @@ if __name__ == "__main__":
 	diff_web = web - local
 	for d in reversed(sorted(diff_web)):
 		print "Getting", d
-		msg = utils.http_get(config.base_url + d)
+		msg = utils.http_get(config.msg_url + d)
 		utils.write_file(config.logdir + "/" + d, msg)
 		utils.update_index(config.logdir)
