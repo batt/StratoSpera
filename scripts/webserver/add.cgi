@@ -8,6 +8,7 @@ import hmac
 cgitb.enable()
 
 password = "stsp4"
+msg_dir='msg'
 
 def check_msg(msg):
     if msg[0] != '/' and msg[0] != '>':
@@ -23,7 +24,7 @@ form = cgi.FieldStorage()
 if 'm' in form and 's' in form and 'n' in form:
     msg = form['m'].value
     sign = form['s'].value
-    msg_name = form['n'].value
+    msg_name = msg_dir + os.sep + form['n'].value
     if not check_hash(msg, sign):
         print "ERR<br>\nInvalid sign."
     else:

@@ -3,7 +3,7 @@ set -e
 set -u
 
 UPD_URL="http://tracker.stratospera.com/refresh.php"
-MSG_DIR="."
+MSG_DIR="msg"
 
 TEMP=$$.tmp
 ls $MSG_DIR | grep -E "^[0-9]{6}$" | sort > $TEMP
@@ -11,7 +11,7 @@ ls $MSG_DIR | grep -E "^[0-9]{6}$" | sort > $TEMP
 mv $TEMP $MSG_DIR/msg_index
 LAST=`ls $MSG_DIR | grep -E "^[0-9]{6}$" | sort | tail -n1`
 if [ ! z$LAST = z ] ; then
-	ln -s $MSG_DIR/$LAST $TEMP
+	ln -s $LAST $TEMP
 	#mv are atomic
 	mv $TEMP $MSG_DIR/last_message
 fi
