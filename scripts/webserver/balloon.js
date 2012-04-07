@@ -343,6 +343,19 @@ Ext.onReady(function(){
 	for (var i = 0; i < stsp_config.fields.length; i++)
 		telem_cols.push({header: stsp_config.fields[i], renderer: 'htmlEncode', dataIndex: stsp_config.fields[i]});
 
+
+	/*
+	 * Handle selection of points on the map/grid.
+     * Points with invalid coordinates are not selectable.
+	 */
+	var selmode = new GeoExt.grid.FeatureSelectionModel({ autoPanMapOnSelection: true });
+	selmode.on('beforerowselect', function(o, idx, ke, rec) {
+		if (rec.data.lat == 0 && rec.data.lon == 0)
+			return false;
+		else
+			return true;
+	});
+
 	var layout = new Ext.Viewport({
 		renderTo: Ext.getBody(),
 		layout: { type: 'border', },
@@ -383,7 +396,7 @@ Ext.onReady(function(){
 					deafultSortable: false,
 					columns: telem_cols
 				}),
-				sm: new GeoExt.grid.FeatureSelectionModel({autoPanMapOnSelection: true}) 
+				sm: selmode,
 			}
 		],
 	});
