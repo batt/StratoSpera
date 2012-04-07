@@ -178,17 +178,26 @@ Ext.onReady(function(){
 		console.log('server-side failure with status code ' + response.status);
 	}
 
-	function addGrid(store, grid_name, rec) {
+	function addGrid(store, rec) {
 		store.addSorted(rec);
-		var idx = store.indexOf(rec);
+		return store.indexOf(rec);
+	}
+
+	function highlightRow(grid_name, idx)
+	{
 		var grid = Ext.getCmp(grid_name);
 		var row = grid.getView().getRow(idx);
 		Ext.get(row).highlight();
+	}
+
+	function selectLast(grid_name) {
 		if (Ext.getCmp('autofollow_btn').pressed) {
+			var grid = Ext.getCmp(grid_name);
 			grid.getSelectionModel().selectLastRow();
 			grid.getView().focusRow(grid.getStore().getCount() - 1);
 		}
 	}
+
 
 	function updateStatusBar() {
 		if (telem_store.getCount() < 2)
@@ -255,15 +264,27 @@ Ext.onReady(function(){
 							var rec = new telem_store.recordType(new_rec, opts.msg_id);
 							var p = new OpenLayers.Geometry.Point(lon, lat);
 							p.transform(new OpenLayers.Projection('EPSG:4326'), map.getProjectionObject());
-							rec.setFeature(new OpenLayers.Feature.Vector(p));
-							addGrid(telem_store, 'telem_grid', rec);
+							var v = new OpenLayers.Feature.Vector(p);
+
+							// Do not display points with invalid position.
+							if (lat == 0 && lon == 0)
+								v.style = 'none';
+
+							rec.setFeature(v);
+							var idx = addGrid(telem_store, rec);
+						
+							highlightRow('telem_grid', idx);
+							selectLast('telem_grid');
 						}
 						else {
 							var rec = new statusmsg_store.recordType(
 								{time: readDate(opts.msg_id), msg: readMsg(m)},
 								opts.msg_id
 							);
-							addGrid(statusmsg_store, 'status_grid', rec);
+							var idx = addGrid(statusmsg_store, rec);
+							highlightRow('status_grid', idx);
+							selectLast('status_grid');
+
 						}
 					},
 					failure: ajaxFailure,
