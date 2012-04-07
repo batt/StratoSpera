@@ -103,7 +103,7 @@ function compass_hdng(brng) {
     return d[Math.round(brng / 22.5)];
 }
 
-var msg_set = [];
+var msg_set = {};
 
 Ext.onReady(function(){
 	var map = new OpenLayers.Map({ controls: [
