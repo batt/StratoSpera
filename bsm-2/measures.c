@@ -36,7 +36,7 @@ float measures_acceleration(Mma845xAxis axis)
 	sem_release(&i2c_sem);
 
 	if (acc == MMA_ERROR)
-		return -6.66;
+		return -99.9;
 	else
 		return (acc * 9.81 * 4.0) / 512;
 }
