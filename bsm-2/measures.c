@@ -43,12 +43,21 @@ float measures_acceleration(Mma845xAxis axis)
 
 static void measures_printMeasures(char *buf, size_t len)
 {
+	float humidity = sensor_read(ADC_HUMIDITY);
+	float ext_t = sensor_read(ADC_T1);
+
+	/*
+	 * Honeywell HIH-5030/5031 humidity sensor temperature compensation.
+	 * See page 2, http://http://sensing.honeywell.com/index.php?ci_id=49692
+	 */
+	humidity /= (1.0546 - 0.00216 * ext_t);
+
 	snprintf(buf, len, "%ld;%.1f;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%.2f;%.0f;%.2f;%.2f;%.2f;%d",
 		gps_info()->altitude,
-		sensor_read(ADC_T1),
+		ext_t,
 		sensor_read(ADC_T2),
 		sensor_read(ADC_PRESS),
-		sensor_read(ADC_HUMIDITY),
+		humidity,
 		measures_intTemp(),
 		sensor_read(ADC_VIN),
 		sensor_read(ADC_5V),
