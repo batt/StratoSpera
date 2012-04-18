@@ -135,7 +135,7 @@ static AX25Call ax25_path[2]=
 };
 
 static Semaphore radio_sem;
-static char radio_msg[100];
+static char radio_msg[128];
 
 static void radio_send(char *buf, size_t len)
 {

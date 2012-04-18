@@ -41,76 +41,10 @@ float measures_acceleration(Mma845xAxis axis)
 		return (acc * 9.81 * 4.0) / 512;
 }
 
-void measures_aprsFormat(char *buf, size_t len)
+static void measures_printMeasures(char *buf, size_t len)
 {
-	const char *lat, *lon;
-	if (gps_fixed())
-	{
-		lat = gps_aprsLat();
-		lon = gps_aprsLon();
-	}
-	else
-	{
-		lat = "0000.00N";
-		lon = "00000.00W";
-	}
-
-	float x = measures_acceleration(MMA_X);
-	float y = measures_acceleration(MMA_Y);
-	float z = measures_acceleration(MMA_Z);
-
-	float acc = sqrt(x * x + y * y + z * z);
-
-	char time[7];
-	radio_time(time, sizeof(time));
-
-	snprintf(buf, len, "/%.6sh%s/%s>%ld;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%d",
-		time,
-		lat, lon,
+	snprintf(buf, len, "%ld;%.1f;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%.2f;%.0f;%.2f;%.2f;%.2f;%d",
 		gps_info()->altitude,
-		sensor_read(ADC_T1),
-		sensor_read(ADC_PRESS),
-		sensor_read(ADC_HUMIDITY),
-		measures_intTemp(),
-		sensor_read(ADC_VIN),
-		acc,
-		hadarp_read()
-	);
-
-	buf[len - 1] = '\0';
-}
-
-void measures_logFormat(char *buf, size_t len)
-{
-	struct tm *t;
-	time_t tim;
-	udegree_t lat, lon;
-	int32_t altitude;
-
-
-	bool fix = gps_fixed();
-	if (fix)
-	{
-		lat = gps_info()->latitude;
-		lon = gps_info()->longitude;
-		altitude = gps_info()->altitude;
-	}
-	else
-	{
-		lat = 0;
-		lon = 0;
-		altitude = 0;
-	}
-
-	tim = gps_time();
-	t = gmtime(&tim);
-
-	snprintf(buf, len, "%02d:%02d:%02d;%s;%02ld.%.06ld;%03ld.%.06ld;%ld;%.1f;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%.2f;%.0f;%.2f;%.2f;%.2f;%d",
-		t->tm_hour, t->tm_min, t->tm_sec,
-		fix ? "FIX" : "NOFIX",
-		lat/1000000, ABS(lat)%1000000,
-		lon/1000000, ABS(lon)%1000000,
-		altitude,
 		sensor_read(ADC_T1),
 		sensor_read(ADC_T2),
 		sensor_read(ADC_PRESS),
@@ -129,9 +63,74 @@ void measures_logFormat(char *buf, size_t len)
 	buf[len - 1] = '\0';
 }
 
+void measures_aprsFormat(char *buf, size_t len)
+{
+	const char *lat, *lon;
+	if (gps_fixed())
+	{
+		lat = gps_aprsLat();
+		lon = gps_aprsLon();
+	}
+	else
+	{
+		lat = "0000.00N";
+		lon = "00000.00W";
+	}
+
+	char time[7];
+	radio_time(time, sizeof(time));
+	size_t cnt = snprintf(buf, len, "/%.6sh%s/%s>", time, lat, lon);
+	if (cnt < len)
+	{
+		buf += cnt;
+		len -= cnt;
+		measures_printMeasures(buf, len);
+	}
+	else
+		buf[len-1] = '\0';
+}
+
+void measures_logFormat(char *buf, size_t len)
+{
+	struct tm *t;
+	time_t tim;
+	udegree_t lat, lon;
+
+	bool fix = gps_fixed();
+	if (fix)
+	{
+		lat = gps_info()->latitude;
+		lon = gps_info()->longitude;
+	}
+	else
+	{
+		lat = 0;
+		lon = 0;
+	}
+
+	tim = gps_time();
+	t = gmtime(&tim);
+
+	size_t cnt = snprintf(buf, len, "%02d:%02d:%02d;%s;%02ld.%.06ld;%03ld.%.06ld;",
+		t->tm_hour, t->tm_min, t->tm_sec,
+		fix ? "FIX" : "NOFIX",
+		lat/1000000, ABS(lat)%1000000,
+		lon/1000000, ABS(lon)%1000000);
+
+	if (cnt < len)
+	{
+		buf += cnt;
+		len -= cnt;
+		measures_printMeasures(buf, len);
+	}
+	else
+		buf[len-1] = '\0';
+}
+
 void measures_init(void)
 {
 	sem_init(&i2c_sem);
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
-	ASSERT(mma845x_init(&i2c_bus, 0, MMADYN_4G));
+	bool ret = mma845x_init(&i2c_bus, 0, MMADYN_4G);
+	ASSERT(ret);
 }
