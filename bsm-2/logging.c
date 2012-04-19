@@ -65,7 +65,8 @@ static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 		if (fatfile_open(f, name, FA_OPEN_EXISTING | FA_WRITE) != FR_OK)
 		{
 			kprintf("Logging on file %s\n", name);
-			ASSERT(fatfile_open(f, name, FA_OPEN_ALWAYS | FA_WRITE) == FR_OK);
+			FRESULT ret = fatfile_open(f, name, FA_OPEN_ALWAYS | FA_WRITE);
+			ASSERT(ret == FR_OK);
 			break;
 		}
 		kfile_close(&f->fd);
