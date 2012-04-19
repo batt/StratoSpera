@@ -199,13 +199,15 @@ int PGM_FUNC(__bassert)(const char * PGM_ATTR cond, const char * PGM_ATTR file, 
 	PGM_FUNC(kputs)(cond);
 	kputchar('\n');
 
-	if (!IRQ_RUNNING())
-	{
-		/* Log on SD */
-		LOG_ERR("%s:%d: Assertion failed: %s\n", file, line, cond);
-	}
-	/* Reset the board */
-	RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+	#if !(ARCH & ARCH_UNITTEST)
+		if (!IRQ_RUNNING())
+		{
+			/* Log on SD */
+			LOG_ERR("%s:%d: Assertion failed: %s\n", file, line, cond);
+		}
+		/* Reset the board */
+		RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+	#endif
 
 	BREAKPOINT;
 	return 1;
