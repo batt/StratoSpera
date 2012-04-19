@@ -47,6 +47,10 @@
 #include <mware/formatwr.h> /* for _formatted_write() */
 #include <cpu/pgm.h>
 
+#include <cpu/irq.h>
+#include <cfg/log.h>
+#include "logging.h"
+
 #ifdef _DEBUG
 
 #if CPU_HARVARD && !defined(_PROGMEM)
@@ -194,6 +198,15 @@ int PGM_FUNC(__bassert)(const char * PGM_ATTR cond, const char * PGM_ATTR file, 
 	PGM_FUNC(kputs)(PGM_STR("Assertion failed: "));
 	PGM_FUNC(kputs)(cond);
 	kputchar('\n');
+
+	if (!IRQ_RUNNING())
+	{
+		/* Log on SD */
+		LOG_ERR("%s:%d: Assertion failed: %s\n", file, line, cond);
+	}
+	/* Reset the board */
+	RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+
 	BREAKPOINT;
 	return 1;
 }
