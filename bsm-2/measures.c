@@ -36,9 +36,40 @@ float measures_acceleration(Mma845xAxis axis)
 	sem_release(&i2c_sem);
 
 	if (acc == MMA_ERROR)
-		return -6.66;
+		return -99.9;
 	else
 		return (acc * 9.81 * 4.0) / 512;
+}
+
+static void measures_printMeasures(char *buf, size_t len)
+{
+	float humidity = sensor_read(ADC_HUMIDITY);
+	float ext_t = sensor_read(ADC_T1);
+
+	/*
+	 * Honeywell HIH-5030/5031 humidity sensor temperature compensation.
+	 * See page 2, http://http://sensing.honeywell.com/index.php?ci_id=49692
+	 */
+	humidity /= (1.0546 - 0.00216 * ext_t);
+
+	snprintf(buf, len, "%ld;%.1f;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%.2f;%.0f;%.2f;%.2f;%.2f;%d",
+		gps_info()->altitude,
+		ext_t,
+		sensor_read(ADC_T2),
+		sensor_read(ADC_PRESS),
+		humidity,
+		measures_intTemp(),
+		sensor_read(ADC_VIN),
+		sensor_read(ADC_5V),
+		sensor_read(ADC_3V3),
+		sensor_read(ADC_CURR),
+		measures_acceleration(MMA_X),
+		measures_acceleration(MMA_Y),
+		measures_acceleration(MMA_Z),
+		hadarp_read()
+	);
+
+	buf[len - 1] = '\0';
 }
 
 void measures_aprsFormat(char *buf, size_t len)
@@ -55,29 +86,17 @@ void measures_aprsFormat(char *buf, size_t len)
 		lon = "00000.00W";
 	}
 
-	float x = measures_acceleration(MMA_X);
-	float y = measures_acceleration(MMA_Y);
-	float z = measures_acceleration(MMA_Z);
-
-	float acc = sqrt(x * x + y * y + z * z);
-
 	char time[7];
 	radio_time(time, sizeof(time));
-
-	snprintf(buf, len, "/%.6sh%s/%s>%ld;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%d",
-		time,
-		lat, lon,
-		gps_info()->altitude,
-		sensor_read(ADC_T1),
-		sensor_read(ADC_PRESS),
-		sensor_read(ADC_HUMIDITY),
-		measures_intTemp(),
-		sensor_read(ADC_VIN),
-		acc,
-		hadarp_read()
-	);
-
-	buf[len - 1] = '\0';
+	size_t cnt = snprintf(buf, len, "/%.6sh%s/%s>", time, lat, lon);
+	if (cnt < len)
+	{
+		buf += cnt;
+		len -= cnt;
+		measures_printMeasures(buf, len);
+	}
+	else
+		buf[len-1] = '\0';
 }
 
 void measures_logFormat(char *buf, size_t len)
@@ -85,53 +104,42 @@ void measures_logFormat(char *buf, size_t len)
 	struct tm *t;
 	time_t tim;
 	udegree_t lat, lon;
-	int32_t altitude;
-
 
 	bool fix = gps_fixed();
 	if (fix)
 	{
 		lat = gps_info()->latitude;
 		lon = gps_info()->longitude;
-		altitude = gps_info()->altitude;
 	}
 	else
 	{
 		lat = 0;
 		lon = 0;
-		altitude = 0;
 	}
 
 	tim = gps_time();
 	t = gmtime(&tim);
 
-	snprintf(buf, len, "%02d:%02d:%02d;%s;%02ld.%.06ld;%03ld.%.06ld;%ld;%.1f;%.1f;%.0f;%.0f;%.1f;%.2f;%.2f;%.2f;%.0f;%.2f;%.2f;%.2f;%d",
+	size_t cnt = snprintf(buf, len, "%02d:%02d:%02d;%s;%02ld.%.06ld;%03ld.%.06ld;",
 		t->tm_hour, t->tm_min, t->tm_sec,
 		fix ? "FIX" : "NOFIX",
 		lat/1000000, ABS(lat)%1000000,
-		lon/1000000, ABS(lon)%1000000,
-		altitude,
-		sensor_read(ADC_T1),
-		sensor_read(ADC_T2),
-		sensor_read(ADC_PRESS),
-		sensor_read(ADC_HUMIDITY),
-		measures_intTemp(),
-		sensor_read(ADC_VIN),
-		sensor_read(ADC_5V),
-		sensor_read(ADC_3V3),
-		sensor_read(ADC_CURR),
-		measures_acceleration(MMA_X),
-		measures_acceleration(MMA_Y),
-		measures_acceleration(MMA_Z),
-		hadarp_read()
-	);
+		lon/1000000, ABS(lon)%1000000);
 
-	buf[len - 1] = '\0';
+	if (cnt < len)
+	{
+		buf += cnt;
+		len -= cnt;
+		measures_printMeasures(buf, len);
+	}
+	else
+		buf[len-1] = '\0';
 }
 
 void measures_init(void)
 {
 	sem_init(&i2c_sem);
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
-	ASSERT(mma845x_init(&i2c_bus, 0, MMADYN_4G));
+	bool ret = mma845x_init(&i2c_bus, 0, MMADYN_4G);
+	ASSERT(ret);
 }

@@ -6,13 +6,19 @@ stsp_config = {
 	fields: [
 		// Put balloon telemetry data fields here.
 		// NOTE: the altitude, which is always the first field, is omitted!
-		'Ext. Temperature',
-		'Pressure',
-		'Humidity',
-		'Int. Temperature',
-		'Battery Voltage',
-		'Acceleration',
-		'HADARP Geiger',
+		'Ext. Temp. 1 (°C)',
+		'Ext. Temp. 2 (°C)',
+		'Pressure (mBar)',
+		'Humidity (%RH)',
+		'Int. Temp. (°C)',
+		'Battery (V)',
+		'+5V Voltage (V)',
+		'+3.3V Voltage (V)',
+		'Current (mA)',
+		'Accel. X (m/s^2)',
+		'Accel. Y (m/s^2)',
+		'Accel. Z (m/s^2)',
+		'HADARP (cpm)',
 	],
 
 	//Delay between updates
