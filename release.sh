@@ -1,18 +1,15 @@
 #!/bin/bash
-#set -x
-set -e
-
-if [ ! $# = 1 ] ; then
-	echo "Usage:" $0 "<version_name>"
-	exit 1
-fi
+#set -e
 
 git diff --exit-code > /dev/null
 if [ $? -ne 0 ]; then
 	echo "ERROR: uncommitted changes!"
 	exit 2
 fi
-version=$1
+
+set -x
+
+version=`python findrev.py`
 echo "Current version will be \""$version"\", do you want to proceed?"
 read resp
 if [ $resp != y ]; then
