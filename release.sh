@@ -8,7 +8,6 @@ if [ $? -ne 0 ]; then
 fi
 
 set -e
-
 version=`python findrev.py`
 echo "Current version will be \""$version"\", do you want to proceed?"
 read resp
