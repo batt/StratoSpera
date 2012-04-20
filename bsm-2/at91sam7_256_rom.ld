@@ -44,8 +44,7 @@
  */
 MEMORY
 {
-  rom(rx) : org = 0x00108000, len = 248k
+  rom(rx) : org = 0x00108000, len = 224k
   ram(rwx) : org = 0x00200000, len = 64k
 }
-
 INCLUDE "bertos/cpu/arm/scripts/arm7tdmi_rom.ld"
