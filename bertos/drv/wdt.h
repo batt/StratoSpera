@@ -47,6 +47,9 @@
 
 #include <cfg/compiler.h> // INLINE
 
+#include <cfg/os.h>
+#include <cpu/attr.h>
+
 /* Configury sanity check */
 #if !defined(CONFIG_WATCHDOG) || (CONFIG_WATCHDOG != 0 && CONFIG_WATCHDOG != 1)
 	#error CONFIG_WATCHDOG must be defined to either 0 or 1
