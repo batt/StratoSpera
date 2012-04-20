@@ -50,7 +50,11 @@
 #include <cpu/irq.h>
 
 #include <cfg/log.h>
-#include "logging.h"
+#include <cfg/cfg_arch.h>
+
+#if (ARCH & ARCH_BSM2)
+	#include "logging.h"
+#endif
 
 #ifdef _DEBUG
 
@@ -200,7 +204,7 @@ int PGM_FUNC(__bassert)(const char * PGM_ATTR cond, const char * PGM_ATTR file, 
 	PGM_FUNC(kputs)(cond);
 	kputchar('\n');
 
-	#if !(ARCH & ARCH_UNITTEST)
+	#if !(ARCH & ARCH_UNITTEST) && (ARCH & ARCH_BSM2)
 		static bool assert_fired = false;
 		if (!IRQ_RUNNING() && logging_running() && !assert_fired)
 		{
