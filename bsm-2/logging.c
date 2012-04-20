@@ -42,6 +42,8 @@
 #include <io/kfile.h>
 #include <fs/fat.h>
 
+#include <cfg/module.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
@@ -53,6 +55,8 @@ static Semaphore log_sem;
 static char logging_buf[16];
 
 static bool logopen, msgopen;
+bool logging_initialized = false;
+
 
 static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 {
@@ -79,6 +83,9 @@ static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 
 void logging_rotate(void)
 {
+	if (!logging_initialized)
+		return;
+
 	sem_obtain(&log_sem);
 
 	if (logopen)
@@ -107,6 +114,9 @@ void logging_rotate(void)
 
 int logging_vmsg(const char *fmt, va_list ap)
 {
+	if (!logging_initialized)
+		return 0;
+
 	struct tm *t;
 	time_t tim;
 
@@ -134,6 +144,9 @@ int logging_vmsg(const char *fmt, va_list ap)
 
 int logging_msg(const char *fmt, ...)
 {
+	if (!logging_initialized)
+		return 0;
+
 	va_list ap;
 	va_start(ap, fmt);
 	int len = logging_vmsg(fmt, ap);
@@ -144,6 +157,9 @@ int logging_msg(const char *fmt, ...)
 
 int logging_data(const char *fmt, ...)
 {
+	if (!logging_initialized)
+		return 0;
+
 	sem_obtain(&log_sem);
 	va_list ap;
 	va_start(ap, fmt);
@@ -157,5 +173,6 @@ int logging_data(const char *fmt, ...)
 void logging_init(void)
 {
 	sem_init(&log_sem);
+	logging_initialized = true;
 	logging_rotate();
 }

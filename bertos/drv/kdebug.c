@@ -48,6 +48,7 @@
 #include <cpu/pgm.h>
 
 #include <cpu/irq.h>
+
 #include <cfg/log.h>
 #include "logging.h"
 
@@ -200,8 +201,11 @@ int PGM_FUNC(__bassert)(const char * PGM_ATTR cond, const char * PGM_ATTR file, 
 	kputchar('\n');
 
 	#if !(ARCH & ARCH_UNITTEST)
-		if (!IRQ_RUNNING())
+		static bool assert_fired = false;
+		if (!IRQ_RUNNING() && logging_running() && !assert_fired)
 		{
+			/* Avoid recursion */
+			assert_fired = true;
 			/* Log on SD */
 			LOG_ERR("%s:%d: Assertion failed: %s\n", file, line, cond);
 		}
