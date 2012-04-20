@@ -39,42 +39,28 @@
 #include <io/arm.h>
 #include <cfg/macros.h>
 
+#include "cfg/cfg_wdt.h"
+
 #define USE_FIXED_PLL 1
 
-#ifdef DEMO_BOARD
-	#define XTAL_FREQ 12000000UL
-#else
-	#define XTAL_FREQ 18432000UL
-#endif
+#define XTAL_FREQ 18432000UL
 
 #if USE_FIXED_PLL
-	#ifdef DEMO_BOARD
-		#if CPU_FREQ != 48000000L
-			#warning Clock registers set for 48MHz operation, revise following code if you want a different clock.
+	#if CPU_FREQ != 48054857L
+		/* Avoid errors on nightly test */
+		#if !defined(ARCH_NIGHTTEST) || !(ARCH & ARCH_NIGHTTEST)
+			#warning Clock registers set for 48.055MHz operation, revise following code if you want a different clock.
 		#endif
-
-		/*
-		 * With a 12MHz cristal, master clock is:
-		 * (((12 * (PLL_MUL_VAL + 1)) / PLL_DIV_VAL) / AT91MCK_PRES) = 48MHz
-		 */
-		#define PLL_MUL_VAL  7  /**< Real multiplier value is PLL_MUL_VAL + 1! */
-		#define PLL_DIV_VAL  1
-		#define AT91MCK_PRES PMC_PRES_CLK_2
-	#else
-		#if CPU_FREQ != 48054857L
-			/* Avoid errors on nightly test */
-			#if !defined(ARCH_NIGHTTEST) || !(ARCH & ARCH_NIGHTTEST)
-				#warning Clock registers set for 48.055MHz operation, revise following code if you want a different clock.
-			#endif
-		#endif
-		/*
-		 * With a 18.432MHz cristal, master clock is:
-		 * (((18.432 * (PLL_MUL_VAL + 1)) / PLL_DIV_VAL) / AT91MCK_PRES) = 48.055MHz
-		 */
-		#define PLL_MUL_VAL  72  /**< Real multiplier value is PLL_MUL_VAL + 1! */
-		#define PLL_DIV_VAL  14
-		#define AT91MCK_PRES PMC_PRES_CLK_2
 	#endif
+
+	/*
+	 * With a 18.432MHz cristal, master clock is:
+	 * (((18.432 * (PLL_MUL_VAL + 1)) / PLL_DIV_VAL) / AT91MCK_PRES) = 48.055MHz
+	 */
+	#define PLL_MUL_VAL  72	/**< Real multiplier value is PLL_MUL_VAL + 1! */
+	#define PLL_DIV_VAL  14
+	#define AT91MCK_PRES PMC_PRES_CLK_2
+
 #else /* !USE_FIXED_PLL*/
 
 	#define PLL_IN_MIN  1000000UL
@@ -178,17 +164,27 @@ void __init1(void)
 	#if CPU_FREQ < 30000000UL
 		/* Use 1 cycles for flash access. */
 		MC_FMR = FMCN << MC_FMCN_SHIFT | MC_FWS_1R2W;
+
+		#if CPU_ARM_AT91SAM7X512 || CPU_ARM_AT91SAM7S512
+			MC_FMR1 = FMCN << MC_FMCN_SHIFT | MC_FWS_1R2W;
+		#endif
 	#else
 		/* Use 2 cycles for flash access. */
 		MC_FMR = FMCN << MC_FMCN_SHIFT | MC_FWS_2R3W;
+
+		#if CPU_ARM_AT91SAM7X512 || CPU_ARM_AT91SAM7S512
+			MC_FMR1 = FMCN << MC_FMCN_SHIFT | MC_FWS_2R3W;
+		#endif
 	#endif
 
         /* Disable all interrupts. Useful for debugging w/o target reset. */
 	AIC_EOICR = 0xFFFFFFFF;
 	AIC_IDCR =  0xFFFFFFFF;
 
-        /* The watchdog is enabled after processor reset. Disable it. */
-	WDT_MR = BV(WDT_WDDIS);
+	#if CONFIG_WATCHDOG == 0
+		/* The watchdog is enabled after processor reset. Disable it. */
+		WDT_MR = BV(WDT_WDDIS);
+	#endif
 
         /*
          * Enable the main oscillator. Set startup time of 6 * 8 slow
