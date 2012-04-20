@@ -40,7 +40,7 @@
 #define CFG_WDT_H
 
 /// Enable watchdog timer. $WIZ$ type = "autoenabled"
-#define CONFIG_WATCHDOG      0
+#define CONFIG_WATCHDOG      1
 
 #endif /* CFG_WDT_H */
 

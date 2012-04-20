@@ -51,6 +51,8 @@ static void NORETURN time_process(void)
 {
 	while (1)
 	{
+		/* Reset watchdog */
+		WDT_CR = WDT_KEY | BV(WDT_WDRSTT);
 		timer_delay(1000);
 
 		if (gps_fix && (timer_clock() - last_heard > ms_to_ticks(10000)))
