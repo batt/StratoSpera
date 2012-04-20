@@ -13,7 +13,7 @@ default: all
 include bertos/config.mk
 
 #include aprs_decoder/aprs_decoder.mk
-#include boot/boot.mk
+include boot/boot.mk
 include bsm-2/bsm-2.mk
 #include bsm-radio/bsm-radio.mk
 
