@@ -1441,6 +1441,10 @@
     <File Name="scripts/ax25.py"/>
     <File Name="scripts/afsk.py"/>
     <File Name="scripts/crc_ccitt.py"/>
+    <File Name="scripts/config_uplink.py"/>
+    <File Name="scripts/uplink.py"/>
+    <File Name="scripts/viewer"/>
+    <File Name="scripts/viewer.py"/>
   </VirtualDirectory>
   <VirtualDirectory Name="custom">
     <File Name="custom/custom.mk"/>
