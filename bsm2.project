@@ -1431,7 +1431,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="scripts">
     <File Name="scripts/uploader.py"/>
-    <File Name="scripts/log00006.csv"/>
     <File Name="scripts/config.py"/>
     <File Name="scripts/simul.py"/>
     <File Name="scripts/utils.py"/>
@@ -1445,6 +1444,11 @@
     <File Name="scripts/uplink.py"/>
     <File Name="scripts/viewer"/>
     <File Name="scripts/viewer.py"/>
+    <File Name="scripts/gps_simul.py"/>
+    <File Name="scripts/stsp2.csv"/>
+    <File Name="scripts/stsp3.csv"/>
+    <File Name="scripts/pre-stsp3.csv"/>
+    <File Name="scripts/stsp1.csv"/>
   </VirtualDirectory>
   <VirtualDirectory Name="custom">
     <File Name="custom/custom.mk"/>
