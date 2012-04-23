@@ -65,7 +65,7 @@ for i in range(end_time):
 	chks = 0
 	for c in nmea_str:
 		chks ^= ord(c)
-	nmea_str = "$%s*%02X\n" % (nmea_str, chks)
+	nmea_str = "$%s*%02X\r\n" % (nmea_str, chks)
 	out.write(nmea_str)
 	sys.stderr.write(nmea_str)
 	clock = start + timedelta(seconds=i+1)
