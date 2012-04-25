@@ -1449,6 +1449,17 @@
     <File Name="scripts/stsp3.csv"/>
     <File Name="scripts/pre-stsp3.csv"/>
     <File Name="scripts/stsp1.csv"/>
+    <VirtualDirectory Name="webserver">
+      <File Name="scripts/webserver/config.js"/>
+      <File Name="scripts/webserver/webserver.py"/>
+      <File Name="scripts/webserver/cache.py"/>
+      <File Name="scripts/webserver/globalmaptiles.py"/>
+      <File Name="scripts/webserver/balloon.js"/>
+      <File Name="scripts/webserver/add.cgi"/>
+      <File Name="scripts/webserver/upd_idx.sh"/>
+      <File Name="scripts/webserver/clear.cgi"/>
+      <File Name="scripts/webserver/index.html"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="custom">
     <File Name="custom/custom.mk"/>
