@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env python
+import sys
+import os
+import urllib
+import cgi
+import cgitb
+import hmac
+cgitb.enable()
 
-set -e
-set -u
+password = "stsp4"
 
-echo "Content-type: text/html"
-echo ""
-
-MSG_DIR="msg"
-
-cd $MSG_DIR
-rm -f last_message
-rm -f *.tmp
-ls | grep -E "^[0-9]{6}$" | xargs rm -f
-cd ..
-./upd_idx.sh
-rm -f $MSG_DIR/last_message
-echo "OK"
+print "Content-type: text/html\n"
+form = cgi.FieldStorage()
+if 'passwd' in form and form['passwd'].value == password:
+        print "OK<br>"
+        os.system("./clear.sh")
+else:
+    print "ERR<br>\nInvalid command format.<br>\nFormat is ?passwd=password"

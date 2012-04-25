@@ -10,6 +10,6 @@ rsync -vu config_web.js $app_url/config.js
 rm config_web.js
 
 #Sync other files/directories
-files="add.cgi balloon.js clear.cgi index.html lib upd_idx.sh"
+files="add.cgi balloon.js clear.cgi clear.sh index.html lib upd_idx.sh"
 rsync -vru $files $app_url
 
