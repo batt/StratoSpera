@@ -1459,6 +1459,7 @@
       <File Name="scripts/webserver/upd_idx.sh"/>
       <File Name="scripts/webserver/clear.cgi"/>
       <File Name="scripts/webserver/index.html"/>
+      <File Name="scripts/webserver/deploy.sh"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="custom">
