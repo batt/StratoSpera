@@ -16,7 +16,7 @@ function readLat(rawData) {
 	var d = parseFloat(rawData.slice(8, 10));
 	var m = parseFloat(rawData.slice(10, 15));
 	d = d + m / 60.0;
-	if (rawData[15] == 'S')
+	if (rawData.charAt(15) == 'S')
 		d *= -1;
 	return d;
 }
@@ -25,7 +25,7 @@ function readLon(rawData) {
 	var d = parseFloat(rawData.slice(17, 20));
 	var m = parseFloat(rawData.slice(20, 25));
 	d = d + m / 60.0;
-	if (rawData[25] == 'W')
+	if (rawData.charAt(25) == 'W')
 		d *= -1;
 	return d;
 }
@@ -37,14 +37,14 @@ function readTelemetry(rawData, n) {
 }
 
 function readMsg(m) {
-	if (m[0] == '>' && isInt(m.slice(1, 7)) && m[7] == 'h')
+	if (m.charAt(0) == '>' && isInt(m.slice(1, 7)) && m.charAt(7) == 'h')
 		return m.slice(8);
 	else
 		return m;
 }
 
 function isTelemetry(m) {
-	return m[0] == '/' && isInt(m.slice(1, 7));
+	return m.charAt(0) == '/' && isInt(m.slice(1, 7));
 }
 
 function deg2rad(deg) {
