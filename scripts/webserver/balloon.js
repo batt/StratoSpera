@@ -98,7 +98,7 @@ function compass_hdng(brng) {
 	    "N", "NNE", "NE", "ENE",
 	    "E", "ESE", "SE", "SSE",
 	    "S", "SSW", "SW", "WSW",
-	    "W", "WNW", "NW", "NNW",
+	    "W", "WNW", "NW", "NNW"
     ];
     return d[Math.round(brng / 22.5)];
 }
@@ -113,8 +113,8 @@ Ext.onReady(function(){
 		                new OpenLayers.Control.ScaleLine(),
 		                new OpenLayers.Control.MousePosition({displayProjection: new OpenLayers.Projection('EPSG:4326')}),
 		                new OpenLayers.Control.KeyboardDefaults(),
-				new OpenLayers.Control.Navigation({mouseWheelOptions: {interval: 200}}),
-		],
+				new OpenLayers.Control.Navigation({mouseWheelOptions: {interval: 200}})
+		]
 	});
 
 	var opencycle = new OpenLayers.Layer.OSM("OpenCycleMap", stsp_config.opencycle_url + "/${z}/${x}/${y}.png",
@@ -152,30 +152,30 @@ Ext.onReady(function(){
 		{name: 'time', type: 'date'},
 		{name: 'lat', type: 'float'},
 		{name: 'lon', type: 'float'},
-		{name: 'altitude', type: 'float'},
+		{name: 'altitude', type: 'float'}
 	];
 
 	//Read other telemetry fields from configuration
 	for (var i = 0; i < stsp_config.fields.length; i++)
-		telem_fields.push({name: stsp_config.fields[i], type: 'string'});   
+		telem_fields.push({name: stsp_config.fields[i], type: 'string'});
 
 	// create feature store, binding it to the vector layer
 	var telem_store = new GeoExt.data.FeatureStore({
 		layer: vecLayer,
-		fields: telem_fields,
+		fields: telem_fields
 	});
 	telem_store.sort('time', 'ASC');
 
 	var statusmsg_store = new Ext.data.ArrayStore({
 		fields: [
 		    {name: 'time', type: 'date'},
-		    {name: 'msg', type: 'string'},
-		],
+		    {name: 'msg', type: 'string'}
+		]
 	});
 	statusmsg_store.sort('time', 'ASC');
 
 	function ajaxFailure(response, opts) {
-		console.log('server-side failure with status code ' + response.status);
+		//console.log('server-side failure with status code ' + response.status);
 	}
 
 	function addGrid(store, rec) {
@@ -256,7 +256,7 @@ Ext.onReady(function(){
 							    time: readDate(opts.msg_id),
 							    lat: lat,
 							    lon: lon,
-							    altitude: readTelemetry(m, 0),
+							    altitude: readTelemetry(m, 0)
 							};
 							for (var i = 0; i < stsp_config.fields.length; i++)
 							    new_rec[stsp_config.fields[i]] = readTelemetry(m, i+1);
@@ -272,7 +272,7 @@ Ext.onReady(function(){
 
 							rec.setFeature(v);
 							var idx = addGrid(telem_store, rec);
-						
+
 							highlightRow('telem_grid', idx);
 							selectLast('telem_grid');
 						}
@@ -287,7 +287,7 @@ Ext.onReady(function(){
 
 						}
 					},
-					failure: ajaxFailure,
+					failure: ajaxFailure
 				});
 
 			}
@@ -303,33 +303,33 @@ Ext.onReady(function(){
 			'Distance from launch:',
 			{
 			    id: 'dst_label',
-				xtype: 'tbtext',    
-				text: '---',
+				xtype: 'tbtext',
+				text: '---'
 			}, '-',
 			'Heading:',
 			{
-			    id: 'brng_label',    
-				xtype: 'tbtext',    
-				text: '---',
+			    id: 'brng_label',
+				xtype: 'tbtext',
+				text: '---'
 			}, '-',
 			'Horizontal speed:',
 			{
-			    id: 'hspeed_label',    
-				xtype: 'tbtext',    
-				text: '---',
+			    id: 'hspeed_label',
+				xtype: 'tbtext',
+				text: '---'
 			}, '-',
 			'Vertical speed:',
 			{
-			    id: 'vspeed_label',    
-				xtype: 'tbtext',    
-				text: '---',
+			    id: 'vspeed_label',
+				xtype: 'tbtext',
+				text: '---'
 			}, '-', '->',
 			{
 			    text: 'Autocenter on updates',
 			    enableToggle: true,
 			    pressed: true,
-			    id: 'autofollow_btn',
-			},
+			    id: 'autofollow_btn'
+			}
 		]
 	};
 
@@ -337,7 +337,7 @@ Ext.onReady(function(){
 		{header: "Time", xtype: 'datecolumn', width: 60, format: 'H:i:s', dataIndex: 'time'},
 		{header: "Latitude", xtype: 'numbercolumn', width: 70, format:'0.000000', dataIndex: 'lat'},
 		{header: "Longitude", xtype: 'numbercolumn', width: 70, format:'0.000000', dataIndex: 'lon'},
-		{header: "Altitude", dataIndex: 'altitude', renderer: 'htmlEncode'},
+		{header: "Altitude", dataIndex: 'altitude', renderer: 'htmlEncode'}
 	];
 
 	for (var i = 0; i < stsp_config.fields.length; i++)
@@ -358,7 +358,7 @@ Ext.onReady(function(){
 
 	var layout = new Ext.Viewport({
 		renderTo: Ext.getBody(),
-		layout: { type: 'border', },
+		layout: { type: 'border' },
 		items: [
 			toolbarCfg, {
 				title: 'Baloon trajectory',
@@ -367,7 +367,7 @@ Ext.onReady(function(){
 				id: 'map_widget',
 				zoom: 9,
 				center: new OpenLayers.LonLat(stsp_config.base_lon, stsp_config.base_lat).transform(new OpenLayers.Projection('EPSG:4326'), map.getProjectionObject()),
-				map: map,
+				map: map
 			},{
 				title: 'Status Messages',
 				region: 'east',
@@ -381,32 +381,32 @@ Ext.onReady(function(){
 					deafultSortable: false,
 					columns: [
 						{header: "Time", xtype: 'datecolumn', width: 60, format: 'H:i:s', dataIndex: 'time'},
-						{header: "Message", dataIndex: 'msg', renderer: 'htmlEncode'},
+						{header: "Message", dataIndex: 'msg', renderer: 'htmlEncode'}
 					]
-				}),
+				})
 			},{
 				title: 'Telemetry',
 				region: 'south',
 				xtype: 'grid',
 				id: 'telem_grid',
 				split: true,
-				height: 220, 
+				height: 220,
 				store: telem_store,
 				colModel: new Ext.grid.ColumnModel({
 					deafultSortable: false,
 					columns: telem_cols
 				}),
-				sm: selmode,
+				sm: selmode
 			}
-		],
+		]
 	});
 
 	updateIndex = function() {
-		console.log("updateIndex()");
+		//console.log("updateIndex()");
 		Ext.Ajax.request({
 			url: 'msg/msg_index',
 			success: parseIndex,
-			failure: ajaxFailure,
+			failure: ajaxFailure
 		});
 		updateStatusBar();
 		setTimeout("updateIndex()", stsp_config.upd_delay);
