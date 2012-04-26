@@ -338,7 +338,7 @@ static bool cutoff_procedure(long code)
 				radio_printf("CUTOFF pulse %d\n", i+1);
 				CUTOFF_ON();
 				timer_delay(10000);
-				CUTOFF_ON();
+				CUTOFF_OFF();
 				radio_printf("CUTOFF pulse done\n");
 				timer_delay(5000);
 			}
