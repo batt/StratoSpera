@@ -183,7 +183,7 @@ static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 			{
 				if (!logged)
 				{
-					LOG_INFO("Maximum altitude exceeded and timeout expired\n");
+					radio_printf("CUTOFF:altitude over range\n");
 					logged = true;
 				}
 				return false;
@@ -227,7 +227,7 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 			{
 				if (!logged)
 				{
-					LOG_INFO("Maximum distance from base exceeded and timeout expired\n");
+					radio_printf("CUTOFF:distance over range\n");
 					logged = true;
 				}
 				return false;
@@ -281,7 +281,7 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 			{
 				if (!logged)
 				{
-					LOG_INFO("Current altitude lower than delta and timeout expired\n");
+					radio_printf("CUTOFF:burst detected\n");
 					logged = true;
 				}
 				return false;
@@ -309,7 +309,7 @@ static bool cutoff_checkTime(ticks_t now)
 	{
 		if (!logged)
 		{
-			LOG_INFO("Maximum mission time expired\n");
+			radio_printf("CUTOFF:mission time expired\n");
 			logged = true;
 		}
 		return false;
