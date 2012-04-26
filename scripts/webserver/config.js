@@ -26,7 +26,7 @@ stsp_config = {
 	],
 
 	//Delay between updates
-	upd_delay: 5000,
+	upd_delay: local_app ? 5000 : 20000,
 
 	//If app is in local use the local 'maps' directory for tiles
 	//otherwise use opencycle_url: 'http://b.tile.opencyclemap.org/cycle',
