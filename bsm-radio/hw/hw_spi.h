@@ -60,8 +60,8 @@
 /*\}*/
 
 
-#define STROBE_ON()       stm32_gpioPinWrite(GPIO_BASE, STROBE, 0)
-#define STROBE_OFF()      stm32_gpioPinWrite(GPIO_BASE, STROBE, 1)
+#define STROBE_ON()      stm32_gpioPinWrite(GPIO_BASE, STROBE, 1)
+#define STROBE_OFF()     stm32_gpioPinWrite(GPIO_BASE, STROBE, 0)
 
 #define MOSI_LOW()       stm32_gpioPinWrite(GPIO_BASE, MOSI, 0)
 #define MOSI_HIGH()      stm32_gpioPinWrite(GPIO_BASE, MOSI, 1)
@@ -86,10 +86,10 @@
 	do { \
 		/* Enable clocking on GPIOA */	\
 		RCC->APB2ENR |= RCC_APB2_GPIOA;			\
-		stm32_gpioPinConfig(GPIO_BASE, CS | SCK | MOSI | STROBE, GPIO_MODE_OUT_PP, GPIO_SPEED_50MHZ); \
-		stm32_gpioPinConfig(GPIO_BASE, MISO, GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ); \
 		stm32_gpioPinWrite(GPIO_BASE, CS | SCK, 1); \
 		stm32_gpioPinWrite(GPIO_BASE, MOSI | STROBE, 0); \
+		stm32_gpioPinConfig(GPIO_BASE, CS | SCK | MOSI | STROBE, GPIO_MODE_OUT_PP, GPIO_SPEED_50MHZ); \
+		stm32_gpioPinConfig(GPIO_BASE, MISO, GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ); \
 	} while(0)
 
 #endif /* HW_SPI_H */
