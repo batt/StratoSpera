@@ -63,36 +63,55 @@
 
 
 
+#define N_CUTOFF 2
+
 #if !(ARCH & ARCH_UNITTEST)
 
 	#ifdef DEMO_BOARD
-		#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
-		#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_ENABLE(ch, en) \
+		do { \
+			if (ch == 0) \
+			{ \
+				if (en) \
+					PIOA_SODR = CUTOFF_PIN; \
+				else \
+					PIOA_CODR = CUTOFF_PIN; \
+			} \
+		} while (0)
+
 		#define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
 	#else
 		#include <drv/pwm.h>
-		static Pwm cutoff_pwm;
+		static Pwm cutoff_ctx[N_CUTOFF];
 
-		#define CUTOFF_OFF()  pwm_enable(&cutoff_pwm, false)
-		#define CUTOFF_ON() \
-			do { \
-				pwm_setDuty(&cutoff_pwm, pwm_duty); \
-				pwm_enable(&cutoff_pwm, true); \
-			} while (0)
+		/* Table which maps cutoff channels to PWM channels */
+		static const int pwm_ch_map[] = {1, 2};
+		STATIC_ASSERT(countof(pwm_ch_map) == N_CUTOFF);
 
-		#define CUTOFF_INIT() do { \
-			pwm_init(&cutoff_pwm, CUTOFF1_PWM); \
-			pwm_setFrequency(&cutoff_pwm, CONFIG_AFSK_DAC_SAMPLERATE / 8); \
+		#define CUTOFF_ENABLE(ch, en) \
+		{ \
+			pwm_setDuty(&cutoff_ctx[ch], pwm_duty[ch]); \
+			pwm_enable(&cutoff_ctx[ch], en); \
+		}
+
+		#define CUTOFF_INIT() \
+		do { \
+			for (unsigned i = 0; i < N_CUTOFF; i++) \
+			{ \
+				pwm_init(&cutoff_ctx[i], pwm_ch_map[i]); \
+				pwm_setFrequency(&cutoff_ctx[i], CONFIG_AFSK_DAC_SAMPLERATE / 8); \
+			} \
 		} while (0)
 	#endif
 #else
-	#define CUTOFF_OFF()  do {  } while (0)
-	#define CUTOFF_ON()   do {  } while (0)
+	#define CUTOFF_ENABLE(ch, en) do { (void)ch; (void)en; } while (0)
 	#define CUTOFF_INIT() do {  } while (0)
 	#define testmode() false
 #endif
 
 static void cutoff_reload(void);
+
+static int pwm_duty[N_CUTOFF];
 
 DECLARE_CONF(cutoff, cutoff_reload,
 	CONF_INT(mission_timeout, 10, 86400, 8400), //seconds
@@ -104,7 +123,8 @@ DECLARE_CONF(cutoff, cutoff_reload,
 	CONF_INT(dist_timeout, 0, 1800, 300), // seconds
 	CONF_INT(altmax_meters, 20, 500000, 50000), //meters
 	CONF_INT(altmax_timeout, 0, 1800, 300), //seconds
-	CONF_INT(pwm_duty, 0, 0xffff, 0x8000) // Number from 0 to 0xffff
+	CONF_INT_NODECLARE(pwm_duty1, pwm_duty[0], 0, 0xffff, 0x8000), // Number from 0 to 0xffff
+	CONF_INT_NODECLARE(pwm_duty2, pwm_duty[1], 0, 0xffff, 0x8000) // Number from 0 to 0xffff
 );
 
 static void cutoff_reload(void)
@@ -118,7 +138,8 @@ static void cutoff_reload(void)
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)dist_timeout);
 	LOG_INFO(" max altitude: %ld meters\n", (long)altmax_meters);
 	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)altmax_timeout);
-	LOG_INFO(" pwm duty 0x%04X\n", pwm_duty);
+	for (unsigned i = 0; i < N_CUTOFF; i++)
+		LOG_INFO(" pwm duty%d 0x%04X\n", i+1, pwm_duty[i]);
 	cutoff_reset();
 }
 
@@ -321,9 +342,15 @@ void cutoff_test_cut(bool on)
 	if (testmode())
 	{
 		if (on)
-			CUTOFF_ON();
+		{
+			for (int i = 0; i < N_CUTOFF; i++)
+				CUTOFF_ENABLE(i, true);
+		}
 		else
-			CUTOFF_OFF();
+		{
+			for (int i = 0; i < N_CUTOFF; i++)
+				CUTOFF_ENABLE(i, false);
+		}
 	}
 }
 
@@ -333,14 +360,17 @@ static bool cutoff_procedure(long code)
 	{
 		#if !(ARCH & ARCH_UNITTEST)
 			radio_printf("---CUTOFF ACTIVATED---\n");
-			for (int i = 0; i < 3; i++)
+			for (int c = 0; c < N_CUTOFF; c++)
 			{
-				radio_printf("CUTOFF pulse %d\n", i+1);
-				CUTOFF_ON();
-				timer_delay(10000);
-				CUTOFF_OFF();
-				radio_printf("CUTOFF pulse done\n");
-				timer_delay(5000);
+				for (int i = 0; i < 3; i++)
+				{
+					radio_printf("CUTOFF%d pulse %d\n", c+1, i+1);
+					CUTOFF_ENABLE(c, true);
+					timer_delay(10000);
+					CUTOFF_ENABLE(c, false);
+					radio_printf("CUTOFF%d pulse done\n", c+1);
+					timer_delay(5000);
+				}
 			}
 			radio_printf("Cutoff completed.\n");
 		#else
