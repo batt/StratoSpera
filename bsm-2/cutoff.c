@@ -342,7 +342,7 @@ static bool cutoff_procedure(long code)
 				radio_printf("CUTOFF pulse done\n");
 				timer_delay(5000);
 			}
-			radio_printf("Cutoff procedure finished.\n");
+			radio_printf("Cutoff completed.\n");
 		#else
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
 		#endif
