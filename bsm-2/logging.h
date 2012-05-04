@@ -45,6 +45,7 @@
 int logging_data(const char *fmt, ...);
 int logging_vmsg(const char *fmt, va_list ap);
 int logging_msg(const char *fmt, ...);
+int logging_acc(void *acc, size_t size);
 void logging_rotate(void);
 void logging_init(void);
 

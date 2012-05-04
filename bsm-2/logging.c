@@ -41,6 +41,7 @@
 #include <kern/sem.h>
 #include <io/kfile.h>
 #include <fs/fat.h>
+#include <drv/timer.h>
 
 #include <cfg/module.h>
 
@@ -51,10 +52,11 @@
 
 static FatFile logfile;
 static FatFile msgfile;
+static FatFile accfile;
 static Semaphore log_sem;
 static char logging_buf[16];
 
-static bool logopen, msgopen;
+static bool log_open;
 bool logging_initialized = false;
 
 
@@ -78,7 +80,11 @@ static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 
 	//Seek to the end
 	kfile_seek(&f->fd, 0, KSM_SEEK_END);
-	kfile_printf(&f->fd, "Logging start...\n");
+
+	time_t tim = gps_time();
+	struct tm *t = gmtime(&tim);
+
+	kfile_printf(&f->fd, "%02d:%02d:%02d-Logging started @%ld\n",t->tm_hour, t->tm_min, t->tm_sec, (long)timer_clock());
 }
 
 void logging_rotate(void)
@@ -88,26 +94,22 @@ void logging_rotate(void)
 
 	sem_obtain(&log_sem);
 
-	if (logopen)
+	if (log_open)
 	{
 		kfile_close(&logfile.fd);
-		logopen = false;
+		kfile_close(&msgfile.fd);
+		kfile_close(&accfile.fd);
+		log_open = false;
 	}
 	rotate_file(&logfile, "log", "csv");
-	logopen = true;
+	rotate_file(&msgfile, "msg", "txt");
+	rotate_file(&accfile, "acc", "dat");
+	log_open = true;
 
 	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt (m);"
 		"Ext T1 (°C); Ext T2 (°C);Pressure (mBar);Humidity (%%);Internal Temp (°C);"
 		"Vsupply (V);+5V;+3.3V;Current (mA);"
 		"Acc X (m/s^2);Acc Y (m/s^2);Acc Z (m/s^2);HADARP counter (cpm)\n");
-
-	if (msgopen)
-	{
-		kfile_close(&msgfile.fd);
-		msgopen = false;
-	}
-	rotate_file(&msgfile, "msg", "txt");
-	msgopen = true;
 
 	sem_release(&log_sem);
 }
@@ -166,6 +168,18 @@ int logging_data(const char *fmt, ...)
 	int len = kfile_vprintf(&logfile.fd, fmt, ap);
 	va_end(ap);
 	kfile_flush(&logfile.fd);
+	sem_release(&log_sem);
+	return len;
+}
+
+int logging_acc(void *acc, size_t size)
+{
+	if (!logging_initialized)
+		return 0;
+
+	sem_obtain(&log_sem);
+	int len = kfile_write(&accfile.fd, acc, size);
+	kfile_flush(&accfile.fd);
 	sem_release(&log_sem);
 	return len;
 }
