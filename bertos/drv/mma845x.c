@@ -89,6 +89,18 @@ static int mma845x_readReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr)
 		return (int)(uint8_t)data;
 }
 
+bool mma845x_rawAcc(I2c *i2c, uint8_t dev_addr, uint8_t *buf)
+{
+	dev_addr &= 1;
+	dev_addr = (dev_addr | MMA845x_DEV_ADDR) << 1;
+
+	i2c_start_w(i2c, dev_addr, 1, I2C_NOSTOP);
+	i2c_putc(i2c, OUT_X_MSB);
+	i2c_start_r(i2c, dev_addr, 6, I2C_STOP);
+	i2c_read(i2c, buf, 6);
+	return i2c_error(i2c) == 0;
+}
+
 bool mma845x_enable(I2c *i2c, uint8_t addr, bool state)
 {
 	int ctrl_reg1 = mma845x_readReg(i2c, addr, CTRL_REG1);
