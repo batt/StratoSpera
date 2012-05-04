@@ -229,9 +229,13 @@ static void NORETURN radio_process(void)
 		else
 			delay = ms_to_ticks(aprs_interval * 1000);
 
-		if (timer_clock() - start > delay)
+		ticks_t now = timer_clock();
+		if (now - start > delay)
 		{
-			start += delay;
+			/* Avoid sending multiple messages the radio
+			 * is busy for a long time */
+			while (now - start > delay)
+				start += delay;
 			radio_sendTelemetry();
 		}
 	}
