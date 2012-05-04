@@ -194,6 +194,8 @@ static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 
 			if (maxalt_ok)
 			{
+				radio_printf("CUTOFF:altitude over range\n");
+				radio_printf("CUTOFF in %lds\n", (long)altmax_timeout);
 				LOG_INFO("Altitude: %ldm; limit %ldm, starting %lds timeout\n",
 					(long)curr_alt, (long)altmax_meters, (long)altmax_timeout);
 				maxalt_ok = false;
@@ -204,7 +206,7 @@ static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 			{
 				if (!logged)
 				{
-					radio_printf("CUTOFF:altitude over range\n");
+					radio_printf("CUTOFF:altitude timeout\n");
 					logged = true;
 				}
 				return false;
@@ -238,6 +240,8 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 
 			if (dist_ok)
 			{
+				radio_printf("CUTOFF:distance over range\n");
+				radio_printf("CUTOFF in %lds\n", (long)dist_timeout);
 				LOG_INFO("Current position %8.06f %9.06f, distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
 					lat / 1e6, lon / 1e6, curr_dist, (long)dist_max_meters, (long)dist_timeout);
 				dist_ok = false;
@@ -248,7 +252,7 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 			{
 				if (!logged)
 				{
-					radio_printf("CUTOFF:distance over range\n");
+					radio_printf("CUTOFF:distance timeout\n");
 					logged = true;
 				}
 				return false;
@@ -292,7 +296,9 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 
 			if (alt_ok)
 			{
-				LOG_INFO("Current altitude %ld, max altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
+				radio_printf("CUTOFF:burst detected\n");
+				radio_printf("CUTOFF in %lds\n", (long)altitude_timeout);
+				LOG_INFO("Current altitude %ld, peak altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
 					(long)curr_alt, (long)alt_max, (long)altitude_timeout);
 				alt_ok = false;
 				logged = false;
@@ -302,7 +308,7 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 			{
 				if (!logged)
 				{
-					radio_printf("CUTOFF:burst detected\n");
+					radio_printf("CUTOFF:burst timeout\n");
 					logged = true;
 				}
 				return false;
@@ -330,7 +336,7 @@ static bool cutoff_checkTime(ticks_t now)
 	{
 		if (!logged)
 		{
-			radio_printf("CUTOFF:mission time expired\n");
+			radio_printf("CUTOFF:mission timeout\n");
 			logged = true;
 		}
 		return false;
