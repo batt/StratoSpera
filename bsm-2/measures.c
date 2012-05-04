@@ -3,6 +3,7 @@
 #include "sensors.h"
 #include "hadarp.h"
 #include "radio.h"
+#include "logging.h"
 
 #include <kern/sem.h>
 
@@ -38,7 +39,7 @@ float measures_acceleration(Mma845xAxis axis)
 	if (acc == MMA_ERROR)
 		return -99.9;
 	else
-		return (acc * 9.81 * 4.0) / 512;
+		return (acc * 9.80665 * 4.0) / 512;
 }
 
 static void measures_printMeasures(char *buf, size_t len)
@@ -136,10 +137,46 @@ void measures_logFormat(char *buf, size_t len)
 		buf[len-1] = '\0';
 }
 
+
+typedef struct RawAcc
+{
+	uint8_t acc[6];
+} PACKED RawAcc;
+
+static RawAcc acc_buf[128];
+static unsigned acc_idx = 0;
+
+#define ACC_SAMPLE_RATE 50
+
+static void NORETURN acc_process(void)
+{
+	ticks_t start = timer_clock();
+	mtime_t delay = 0;
+	while (1)
+	{
+		sem_obtain(&i2c_sem);
+		bool r = mma845x_rawAcc(&i2c_bus, 0, acc_buf[acc_idx].acc);
+		sem_release(&i2c_sem);
+		if (!r)
+			kprintf("ACC error!\n");
+		if (++acc_idx >= countof(acc_buf))
+		{
+			acc_idx = 0;
+			logging_acc(acc_buf, sizeof(acc_buf));
+		}
+
+		/* Wait for the next sample adjusting for time spent above */
+		delay += (1000 / ACC_SAMPLE_RATE);
+		timer_delay(delay - ticks_to_ms(timer_clock() - start));
+	}
+}
+
 void measures_init(void)
 {
 	sem_init(&i2c_sem);
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
 	bool ret = mma845x_init(&i2c_bus, 0, MMADYN_4G);
 	ASSERT(ret);
+	Process *p = proc_new(acc_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	ASSERT(p);
 }
