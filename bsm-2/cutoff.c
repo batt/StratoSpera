@@ -326,13 +326,9 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 static bool cutoff_checkTime(ticks_t now)
 {
 	static bool logged = false;
+	static bool warn_logged = false;
 
-	if (now - status_missionStartTicks() < ms_to_ticks(mission_timeout * 1000))
-	{
-		logged = false;
-		return true;
-	}
-	else
+	if (now - status_missionStartTicks() > ms_to_ticks(mission_timeout * 1000))
 	{
 		if (!logged)
 		{
@@ -340,6 +336,21 @@ static bool cutoff_checkTime(ticks_t now)
 			logged = true;
 		}
 		return false;
+	}
+	else if (now - status_missionStartTicks() > ms_to_ticks(mission_timeout * 1000) - ms_to_ticks(5*60*1000))
+	{
+		if (!warn_logged)
+		{
+			radio_printf("CUTOFF:mission end in %ds\n", mission_timeout - ticks_to_ms(now - status_missionStartTicks()) / 1000);
+			warn_logged = true;
+		}
+		return true;
+	}
+	else
+	{
+		logged = false;
+		warn_logged = false;
+		return true;
 	}
 }
 
