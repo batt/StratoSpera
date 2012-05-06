@@ -537,6 +537,7 @@ void cutoff_init(void)
 	#if !(ARCH & ARCH_UNITTEST)
 		//start process
 		LOG_INFO("Starting cutoff process\n");
-		proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+		Process *p = proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 6, NULL);
+		ASSERT(p);
 	#endif
 }
