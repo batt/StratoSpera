@@ -80,5 +80,6 @@ void hadarp_init(unsigned port, unsigned long baudrate)
 	ser_setbaudrate(&ser, baudrate);
 	hadarp_cnt = -1;
 
-	proc_new(hadarp_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	Process *p = proc_new(hadarp_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	ASSERT(p);
 }

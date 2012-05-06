@@ -408,8 +408,10 @@ void status_init(void)
 	status_missionStart();
 	#if !(ARCH & ARCH_UNITTEST)
 		LOG_INFO("Starting status check process\n");
-		proc_new(status_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+		Process *p1 = proc_new(status_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+		ASSERT(p1);
 		LOG_INFO("Starting camera communication process\n");
-		proc_new(camera_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+		Process *p2 = proc_new(camera_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+		ASSERT(p2);
 	#endif
 }
