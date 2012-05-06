@@ -277,5 +277,6 @@ void radio_init(void)
 	radio_initialized = true;
 	uplink_registerCmd("ping", radio_ping);
 
-	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
+	Process *p = proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 6, NULL);
+	ASSERT(p);
 }
