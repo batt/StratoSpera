@@ -177,6 +177,6 @@ void measures_init(void)
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
 	bool ret = mma845x_init(&i2c_bus, 0, MMADYN_4G);
 	ASSERT(ret);
-	Process *p = proc_new(acc_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	Process *p = proc_new(acc_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 	ASSERT(p);
 }
