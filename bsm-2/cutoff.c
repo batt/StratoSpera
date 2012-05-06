@@ -413,6 +413,9 @@ static void cutoff_cut(void)
 		}
 }
 
+#define PAUSE_TIME (5*60*1000)
+static ticks_t cutoff_pause_time = 0;
+
 bool cutoff_check(ticks_t now, int32_t curr_alt, udegree_t lat, udegree_t lon)
 {
 	bool cutoff =(!cutoff_checkTime(now) ||
@@ -420,8 +423,30 @@ bool cutoff_check(ticks_t now, int32_t curr_alt, udegree_t lat, udegree_t lon)
 		!cutoff_checkAltitude(curr_alt, now) ||
 		!cutoff_checkMaxalt(curr_alt, now));
 
+	static bool logged = false;
 	if (cutoff)
-		cutoff_cut();
+	{
+		if (cutoff_pause_time && timer_clock() - cutoff_pause_time < ms_to_ticks(PAUSE_TIME))
+		{
+			if (!logged)
+			{
+				radio_printf("CUTOFF pending!\n");
+				logged = true;
+			}
+		}
+		else
+		{
+			cutoff_pause_time = 0;
+			logged = false;
+			cutoff_cut();
+		}
+	}
+	else
+	{
+		if (logged)
+			radio_printf("Pending CUTOFF cancelled\n");
+		logged = false;
+	}
 
 	return cutoff;
 }
@@ -447,14 +472,55 @@ void cutoff_reset(void)
 	alt_reset();
 	dist_ok = true;
 	maxalt_ok = true;
+	cutoff_pause_time = 0;
 
 	cut = false;
 }
 
+/*
+ * Reset the cutoff state machine:
+ *  - Burst detector data
+ *  - Burst detector timeout
+ *  - Max distance timeout
+ *  - Max altitude timeout
+ *  - Cutoff is resumed if paused
+ * NOTE: mission timeout is NOT reset! (use mission_start to reset all)
+ */
 static bool cmd_cutoff_reset(long l)
 {
 	(void)l;
 	cutoff_reset();
+	return true;
+}
+
+/*
+ * Pause the cutoff for PAUSE_TIME.
+ *
+ * Useful if you have to take critical decisions and the cutoff is about to
+ * activate.
+ * The cutoff state machine will be still active, but no wire is cut for the following
+ * PAUSE_TIME milliseconds after this command is issued.
+ * After this time, if a cutoff condition is still present, the cutoff procedure
+ * will be executed.
+ *
+ * NOTE: you can call cutoff_pause repeatedly, each time the timeout is reset or
+ *  you can call cutoff_resume to cancel the pause in advance.
+ */
+static bool cmd_cutoff_pause(long l)
+{
+	(void)l;
+	cutoff_pause_time = timer_clock();
+	return true;
+}
+
+/*
+ * Call cutoff_resume to cancel a pause in advance.
+ * If there is no pause this function will have no effect.
+ */
+static bool cmd_cutoff_resume(long l)
+{
+	(void)l;
+	cutoff_pause_time = 0;
 	return true;
 }
 
@@ -465,6 +531,8 @@ void cutoff_init(void)
 	config_load(&cutoff);
 	uplink_registerCmd("cutoff", cutoff_procedure);
 	uplink_registerCmd("cutoff_reset", cmd_cutoff_reset);
+	uplink_registerCmd("cutoff_pause", cmd_cutoff_pause);
+	uplink_registerCmd("cutoff_resume", cmd_cutoff_resume);
 
 	#if !(ARCH & ARCH_UNITTEST)
 		//start process
