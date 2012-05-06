@@ -377,9 +377,9 @@ static bool cutoff_procedure(long code)
 	{
 		#if !(ARCH & ARCH_UNITTEST)
 			radio_printf("---CUTOFF ACTIVATED---\n");
-			for (int c = 0; c < N_CUTOFF; c++)
+			for (int i = 0; i < 3; i++)
 			{
-				for (int i = 0; i < 3; i++)
+				for (int c = 0; c < N_CUTOFF; c++)
 				{
 					radio_printf("CUTOFF%d pulse %d\n", c+1, i+1);
 					CUTOFF_ENABLE(c, true);
