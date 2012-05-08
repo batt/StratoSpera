@@ -110,6 +110,8 @@ static void init(void)
 	#if !HADARP_ENABLED
 		custom_init();
 	#endif
+	/* Enable powerswitch for aux devices */
+	aux_out(true);
 }
 
 int main(void)
