@@ -61,10 +61,14 @@ static void NORETURN hadarp_process(void)
 			continue;
 		}
 
-		hadarp_cnt = atoi(buf);
-		if (hadarp_cnt > 10000 || hadarp_cnt < 0)
+		int hadarp_raw = atoi(buf);
+		if (hadarp_raw > 10000 || hadarp_raw < 0)
 			hadarp_cnt = -1;
-
+		else
+		{
+			float cps = hadarp_raw / 60.0;
+			hadarp_cnt = ABS(cps / (1 - (cps * 1.9e-4)) * 60.0 + 0.5);
+		}
 		LOG_INFO("HADARP cnt:%d\n", hadarp_cnt);
 	}
 }
