@@ -36,7 +36,7 @@
  */
 
 #include "hadarp.h"
-#include "measures.h"
+#include "gps.h"
 
 #include <drv/ser.h>
 #include <kern/proc.h>
@@ -45,6 +45,7 @@
 #include <cfg/log.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 
 static Serial ser;
 static int hadarp_cnt;
@@ -55,9 +56,13 @@ static void NORETURN hadarp_process(void)
 
 	while (1)
 	{
+		struct tm *t;
+		time_t tim;
+
 		/* Send time to Polifemo */
-		measures_logFormat(buf, 9);
-		kfile_printf(&ser.fd, "%s\n", buf);
+		tim = gps_time();
+		t = gmtime(&tim);
+		kfile_printf(&ser.fd, "%02d%02d%02d\n",	t->tm_hour, t->tm_min, t->tm_sec);
 
 		if (kfile_gets(&ser.fd, buf, sizeof(buf)) == EOF)
 		{
