@@ -66,8 +66,9 @@ static void NORETURN hadarp_process(void)
 			hadarp_cnt = -1;
 		else
 		{
+			/* Compensate for geiger tube dead time */
 			float cps = hadarp_raw / 60.0;
-			hadarp_cnt = ABS(cps / (1 - (cps * 1.9e-4)) * 60.0 + 0.5);
+			hadarp_cnt = ABS(cps / (1.0 - (cps * 1.9e-4)) * 60.0 + 0.5);
 		}
 		LOG_INFO("HADARP cnt:%d\n", hadarp_cnt);
 	}
