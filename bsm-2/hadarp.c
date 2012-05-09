@@ -36,6 +36,7 @@
  */
 
 #include "hadarp.h"
+#include "measures.h"
 
 #include <drv/ser.h>
 #include <kern/proc.h>
@@ -54,6 +55,10 @@ static void NORETURN hadarp_process(void)
 
 	while (1)
 	{
+		/* Send time to Polifemo */
+		measures_logFormat(buf, 9);
+		kfile_printf(&ser.fd, "%s\n", buf);
+
 		if (kfile_gets(&ser.fd, buf, sizeof(buf)) == EOF)
 		{
 			hadarp_cnt = -1;
