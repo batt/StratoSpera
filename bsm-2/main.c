@@ -151,7 +151,7 @@ int main(void)
 		{
 			char msg[128];
 			log_start += ms_to_ticks(log_interval * 1000);
-			//monitor_report();
+			monitor_report();
 
 			measures_logFormat(msg, sizeof(msg));
 			kprintf("%s\n", msg);
