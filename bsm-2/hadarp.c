@@ -62,7 +62,7 @@ static void NORETURN hadarp_process(void)
 		/* Send time to Polifemo */
 		tim = gps_time();
 		t = gmtime(&tim);
-		kfile_printf(&ser.fd, "%02d%02d%02d\n",	t->tm_hour, t->tm_min, t->tm_sec);
+		kfile_printf(&ser.fd, "%02d%02d%02d", t->tm_hour, t->tm_min, t->tm_sec);
 
 		if (kfile_gets(&ser.fd, buf, sizeof(buf)) == EOF)
 		{
