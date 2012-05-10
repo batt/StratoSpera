@@ -78,8 +78,8 @@ uint8_t cc1101_write(uint8_t addr, uint8_t data)
 	SS_ACTIVE();
 	WAIT_SO_LOW();
 
-    uint8_t x = spi_sendRecv(addr);
-    x = spi_sendRecv(data);
+    spi_sendRecv(addr);
+    uint8_t x = spi_sendRecv(data);
 
 	SS_INACTIVE();
     return x;
@@ -120,35 +120,35 @@ void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
 
 void cc1101_powerOnReset(void)
 {
-	STROBE_ON();
-	SS_INACTIVE();
-	timer_udelay(1);
-	STROBE_OFF();
+	SCK_ACTIVE();
+	MOSI_LOW();
+	timer_udelay(10);
 
+	SS_INACTIVE();
+	timer_udelay(10);
 	SS_ACTIVE();
 	timer_udelay(1);
 	SS_INACTIVE();
-	STROBE_ON();
-
-	timer_udelay(41);
+	timer_udelay(40);
 	SS_ACTIVE();
 
-	STROBE_OFF();
 	WAIT_SO_LOW();
 
     spi_sendRecv(CC1101_SRES);
 
+	SS_INACTIVE();
+	/*
+	timer_udelay(1);
+	SS_ACTIVE();
 	WAIT_SO_LOW();
 	timer_udelay(50);
-
 	SS_INACTIVE();
+	*/
 }
 
 void cc1101_setup(const Setting* settings)
 {
 	uint8_t x = 0;
-
-
 
 	do
 	{
@@ -159,7 +159,7 @@ void cc1101_setup(const Setting* settings)
 
 		SS_INACTIVE();
 
-		kprintf("%d\n", STATUS_RDY(x));
+//		kprintf("%d\n", STATUS_RDY(x));
 
 	} while (STATUS_RDY(x));
 
@@ -174,6 +174,6 @@ void cc1101_setup(const Setting* settings)
 
 		SS_INACTIVE();
 
-		kprintf("setup %d %d %d\n", UNPACK_STATUS(x));
+		//kprintf("setup %d %d %d\n", UNPACK_STATUS(x));
 	}
 }

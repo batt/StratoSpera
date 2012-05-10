@@ -129,6 +129,15 @@
 #define CC1101_TXFIFO       0x3F
 #define CC1101_RXFIFO       0x3F
 
+#define CC1101_STATUS_IDLE             0
+#define CC1101_STATUS_RX               1
+#define CC1101_STATUS_TX               2
+#define CC1101_STATUS_FSTXON           3
+#define CC1101_STATUS_CALIBRATE        4
+#define CC1101_STATUS_SETTLING         5
+#define CC1101_STATUS_RX_FIFOUNFLOW    6
+#define CC1101_STATUS_TX_FIFOUNFLOW    7
+
 #include <cpu/types.h>
 
 
