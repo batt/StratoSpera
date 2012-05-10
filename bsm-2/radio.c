@@ -135,7 +135,7 @@ static AX25Call ax25_path[2]=
 };
 
 static Semaphore radio_sem;
-static char radio_msg[100];
+static char radio_msg[128];
 
 static void radio_send(char *buf, size_t len)
 {
@@ -229,9 +229,13 @@ static void NORETURN radio_process(void)
 		else
 			delay = ms_to_ticks(aprs_interval * 1000);
 
-		if (timer_clock() - start > delay)
+		ticks_t now = timer_clock();
+		if (now - start > delay)
 		{
-			start += delay;
+			/* Avoid sending multiple messages the radio
+			 * is busy for a long time */
+			while (now - start > delay)
+				start += delay;
 			radio_sendTelemetry();
 		}
 	}
@@ -273,5 +277,6 @@ void radio_init(void)
 	radio_initialized = true;
 	uplink_registerCmd("ping", radio_ping);
 
-	proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
+	Process *p = proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 6, NULL);
+	ASSERT(p);
 }

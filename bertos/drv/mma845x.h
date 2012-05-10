@@ -41,5 +41,6 @@ typedef enum Mma845xAxis
 int mma845x_read(I2c *i2c, uint8_t addr, Mma845xAxis axis);
 bool mma845x_enable(I2c *i2c, uint8_t addr, bool state);
 bool mma845x_init(I2c *i2c, uint8_t addr, Mma845xDynamicRange dyn_range);
+bool mma845x_rawAcc(I2c *i2c, uint8_t dev_addr, uint8_t *buf);
 
 #endif /* DRV_MMA845X_H */

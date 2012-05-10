@@ -36,6 +36,7 @@
  */
 
 #include "hadarp.h"
+#include "gps.h"
 
 #include <drv/ser.h>
 #include <kern/proc.h>
@@ -44,6 +45,7 @@
 #include <cfg/log.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 
 static Serial ser;
 static int hadarp_cnt;
@@ -54,6 +56,14 @@ static void NORETURN hadarp_process(void)
 
 	while (1)
 	{
+		struct tm *t;
+		time_t tim;
+
+		/* Send time to Polifemo */
+		tim = gps_time();
+		t = gmtime(&tim);
+		kfile_printf(&ser.fd, "%02d%02d%02d\n",	t->tm_hour, t->tm_min, t->tm_sec);
+
 		if (kfile_gets(&ser.fd, buf, sizeof(buf)) == EOF)
 		{
 			hadarp_cnt = -1;
@@ -61,10 +71,15 @@ static void NORETURN hadarp_process(void)
 			continue;
 		}
 
-		hadarp_cnt = atoi(buf);
-		if (hadarp_cnt > 10000 || hadarp_cnt < 0)
+		int hadarp_raw = atoi(buf);
+		if (hadarp_raw > 10000 || hadarp_raw < 0)
 			hadarp_cnt = -1;
-
+		else
+		{
+			/* Compensate for geiger tube dead time */
+			float cps = hadarp_raw / 60.0;
+			hadarp_cnt = ABS(cps / (1.0 - (cps * 1.9e-4)) * 60.0 + 0.5);
+		}
 		LOG_INFO("HADARP cnt:%d\n", hadarp_cnt);
 	}
 }
@@ -80,5 +95,6 @@ void hadarp_init(unsigned port, unsigned long baudrate)
 	ser_setbaudrate(&ser, baudrate);
 	hadarp_cnt = -1;
 
-	proc_new(hadarp_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	Process *p = proc_new(hadarp_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	ASSERT(p);
 }

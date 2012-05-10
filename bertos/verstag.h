@@ -50,26 +50,14 @@
 #define APP_AUTHOR "Develer"
 #define APP_COPYRIGHT "Copyright 2009 Develer (http://www.develer.com/)"
 
-
-#if ARCH & ARCH_DEFAULT
-	#define VERS_MAJOR 0
-	#define VERS_MINOR 1
-	#define VERS_REV   0
-	#define VERS_LETTER ""
-#elif ARCH & ARCH_NIGHTTEST
-	#define VERS_MAJOR 0
-	#define VERS_MINOR 1
-	#define VERS_REV   0
-	#define VERS_LETTER ""
-#else
-	#error unknown architecture
-#endif
+#define VERS_NAME  "cygnus"
+#define VERS_REV   3
 
 /**
  * If _SNAPSHOT is defined, \c VERS_TAG contains the build date
  * date instead of a numeric version string.
  */
-#define _SNAPSHOT
+//#define _SNAPSHOT
 
 #ifdef _DEBUG
 	#define VERS_DBG "D"
@@ -81,11 +69,15 @@
 #define _STRINGIZE(x) __STRINGIZE(x)
 
 /** Build application version string (i.e.: "1.7.0") */
-#define MAKE_VERS(maj,min,rev) _STRINGIZE(maj) "." _STRINGIZE(min) "." _STRINGIZE(rev) VERS_LETTER VERS_DBG
+#define MAKE_VERS(maj,min,rev) _STRINGIZE(maj) "." _STRINGIZE(min) "." _STRINGIZE(rev) VERS_DBG
 #ifdef _SNAPSHOT
-	#define VERS_TAG "snapshot" " " __DATE__ " " __TIME__ " " VERS_LETTER " " VERS_DBG
+	#define VERS_TAG "snapshot" " " __DATE__ " " __TIME__ " " VERS_DBG
 #else
-	#define VERS_TAG MAKE_VERS(VERS_MAJOR,VERS_MINOR,VERS_REV)
+	#if VERS_REV
+		#define VERS_TAG VERS_NAME _STRINGIZE(VERS_REV)
+	#else
+		#define VERS_TAG VERS_NAME
+	#endif
 #endif
 
 /** Build application version string suitable for MS windows resource files (i.e.: "1, 7, 0, 1") */

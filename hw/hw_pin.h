@@ -90,7 +90,7 @@
 	#define ADC_MUX_CH           5 // The external mux is connected here
 
 	#define GPS_ENABLED 1
-	#define HADARP_ENABLED 0
+	#define HADARP_ENABLED 1
 	#define HADARP_PORT SER_UART1
 	#define GPS_PORT    SER_UART0
 

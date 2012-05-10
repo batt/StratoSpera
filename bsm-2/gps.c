@@ -51,6 +51,8 @@ static void NORETURN time_process(void)
 {
 	while (1)
 	{
+		/* Reset watchdog */
+		WDT_CR = WDT_KEY | BV(WDT_WDRSTT);
 		timer_delay(1000);
 
 		if (gps_fix && (timer_clock() - last_heard > ms_to_ticks(10000)))
@@ -79,8 +81,10 @@ void gps_init(unsigned port, unsigned long baudrate)
 	nmeap_init(&nmea, NULL);
 
 	nmeap_addParser(&nmea, "GPGGA", nmea_gpgga, aprs_gpgga, &gps_gga);
-	proc_new(gps_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
-	proc_new(time_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	Process *p1 = proc_new(gps_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	Process *p2 = proc_new(time_process, NULL, KERN_MINSTACKSIZE * 2, NULL);
+	ASSERT(p1);
+	ASSERT(p2);
 }
 
 

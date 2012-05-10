@@ -41,6 +41,9 @@
 #include <kern/sem.h>
 #include <io/kfile.h>
 #include <fs/fat.h>
+#include <drv/timer.h>
+
+#include <cfg/module.h>
 
 #include <string.h>
 #include <stdio.h>
@@ -49,10 +52,13 @@
 
 static FatFile logfile;
 static FatFile msgfile;
+static FatFile accfile;
 static Semaphore log_sem;
 static char logging_buf[16];
 
-static bool logopen, msgopen;
+static bool log_open;
+bool logging_initialized = false;
+
 
 static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 {
@@ -65,7 +71,8 @@ static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 		if (fatfile_open(f, name, FA_OPEN_EXISTING | FA_WRITE) != FR_OK)
 		{
 			kprintf("Logging on file %s\n", name);
-			ASSERT(fatfile_open(f, name, FA_OPEN_ALWAYS | FA_WRITE) == FR_OK);
+			FRESULT ret = fatfile_open(f, name, FA_OPEN_ALWAYS | FA_WRITE);
+			ASSERT(ret == FR_OK);
 			break;
 		}
 		kfile_close(&f->fd);
@@ -73,39 +80,45 @@ static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 
 	//Seek to the end
 	kfile_seek(&f->fd, 0, KSM_SEEK_END);
-	kfile_printf(&f->fd, "Logging start...\n");
+
+	time_t tim = gps_time();
+	struct tm *t = gmtime(&tim);
+
+	kfile_printf(&f->fd, "%02d:%02d:%02d-Logging started @%ld\n",t->tm_hour, t->tm_min, t->tm_sec, (long)timer_clock());
 }
 
 void logging_rotate(void)
 {
+	if (!logging_initialized)
+		return;
+
 	sem_obtain(&log_sem);
 
-	if (logopen)
+	if (log_open)
 	{
 		kfile_close(&logfile.fd);
-		logopen = false;
+		kfile_close(&msgfile.fd);
+		kfile_close(&accfile.fd);
+		log_open = false;
 	}
 	rotate_file(&logfile, "log", "csv");
-	logopen = true;
+	rotate_file(&msgfile, "msg", "txt");
+	rotate_file(&accfile, "acc", "dat");
+	log_open = true;
 
 	kfile_printf(&logfile.fd, "GPS time;GPS FIX;GPS lat;GPS lon;GPS alt (m);"
 		"Ext T1 (°C); Ext T2 (°C);Pressure (mBar);Humidity (%%);Internal Temp (°C);"
 		"Vsupply (V);+5V;+3.3V;Current (mA);"
 		"Acc X (m/s^2);Acc Y (m/s^2);Acc Z (m/s^2);HADARP counter (cpm)\n");
 
-	if (msgopen)
-	{
-		kfile_close(&msgfile.fd);
-		msgopen = false;
-	}
-	rotate_file(&msgfile, "msg", "txt");
-	msgopen = true;
-
 	sem_release(&log_sem);
 }
 
 int logging_vmsg(const char *fmt, va_list ap)
 {
+	if (!logging_initialized)
+		return 0;
+
 	struct tm *t;
 	time_t tim;
 
@@ -133,6 +146,9 @@ int logging_vmsg(const char *fmt, va_list ap)
 
 int logging_msg(const char *fmt, ...)
 {
+	if (!logging_initialized)
+		return 0;
+
 	va_list ap;
 	va_start(ap, fmt);
 	int len = logging_vmsg(fmt, ap);
@@ -143,6 +159,9 @@ int logging_msg(const char *fmt, ...)
 
 int logging_data(const char *fmt, ...)
 {
+	if (!logging_initialized)
+		return 0;
+
 	sem_obtain(&log_sem);
 	va_list ap;
 	va_start(ap, fmt);
@@ -153,8 +172,21 @@ int logging_data(const char *fmt, ...)
 	return len;
 }
 
+int logging_acc(void *acc, size_t size)
+{
+	if (!logging_initialized)
+		return 0;
+
+	sem_obtain(&log_sem);
+	int len = kfile_write(&accfile.fd, acc, size);
+	kfile_flush(&accfile.fd);
+	sem_release(&log_sem);
+	return len;
+}
+
 void logging_init(void)
 {
 	sem_init(&log_sem);
+	logging_initialized = true;
 	logging_rotate();
 }

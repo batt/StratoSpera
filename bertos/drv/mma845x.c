@@ -89,6 +89,18 @@ static int mma845x_readReg(I2c *i2c, uint8_t dev_addr, uint8_t reg_addr)
 		return (int)(uint8_t)data;
 }
 
+bool mma845x_rawAcc(I2c *i2c, uint8_t dev_addr, uint8_t *buf)
+{
+	dev_addr &= 1;
+	dev_addr = (dev_addr | MMA845x_DEV_ADDR) << 1;
+
+	i2c_start_w(i2c, dev_addr, 1, I2C_NOSTOP);
+	i2c_putc(i2c, OUT_X_MSB);
+	i2c_start_r(i2c, dev_addr, 6, I2C_STOP);
+	i2c_read(i2c, buf, 6);
+	return i2c_error(i2c) == 0;
+}
+
 bool mma845x_enable(I2c *i2c, uint8_t addr, bool state)
 {
 	int ctrl_reg1 = mma845x_readReg(i2c, addr, CTRL_REG1);
@@ -125,12 +137,20 @@ bool mma845x_init(I2c *i2c, uint8_t addr, Mma845xDynamicRange dyn_range)
 
 	if (!mma845x_writeReg(i2c, addr, XYZ_DATA_CFG, dyn_range))
 		return false;
+	/*
+	 * Using a different data rate and/or mode other than the default one
+	 * causes a -3% sentitivity error:
+	 * http://www.freescale.com/files/sensors/doc/data_sheet/MMA8453Q.pdf
+	 * page 6, small foot note #2.
+	 *
+	 * So we disable low sample rate and high res mode for now.
+	 */
+	#if 0
+		if (!mma845x_writeReg(i2c, addr, CTRL_REG1, MMADR_1_56HZ << DATARATE_SHIFT))
+			return false;
 
-	if (!mma845x_writeReg(i2c, addr, CTRL_REG1, MMADR_1_56HZ << DATARATE_SHIFT))
-		return false;
-
-	if (!mma845x_writeReg(i2c, addr, CTRL_REG2, HIGH_RES_MODE))
-		return false;
-
+		if (!mma845x_writeReg(i2c, addr, CTRL_REG2, HIGH_RES_MODE))
+			return false;
+	#endif
 	return mma845x_enable(i2c, addr, true);
 }

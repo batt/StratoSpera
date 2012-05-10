@@ -63,36 +63,55 @@
 
 
 
+#define N_CUTOFF 2
+
 #if !(ARCH & ARCH_UNITTEST)
 
 	#ifdef DEMO_BOARD
-		#define CUTOFF_OFF()  do { PIOA_CODR = CUTOFF_PIN; } while (0)
-		#define CUTOFF_ON()   do { PIOA_SODR = CUTOFF_PIN; } while (0)
+		#define CUTOFF_ENABLE(ch, en) \
+		do { \
+			if (ch == 0) \
+			{ \
+				if (en) \
+					PIOA_SODR = CUTOFF_PIN; \
+				else \
+					PIOA_CODR = CUTOFF_PIN; \
+			} \
+		} while (0)
+
 		#define CUTOFF_INIT() do { CUTOFF_OFF(); PIOA_PER = CUTOFF_PIN; PIOA_OER = CUTOFF_PIN; } while (0)
 	#else
 		#include <drv/pwm.h>
-		static Pwm cutoff_pwm;
+		static Pwm cutoff_ctx[N_CUTOFF];
 
-		#define CUTOFF_OFF()  pwm_enable(&cutoff_pwm, false)
-		#define CUTOFF_ON() \
-			do { \
-				pwm_setDuty(&cutoff_pwm, pwm_duty); \
-				pwm_enable(&cutoff_pwm, true); \
-			} while (0)
+		/* Table which maps cutoff channels to PWM channels */
+		static const int pwm_ch_map[] = {1, 2};
+		STATIC_ASSERT(countof(pwm_ch_map) == N_CUTOFF);
 
-		#define CUTOFF_INIT() do { \
-			pwm_init(&cutoff_pwm, CUTOFF1_PWM); \
-			pwm_setFrequency(&cutoff_pwm, CONFIG_AFSK_DAC_SAMPLERATE / 8); \
+		#define CUTOFF_ENABLE(ch, en) \
+		{ \
+			pwm_setDuty(&cutoff_ctx[ch], pwm_duty[ch]); \
+			pwm_enable(&cutoff_ctx[ch], en); \
+		}
+
+		#define CUTOFF_INIT() \
+		do { \
+			for (unsigned i = 0; i < N_CUTOFF; i++) \
+			{ \
+				pwm_init(&cutoff_ctx[i], pwm_ch_map[i]); \
+				pwm_setFrequency(&cutoff_ctx[i], CONFIG_AFSK_DAC_SAMPLERATE / 8); \
+			} \
 		} while (0)
 	#endif
 #else
-	#define CUTOFF_OFF()  do {  } while (0)
-	#define CUTOFF_ON()   do {  } while (0)
+	#define CUTOFF_ENABLE(ch, en) do { (void)ch; (void)en; } while (0)
 	#define CUTOFF_INIT() do {  } while (0)
 	#define testmode() false
 #endif
 
 static void cutoff_reload(void);
+
+static int pwm_duty[N_CUTOFF];
 
 DECLARE_CONF(cutoff, cutoff_reload,
 	CONF_INT(mission_timeout, 10, 86400, 8400), //seconds
@@ -104,7 +123,8 @@ DECLARE_CONF(cutoff, cutoff_reload,
 	CONF_INT(dist_timeout, 0, 1800, 300), // seconds
 	CONF_INT(altmax_meters, 20, 500000, 50000), //meters
 	CONF_INT(altmax_timeout, 0, 1800, 300), //seconds
-	CONF_INT(pwm_duty, 0, 0xffff, 0x8000) // Number from 0 to 0xffff
+	CONF_INT_NODECLARE(pwm_duty1, pwm_duty[0], 0, 0xffff, 0x8000), // Number from 0 to 0xffff
+	CONF_INT_NODECLARE(pwm_duty2, pwm_duty[1], 0, 0xffff, 0x8000) // Number from 0 to 0xffff
 );
 
 static void cutoff_reload(void)
@@ -118,7 +138,8 @@ static void cutoff_reload(void)
 	LOG_INFO(" max distance timeout: %ld seconds\n", (long)dist_timeout);
 	LOG_INFO(" max altitude: %ld meters\n", (long)altmax_meters);
 	LOG_INFO(" max altitude timeout: %ld seconds\n", (long)altmax_timeout);
-	LOG_INFO(" pwm duty 0x%04X\n", pwm_duty);
+	for (unsigned i = 0; i < N_CUTOFF; i++)
+		LOG_INFO(" pwm duty%d 0x%04X\n", i+1, pwm_duty[i]);
 	cutoff_reset();
 }
 
@@ -173,6 +194,8 @@ static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 
 			if (maxalt_ok)
 			{
+				radio_printf("CUTOFF:altitude over range\n");
+				radio_printf("CUTOFF in %lds\n", (long)altmax_timeout);
 				LOG_INFO("Altitude: %ldm; limit %ldm, starting %lds timeout\n",
 					(long)curr_alt, (long)altmax_meters, (long)altmax_timeout);
 				maxalt_ok = false;
@@ -183,7 +206,7 @@ static bool cutoff_checkMaxalt(int32_t curr_alt, ticks_t now)
 			{
 				if (!logged)
 				{
-					LOG_INFO("Maximum altitude exceeded and timeout expired\n");
+					radio_printf("CUTOFF:altitude timeout\n");
 					logged = true;
 				}
 				return false;
@@ -217,6 +240,8 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 
 			if (dist_ok)
 			{
+				radio_printf("CUTOFF:distance over range\n");
+				radio_printf("CUTOFF in %lds\n", (long)dist_timeout);
 				LOG_INFO("Current position %8.06f %9.06f, distance from base: %.0fm; limit %ldm, starting %lds timeout\n",
 					lat / 1e6, lon / 1e6, curr_dist, (long)dist_max_meters, (long)dist_timeout);
 				dist_ok = false;
@@ -227,7 +252,7 @@ static bool cutoff_checkDist(udegree_t lat, udegree_t lon, ticks_t now)
 			{
 				if (!logged)
 				{
-					LOG_INFO("Maximum distance from base exceeded and timeout expired\n");
+					radio_printf("CUTOFF:distance timeout\n");
 					logged = true;
 				}
 				return false;
@@ -271,7 +296,9 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 
 			if (alt_ok)
 			{
-				LOG_INFO("Current altitude %ld, max altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
+				radio_printf("CUTOFF:burst detected\n");
+				radio_printf("CUTOFF in %lds\n", (long)altitude_timeout);
+				LOG_INFO("Current altitude %ld, peak altitude %ld; current altitude lower than delta, starting %ld s timeout\n",
 					(long)curr_alt, (long)alt_max, (long)altitude_timeout);
 				alt_ok = false;
 				logged = false;
@@ -281,7 +308,7 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 			{
 				if (!logged)
 				{
-					LOG_INFO("Current altitude lower than delta and timeout expired\n");
+					radio_printf("CUTOFF:burst timeout\n");
 					logged = true;
 				}
 				return false;
@@ -299,20 +326,31 @@ static bool cutoff_checkAltitude(int32_t curr_alt, ticks_t now)
 static bool cutoff_checkTime(ticks_t now)
 {
 	static bool logged = false;
+	static bool warn_logged = false;
 
-	if (now - status_missionStartTicks() < ms_to_ticks(mission_timeout * 1000))
+	if (now - status_missionStartTicks() > ms_to_ticks(mission_timeout * 1000))
 	{
-		logged = false;
+		if (!logged)
+		{
+			radio_printf("CUTOFF:mission timeout\n");
+			logged = true;
+		}
+		return false;
+	}
+	else if (now - status_missionStartTicks() > ms_to_ticks(mission_timeout * 1000) - ms_to_ticks(5*60*1000))
+	{
+		if (!warn_logged)
+		{
+			radio_printf("CUTOFF:mission end in %ds\n", mission_timeout - ticks_to_ms(now - status_missionStartTicks()) / 1000);
+			warn_logged = true;
+		}
 		return true;
 	}
 	else
 	{
-		if (!logged)
-		{
-			LOG_INFO("Maximum mission time expired\n");
-			logged = true;
-		}
-		return false;
+		logged = false;
+		warn_logged = false;
+		return true;
 	}
 }
 
@@ -321,9 +359,15 @@ void cutoff_test_cut(bool on)
 	if (testmode())
 	{
 		if (on)
-			CUTOFF_ON();
+		{
+			for (int i = 0; i < N_CUTOFF; i++)
+				CUTOFF_ENABLE(i, true);
+		}
 		else
-			CUTOFF_OFF();
+		{
+			for (int i = 0; i < N_CUTOFF; i++)
+				CUTOFF_ENABLE(i, false);
+		}
 	}
 }
 
@@ -335,14 +379,17 @@ static bool cutoff_procedure(long code)
 			radio_printf("---CUTOFF ACTIVATED---\n");
 			for (int i = 0; i < 3; i++)
 			{
-				radio_printf("CUTOFF pulse %d\n", i+1);
-				CUTOFF_ON();
-				timer_delay(10000);
-				CUTOFF_ON();
-				radio_printf("CUTOFF pulse done\n");
-				timer_delay(5000);
+				for (int c = 0; c < N_CUTOFF; c++)
+				{
+					radio_printf("CUTOFF%d pulse %d\n", c+1, i+1);
+					CUTOFF_ENABLE(c, true);
+					timer_delay(10000);
+					CUTOFF_ENABLE(c, false);
+					radio_printf("CUTOFF%d pulse done\n", c+1);
+					timer_delay(5000);
+				}
 			}
-			radio_printf("Cutoff procedure finished.\n");
+			radio_printf("Cutoff completed.\n");
 		#else
 			LOG_INFO("---CUTOFF ACTIVATED---\n");
 		#endif
@@ -366,6 +413,9 @@ static void cutoff_cut(void)
 		}
 }
 
+#define PAUSE_TIME (5*60*1000)
+static ticks_t cutoff_pause_time = 0;
+
 bool cutoff_check(ticks_t now, int32_t curr_alt, udegree_t lat, udegree_t lon)
 {
 	bool cutoff =(!cutoff_checkTime(now) ||
@@ -373,8 +423,30 @@ bool cutoff_check(ticks_t now, int32_t curr_alt, udegree_t lat, udegree_t lon)
 		!cutoff_checkAltitude(curr_alt, now) ||
 		!cutoff_checkMaxalt(curr_alt, now));
 
+	static bool logged = false;
 	if (cutoff)
-		cutoff_cut();
+	{
+		if (cutoff_pause_time && timer_clock() - cutoff_pause_time < ms_to_ticks(PAUSE_TIME))
+		{
+			if (!logged)
+			{
+				radio_printf("CUTOFF pending!\n");
+				logged = true;
+			}
+		}
+		else
+		{
+			cutoff_pause_time = 0;
+			logged = false;
+			cutoff_cut();
+		}
+	}
+	else
+	{
+		if (logged)
+			radio_printf("Pending CUTOFF cancelled\n");
+		logged = false;
+	}
 
 	return cutoff;
 }
@@ -400,14 +472,55 @@ void cutoff_reset(void)
 	alt_reset();
 	dist_ok = true;
 	maxalt_ok = true;
+	cutoff_pause_time = 0;
 
 	cut = false;
 }
 
+/*
+ * Reset the cutoff state machine:
+ *  - Burst detector data
+ *  - Burst detector timeout
+ *  - Max distance timeout
+ *  - Max altitude timeout
+ *  - Cutoff is resumed if paused
+ * NOTE: mission timeout is NOT reset! (use mission_start to reset all)
+ */
 static bool cmd_cutoff_reset(long l)
 {
 	(void)l;
 	cutoff_reset();
+	return true;
+}
+
+/*
+ * Pause the cutoff for PAUSE_TIME.
+ *
+ * Useful if you have to take critical decisions and the cutoff is about to
+ * activate.
+ * The cutoff state machine will be still active, but no wire is cut for the following
+ * PAUSE_TIME milliseconds after this command is issued.
+ * After this time, if a cutoff condition is still present, the cutoff procedure
+ * will be executed.
+ *
+ * NOTE: you can call cutoff_pause repeatedly, each time the timeout is reset or
+ *  you can call cutoff_resume to cancel the pause in advance.
+ */
+static bool cmd_cutoff_pause(long l)
+{
+	(void)l;
+	cutoff_pause_time = timer_clock();
+	return true;
+}
+
+/*
+ * Call cutoff_resume to cancel a pause in advance.
+ * If there is no pause this function will have no effect.
+ */
+static bool cmd_cutoff_resume(long l)
+{
+	(void)l;
+	cutoff_pause_time = 0;
 	return true;
 }
 
@@ -418,10 +531,13 @@ void cutoff_init(void)
 	config_load(&cutoff);
 	uplink_registerCmd("cutoff", cutoff_procedure);
 	uplink_registerCmd("cutoff_reset", cmd_cutoff_reset);
+	uplink_registerCmd("cutoff_pause", cmd_cutoff_pause);
+	uplink_registerCmd("cutoff_resume", cmd_cutoff_resume);
 
 	#if !(ARCH & ARCH_UNITTEST)
 		//start process
 		LOG_INFO("Starting cutoff process\n");
-		proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 5, NULL);
+		Process *p = proc_new(cutoff_process, NULL, KERN_MINSTACKSIZE * 6, NULL);
+		ASSERT(p);
 	#endif
 }

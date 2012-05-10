@@ -98,6 +98,7 @@ static void init(void)
 	cutoff_init();
 	landing_buz_init();
 	radio_init();
+	radio_printf("BSM-2, ver %s starting...\n", vers_tag);
 	config_register(&system_cfg);
 	config_load(&system_cfg);
 	kfile_close(&conf.fd);
@@ -109,6 +110,8 @@ static void init(void)
 	#if !HADARP_ENABLED
 		custom_init();
 	#endif
+	/* Enable powerswitch for aux devices */
+	aux_out(true);
 }
 
 int main(void)

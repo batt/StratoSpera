@@ -29,7 +29,7 @@ for l in log:
 		dlon = int(lon)
 		mlon = (lon - dlon) * 60
 		ew = 'E' if lon > 0 else 'W'
-		msg =  "/%sh%02d%02.2f%c/%03d%02.2f%c>" % (h+m+s, dlat, mlat, ns, dlon, mlon, ew)
+		msg =  "/%sh%02d%05.2f%c/%03d%05.2f%c>" % (h+m+s, dlat, mlat, ns, dlon, mlon, ew)
 		msg = msg + alt + ';' + t_ext + ';' + press + ';0;' + t_int + ';' + vsupply + ';0;0'
 		send_server(msg, h+m+s)
 		time.sleep(real_delay)

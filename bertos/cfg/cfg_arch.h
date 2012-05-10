@@ -49,4 +49,8 @@
 #define ARCH_UNITTEST  (1<<4) ///< UNITTEST architecture
 #define ARCH_NIGHTTEST (1<<5) ///< NIGHTTEST architecture
 
+#define ARCH_BSM2      (1<<6)
+#define ARCH_BSM2_BOOT (1<<7)
+
+
 #endif /* CFG_ARCH_CONFIG_H */

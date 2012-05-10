@@ -36,10 +36,10 @@
  */
 
 #include "landing_buz.h"
+#include "radio.h"
 
 #include "status_mgr.h"
 #include "hw/hw_pin.h"
-
 
 #include <cfg/compiler.h>
 #include <cfg/module.h>
@@ -69,7 +69,7 @@ void landing_buz_start(void)
 {
 	if (!beep)
 	{
-		LOG_INFO("Starting the landing beeper\n");
+		radio_printf("Beeper started\n");
 		BUZ_START();
 		beep = true;
 	}
@@ -96,7 +96,7 @@ bool landing_buz_check(ticks_t now)
 	{
 		if (!logging)
 		{
-			LOG_INFO("Buzzer timeout expired\n");
+			radio_printf("Beeper timeout expired\n");
 			logging = true;
 		}
 
@@ -136,6 +136,7 @@ void landing_buz_init(void)
 	#if !(ARCH & ARCH_UNITTEST)
 		MOD_CHECK(buzzer);
 		LOG_INFO("Starting landing buzzer control process:\n");
-		proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
+		Process *p = proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
+		ASSERT(p);
 	#endif
 }

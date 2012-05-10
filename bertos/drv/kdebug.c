@@ -47,6 +47,15 @@
 #include <mware/formatwr.h> /* for _formatted_write() */
 #include <cpu/pgm.h>
 
+#include <cpu/irq.h>
+
+#include <cfg/log.h>
+#include <cfg/cfg_arch.h>
+
+#if (ARCH & ARCH_BSM2)
+	#include "logging.h"
+#endif
+
 #ifdef _DEBUG
 
 #if CPU_HARVARD && !defined(_PROGMEM)
@@ -194,6 +203,20 @@ int PGM_FUNC(__bassert)(const char * PGM_ATTR cond, const char * PGM_ATTR file, 
 	PGM_FUNC(kputs)(PGM_STR("Assertion failed: "));
 	PGM_FUNC(kputs)(cond);
 	kputchar('\n');
+
+	#if !(ARCH & ARCH_UNITTEST) && (ARCH & ARCH_BSM2)
+		static bool assert_fired = false;
+		if (!IRQ_RUNNING() && logging_running() && !assert_fired)
+		{
+			/* Avoid recursion */
+			assert_fired = true;
+			/* Log on SD */
+			LOG_ERR("%s:%d: Assertion failed: %s\n", file, line, cond);
+		}
+		/* Reset the board */
+		RSTC_CR = RSTC_KEY | BV(RSTC_EXTRST) | BV(RSTC_PERRST) | BV(RSTC_PROCRST);
+	#endif
+
 	BREAKPOINT;
 	return 1;
 }
