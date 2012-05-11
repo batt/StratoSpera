@@ -46,6 +46,7 @@
 #include <cfg/module.h>
 
 #include <cpu/irq.h>
+#include <cpu/types.h>
 
 void spi_assertSS(void)
 {
