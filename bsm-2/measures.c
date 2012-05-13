@@ -183,7 +183,6 @@ static void NORETURN acc_process(void)
 static void measures_reload(void);
 
 DECLARE_CONF(measures, measures_reload,
-	CONF_BOOL(curr_check, true),
 	CONF_INT(curr_limit, 10, 5000, 500) //mA
 );
 
@@ -193,23 +192,15 @@ static void NORETURN curr_process(void)
 {
 	while (1)
 	{
-		if (!curr_override)
+		if (!curr_override && sensor_read(ADC_CURR) > curr_limit)
 		{
-			if (curr_check)
+			aux_out(false);
+			if (!curr_logged)
 			{
-				if (sensor_read(ADC_CURR) > curr_limit)
-				{
-					aux_out(false);
-					if (!curr_logged)
-					{
-						radio_printf("Current overrange!\n");
-						radio_printf("Switching OFF aux power\n");
-						curr_logged = true;
-					}
-				}
+				radio_printf("Current overrange!\n");
+				radio_printf("Switching OFF aux power\n");
+				curr_logged = true;
 			}
-			else
-				aux_out(true);
 		}
 
 		timer_delay(1000);
@@ -237,7 +228,6 @@ static bool cmd_curr_reset(long l)
 static void measures_reload(void)
 {
 	LOG_INFO("Setting measures configuration\n");
-	LOG_INFO(" current check: %s\n", curr_check ? "ON" : "OFF");
 	LOG_INFO(" current limit: %d mA\n", curr_limit);
 	cmd_curr_reset(0);
 }
