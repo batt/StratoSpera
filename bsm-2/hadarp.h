@@ -39,5 +39,6 @@
 
 int hadarp_read(void);
 void hadarp_init(unsigned port, unsigned long baudrate);
+void hadarp_wakePolifemo(void);
 
 #endif

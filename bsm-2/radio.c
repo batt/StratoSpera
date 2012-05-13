@@ -5,6 +5,7 @@
 #include "gps.h"
 #include "testmode.h"
 #include "uplink.h"
+#include "hadarp.h"
 
 #include <cpu/byteorder.h>
 #include <kern/proc.h>
@@ -137,8 +138,18 @@ static AX25Call ax25_path[2]=
 static Semaphore radio_sem;
 static char radio_msg[128];
 
+#define RADIO_PAUSE_TIME (5 * 60 * 1000) //5min
+static ticks_t radio_pause_time = 0;
+
 static void radio_send(char *buf, size_t len)
 {
+	if (radio_pause_time && timer_clock() - radio_pause_time < ms_to_ticks(RADIO_PAUSE_TIME))
+	{
+		LOG_INFO("Radio pause: message discarded\n");
+		return;
+	}
+
+	radio_pause_time = 0;
 	ax25_sendVia(&ax25, ax25_path, countof(ax25_path), buf, len);
 }
 
@@ -262,6 +273,35 @@ static bool radio_ping(long l)
 	return true;
 }
 
+/*
+ * Pause the radio for RADIO_PAUSE_TIME.
+ *
+ * Useful if you want to test different radio devices on board and
+ * you need the main one to be disabled.
+ * For RADIO_PAUSE_TIME milliseconds all radio messages will be discarded.
+ *
+ * NOTE: you can call radio_pause repeatedly, each time the timeout is reset or
+ *  you can call radio_resume to cancel the pause in advance.
+ */
+static bool cmd_radio_pause(long l)
+{
+	(void)l;
+	radio_pause_time = timer_clock();
+	hadarp_wakePolifemo();
+	return true;
+}
+
+/*
+ * Call radio_resume to cancel a pause in advance.
+ * If there is no pause this function will have no effect.
+ */
+static bool cmd_radio_resume(long l)
+{
+	(void)l;
+	radio_pause_time = 0;
+	return true;
+}
+
 void radio_init(void)
 {
 	sem_init(&radio_sem);
@@ -276,6 +316,8 @@ void radio_init(void)
 	ax25_init(&ax25, &afsk.fd, ax25_log);
 	radio_initialized = true;
 	uplink_registerCmd("ping", radio_ping);
+	uplink_registerCmd("radio_pause", cmd_radio_pause);
+	uplink_registerCmd("radio_resume", cmd_radio_resume);
 
 	Process *p = proc_new(radio_process, NULL, KERN_MINSTACKSIZE * 6, NULL);
 	ASSERT(p);

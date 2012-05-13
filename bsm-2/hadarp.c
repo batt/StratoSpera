@@ -36,10 +36,10 @@
  */
 
 #include "hadarp.h"
-#include "gps.h"
 
 #include <drv/ser.h>
 #include <kern/proc.h>
+#include <kern/signal.h>
 
 #define LOG_LEVEL LOG_LVL_WARN
 #include <cfg/log.h>
@@ -49,6 +49,14 @@
 
 static Serial ser;
 static int hadarp_cnt;
+static Process *hadarp_proc;
+
+#define SIG_POLIFEMO SIG_USER3
+
+void hadarp_wakePolifemo(void)
+{
+	sig_send(hadarp_proc, SIG_POLIFEMO);
+}
 
 static void NORETURN hadarp_process(void)
 {
@@ -56,13 +64,8 @@ static void NORETURN hadarp_process(void)
 
 	while (1)
 	{
-		struct tm *t;
-		time_t tim;
-
-		/* Send time to Polifemo */
-		tim = gps_time();
-		t = gmtime(&tim);
-		kfile_printf(&ser.fd, "%02d%02d%02d", t->tm_hour, t->tm_min, t->tm_sec);
+		if (sig_check(SIG_POLIFEMO))
+			kfile_putc('@', &ser.fd);
 
 		if (kfile_gets(&ser.fd, buf, sizeof(buf)) == EOF)
 		{
@@ -95,6 +98,6 @@ void hadarp_init(unsigned port, unsigned long baudrate)
 	ser_setbaudrate(&ser, baudrate);
 	hadarp_cnt = -1;
 
-	Process *p = proc_new(hadarp_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
-	ASSERT(p);
+	hadarp_proc = proc_new(hadarp_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	ASSERT(hadarp_proc);
 }
