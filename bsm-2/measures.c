@@ -207,6 +207,18 @@ static void NORETURN curr_process(void)
 	}
 }
 
+
+/*
+ * Override current protection.
+ *
+ * With this command you can manually switch on and off the power supply
+ * to the aux devices. If the argument is 0, the power will be switched OFF,
+ * while if it's different from 0 the power will be switched ON.
+ * This command ovverride and disable the current protection state.
+ *
+ * To switch back to automatic protection state, you can call the curr_reset
+ * command.
+ */
 static bool cmd_curr_override(long cmd)
 {
 	curr_override = true;
@@ -214,6 +226,14 @@ static bool cmd_curr_override(long cmd)
 	return true;
 }
 
+/*
+ * Reset the current protection.
+ *
+ * If the protection is active, this command will reset it and will turn back
+ * on the power supply to the auxiliary devices.
+ * If the protection is currently manually overrided, this command resets the
+ * process to automatic protection check.
+ */
 static bool cmd_curr_reset(long l)
 {
 	(void)l;
