@@ -50,8 +50,8 @@
 #define APP_AUTHOR "Develer"
 #define APP_COPYRIGHT "Copyright 2009 Develer (http://www.develer.com/)"
 
-#define VERS_NAME  "draco"
-#define VERS_REV   0
+#define VERS_NAME  "cygnus"
+#define VERS_REV   3
 
 /**
  * If _SNAPSHOT is defined, \c VERS_TAG contains the build date
