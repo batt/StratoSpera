@@ -60,7 +60,6 @@ static void init(void)
 {
 	IRQ_ENABLE;
 	led_init();
-	aux_init();
 	kdbg_init();
 	kprintf("BSM-2, ver %s\n", vers_tag);
 	timer_init();
@@ -110,8 +109,6 @@ static void init(void)
 	#if !HADARP_ENABLED
 		custom_init();
 	#endif
-	/* Enable powerswitch for aux devices */
-	aux_out(true);
 }
 
 int main(void)

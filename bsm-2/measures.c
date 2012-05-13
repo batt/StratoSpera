@@ -3,13 +3,22 @@
 #include "sensors.h"
 #include "hadarp.h"
 #include "radio.h"
-#include "logging.h"
+#include "uplink.h"
+
+#include "hw/hw_aux.h"
 
 #include <kern/sem.h>
 
 #include <drv/i2c.h>
 #include <drv/lm75.h>
 #include <drv/mma845x.h>
+
+#include <mware/config.h>
+
+#define LOG_LEVEL     LOG_LVL_INFO
+#define LOG_VERBOSITY LOG_FMT_VERBOSE
+#include <cfg/log.h>
+#include "logging.h"
 
 #include <time.h>
 #include <stdlib.h>
@@ -171,12 +180,88 @@ static void NORETURN acc_process(void)
 	}
 }
 
+static void measures_reload(void);
+
+DECLARE_CONF(measures, measures_reload,
+	CONF_BOOL(curr_check, true),
+	CONF_INT(curr_limit, 10, 5000, 500) //mA
+);
+
+static bool curr_logged;
+static bool curr_override;
+static void NORETURN curr_process(void)
+{
+	while (1)
+	{
+		if (!curr_override)
+		{
+			if (curr_check)
+			{
+				if (sensor_read(ADC_CURR) > curr_limit)
+				{
+					aux_out(false);
+					if (!curr_logged)
+					{
+						radio_printf("Current overrange!\n");
+						radio_printf("Switching OFF aux devices\n");
+						curr_logged = true;
+					}
+				}
+			}
+			else
+				aux_out(true);
+		}
+
+		timer_delay(1000);
+	}
+}
+
+static bool cmd_curr_override(long cmd)
+{
+	curr_override = true;
+	aux_out(cmd);
+	return true;
+}
+
+static bool cmd_curr_resume(long l)
+{
+	(void)l;
+	curr_override = false;
+	curr_logged = false;
+	return true;
+}
+
+static void measures_reload(void)
+{
+	LOG_INFO("Setting measures configuration\n");
+	LOG_INFO(" current check: %s\n", curr_check ? "ON" : "OFF");
+	LOG_INFO(" current limit: %d mA\n", curr_limit);
+	curr_logged = false;
+
+	/* Enable powerswitch for aux devices */
+	aux_out(true);
+}
+
+
 void measures_init(void)
 {
 	sem_init(&i2c_sem);
 	i2c_init(&i2c_bus, I2C_BITBANG0, CONFIG_I2C_FREQ);
 	bool ret = mma845x_init(&i2c_bus, 0, MMADYN_4G);
 	ASSERT(ret);
+
 	Process *p = proc_new(acc_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 	ASSERT(p);
+
+	aux_init();
+
+	config_register(&measures);
+	config_load(&measures);
+
+	/* Start current check process */
+	p = proc_new(curr_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	ASSERT(p);
+
+	uplink_registerCmd("curr_override", cmd_curr_override);
+	uplink_registerCmd("curr_resume", cmd_curr_resume);
 }
