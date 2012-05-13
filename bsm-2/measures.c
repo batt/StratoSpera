@@ -223,11 +223,14 @@ static bool cmd_curr_override(long cmd)
 	return true;
 }
 
-static bool cmd_curr_resume(long l)
+static bool cmd_curr_reset(long l)
 {
 	(void)l;
+	LOG_INFO("Resetting current protection\n");
 	curr_override = false;
 	curr_logged = false;
+	/* (Re)enable powerswitch for aux devices */
+	aux_out(true);
 	return true;
 }
 
@@ -236,10 +239,7 @@ static void measures_reload(void)
 	LOG_INFO("Setting measures configuration\n");
 	LOG_INFO(" current check: %s\n", curr_check ? "ON" : "OFF");
 	LOG_INFO(" current limit: %d mA\n", curr_limit);
-	curr_logged = false;
-
-	/* Enable powerswitch for aux devices */
-	aux_out(true);
+	cmd_curr_reset(0);
 }
 
 
@@ -263,5 +263,5 @@ void measures_init(void)
 	ASSERT(p);
 
 	uplink_registerCmd("curr_override", cmd_curr_override);
-	uplink_registerCmd("curr_resume", cmd_curr_resume);
+	uplink_registerCmd("curr_reset", cmd_curr_reset);
 }
