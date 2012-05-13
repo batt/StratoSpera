@@ -203,7 +203,7 @@ static void NORETURN curr_process(void)
 					if (!curr_logged)
 					{
 						radio_printf("Current overrange!\n");
-						radio_printf("Switching OFF aux devices\n");
+						radio_printf("Switching OFF aux power\n");
 						curr_logged = true;
 					}
 				}
