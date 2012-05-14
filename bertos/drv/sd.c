@@ -69,7 +69,7 @@ typedef struct CardCSD
 #define TIMEOUT_NAC   16384
 #define SD_DEFAULT_BLOCKLEN 512
 
-#define SD_BUSY_TIMEOUT ms_to_ticks(200)
+#define SD_BUSY_TIMEOUT ms_to_ticks(500)
 
 static bool sd_select(Sd *sd, bool state)
 {
