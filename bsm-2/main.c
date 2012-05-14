@@ -81,7 +81,6 @@ static void init(void)
 	spi_dma_init(&spi_dma);
 	spi_dma_setclock(20000000L);
 	kbd_init();
-	measures_init();
 
 	ASSERT(sd_init(&sd, &spi_dma.fd, false));
 	ASSERT(f_mount(0, &fs) == FR_OK);
@@ -93,6 +92,7 @@ static void init(void)
 	uplink_init();
 	sensor_init();
 	LOG_INFO("Sensor calibration loaded\n");
+	measures_init();
 	status_init();
 	cutoff_init();
 	landing_buz_init();
