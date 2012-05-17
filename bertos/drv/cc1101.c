@@ -61,28 +61,46 @@
 	} while(0)
 
 
-uint8_t cc1101_read(uint8_t addr)
+uint8_t cc1101_read(uint8_t addr, uint8_t *buf, size_t len)
 {
-
 	SS_ACTIVE();
 	WAIT_SO_LOW();
 
-    uint8_t x = spi_sendRecv(addr);
+	uint8_t status = 0xFF;
+
+	if (len == 1)
+	{
+		buf[0] = spi_sendRecv(addr);
+	}
+	else
+	{
+		status = spi_sendRecv(addr | 0xc0);
+		spi_read(buf, len);
+	}
 
 	SS_INACTIVE();
-    return x;
+    return status;
 }
 
-uint8_t cc1101_write(uint8_t addr, uint8_t data)
+uint8_t cc1101_write(uint8_t addr, const uint8_t *buf, size_t len)
 {
 	SS_ACTIVE();
 	WAIT_SO_LOW();
 
-    spi_sendRecv(addr);
-    uint8_t x = spi_sendRecv(data);
+	uint8_t status = 0xFF;
+	if (len == 1)
+	{
+		spi_sendRecv(addr);
+		status = spi_sendRecv(buf[0]);
+	}
+	else
+	{
+		status = spi_sendRecv(addr | 0x40);
+		spi_write(buf, len);
+	}
 
 	SS_INACTIVE();
-    return x;
+    return status;
 }
 
 uint8_t cc1101_strobe(uint8_t addr)
@@ -94,28 +112,6 @@ uint8_t cc1101_strobe(uint8_t addr)
 
 	SS_INACTIVE();
     return x;
-}
-
-void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len)
-{
-	SS_ACTIVE();
-	WAIT_SO_LOW();
-
-    spi_sendRecv(addr | 0xc0);
-	spi_read(buf, len);
-
-	SS_INACTIVE();
-}
-
-void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len)
-{
-	SS_ACTIVE();
-	WAIT_SO_LOW();
-
-    spi_sendRecv(addr | 0x40);
-	spi_write(buf, len);
-
-	SS_INACTIVE();
 }
 
 void cc1101_powerOnReset(void)
@@ -141,10 +137,12 @@ void cc1101_powerOnReset(void)
 	SS_INACTIVE();
 }
 
-void cc1101_init(const Setting* settings)
+void cc1101_init(const Setting  *settings)
 {
 	cc1101_powerOnReset();
-
+	
 	for (int i = 0; settings[i].addr != 0xFF && settings[i].data != 0xFF; i++)
-		cc1101_write(settings[i].addr, settings[i].data);
+	{
+		cc1101_write(settings[i].addr, &settings[i].data, sizeof(uint8_t));
+	}
 }

@@ -143,13 +143,23 @@ typedef struct Setting
 {
 	uint8_t addr;
 	uint8_t data;
-}Setting;
+} Setting;
 
-uint8_t cc1101_read(uint8_t addr);
-uint8_t cc1101_write(uint8_t addr, uint8_t data);
+
+INLINE int16_t cc1101_rssidBm(uint8_t raw_rssi, uint16_t offset_rssi)
+{
+	int16_t rssi_dBm;
+	if (raw_rssi >= 128)
+		rssi_dBm = (int16_t)((int16_t)( raw_rssi - 256) / 2) - offset_rssi;
+	else
+		rssi_dBm = (raw_rssi / 2) - offset_rssi;
+
+	return rssi_dBm;
+}
+
 uint8_t cc1101_strobe(uint8_t addr);
-void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len);
-void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len);
+uint8_t cc1101_read(uint8_t addr, uint8_t *buf, size_t len);
+uint8_t cc1101_write(uint8_t addr, const uint8_t *buf, size_t len);
 void cc1101_powerOnReset(void);
 void cc1101_init(const Setting* settings);
 
