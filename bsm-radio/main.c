@@ -76,10 +76,8 @@ static void init(void)
 
 	timer_delay(1);
 
-	cc1101_powerOnReset();
-	//kputs("cc1101 Reset!\n");
-	cc1101_setup(ping_low_baud_868);
-//	kputs("cc1101 started!\n");
+	cc1101_init(ping_low_baud_868);
+	kputs("cc1101 started!\n");
 }
 uint8_t tmp[64];
 int main(void)
@@ -89,14 +87,13 @@ int main(void)
 	while (1)
 	{
 
-		#if 1
+		#if 0
 		status = cc1101_strobe(CC1101_SNOP);
 		kprintf("N %d %d %d\n", UNPACK_STATUS(status));
 
-		status = cc1101_write(CC1101_TXFIFO, 'c');
-		status = cc1101_write(CC1101_TXFIFO, 'a');
-		status = cc1101_write(CC1101_TXFIFO, 'f');
-		status = cc1101_write(CC1101_TXFIFO, 'e');
+		uint8_t a[]= {4, 'c','a','f','e'};
+		cc1101_write(CC1101_TXFIFO, a, 5);
+
 		kprintf("T %d %d %d\n", UNPACK_STATUS(status));
 
 		status = cc1101_strobe(CC1101_STX);
@@ -117,44 +114,22 @@ int main(void)
 		while (!stm32_gpioPinRead(GPIO_BASE, BV(11)))
 			cpu_relax();
 
-		uint8_t len = cc1101_read(CC1101_RXBYTES) & 0x7F;
+		uint8_t rx_data[2];
+
+		cc1101_read(CC1101_RXFIFO, rx_data, 2);
+		uint8_t len = rx_data[1];
 		kprintf("len[%d] in rx_fifo\n", len);
 
-		cc1101_readBurst(CC1101_RXFIFO, tmp, len);
+		int16_t rssi_dBm = cc1101_rssidBm(rx_data[0], 74);
+		kprintf("RSSI[%d] dBm\n",rssi_dBm);
 
-		kputs("[ ");
-		for (int i = 0; i < len; i++)
-			kprintf("%x ", tmp[i]);
-		kputs(" ]\n");
+		cc1101_read(CC1101_RXFIFO, tmp, len);
+
 		kputs("[ ");
 		for (int i = 0; i < len; i++)
 			kprintf("%c ", tmp[i]);
 		kputs(" ]\n");
 
-		uint8_t rssi_dec = cc1101_read(CC1101_RSSI);
-		int16_t rssi_dBm;
-		uint8_t rssi_offset = 74; // CC1101 at 868/900 MHz
-
-		if (rssi_dec >= 128)
-			rssi_dBm = (int16_t)((int16_t)( rssi_dec - 256) / 2) - rssi_offset;
-		else
-			rssi_dBm = (rssi_dec / 2) - rssi_offset;
-
-		kprintf("RSSI[%d]dBm\n",rssi_dBm);
-
-		/*
-		while (1)
-		{
-			if (stm32_gpioPinRead(GPIO_BASE, BV(11)))
-			{
-				while (stm32_gpioPinRead(GPIO_BASE, BV(11)))
-					cpu_relax();
-
-				break;
-			}
-			cpu_relax();
-		}
-		*/
 		#endif
 		timer_delay(500);
 
