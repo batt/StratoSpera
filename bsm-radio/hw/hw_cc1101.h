@@ -26,21 +26,44 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2006 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 2012 Develer S.r.l. (http://www.develer.com/)
  * All Rights Reserved.
  * -->
  *
- * \brief AFSK modem hardware-specific definitions.
+ * \brief CC1101 transceiver
  *
- * \author Francesco Sacchi <batt@develer.com>
+ * \author Daniele Basile <asterix@develer.com>
  */
 
 #ifndef HW_CC1101_H
 #define HW_CC1101_H
 
+#include <cfg/macros.h>
+
+#include <io/stm32.h>
+#include <cpu/types.h>
+#include <cpu/power.h>
+
+#include <drv/gpio_stm32.h>
 #include <drv/cc1101.h>
 
-extern const Setting ping_low_baud[];
+#define GPIO_BASE       ((struct stm32_gpio *)GPIOA_BASE)
+
 extern const Setting ping_low_baud_868[];
+
+#define WAIT_FIFO_AVAIL() \
+do { \
+	while (!stm32_gpioPinRead(GPIO_BASE, BV(11))) \
+				cpu_relax(); \
+} while (0)
+
+int radio_send(const uint8_t *buf, size_t len);
+int radio_recv(uint8_t *buf, size_t len);
+
+
+#define CC1101_HW_INIT() \
+do { \
+	stm32_gpioPinConfig(GPIO_BASE, BV(11), GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ); \
+} while (0)
 
 #endif /* HW_CC1101_H */

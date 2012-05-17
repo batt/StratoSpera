@@ -35,9 +35,22 @@
  * \author Daniele Basile <asterix@develer.com>
  */
 
+#include "hw_cc1101.h"
+
+#include "cfg/cfg_cc1101.h"
+
+// Define log settings for cfg/log.h.
+#define LOG_LEVEL         CC1101_LOG_LEVEL
+#define LOG_FORMAT        CC1101_LOG_FORMAT
+#include <cfg/log.h>
+#include <cfg/debug.h>
+
 #include <drv/cc1101.h>
 
-Setting ping_low_baud_868[] = {
+#include <string.h>
+
+const Setting ping_low_baud_868[] =
+{
   {CC1101_IOCFG0,      0x06 /* GDO0 Output Pin Configuration */},
   {CC1101_FIFOTHR,     0x47 /* RX FIFO and TX FIFO Thresholds */},
   {CC1101_PKTLEN,      0x04 /* Packet Length */},
@@ -63,3 +76,55 @@ Setting ping_low_baud_868[] = {
   {CC1101_TEST0,       0x09 /* Various Test Settings */},
   { 0xff, 0xff },
 };
+
+uint8_t tmp_buf[256];
+
+int radio_send(const uint8_t *buf, size_t len)
+{
+	uint8_t status;
+	//Flush the data in the fifo
+	status = cc1101_strobe(CC1101_SFRX);
+	LOG_INFO("FlushTx: Rdy[%d] St[%d] TxAvail[%d]\n", UNPACK_STATUS(status));
+
+	memset(tmp_buf, 0, sizeof(tmp_buf));
+
+	size_t tx_len = MIN(sizeof(tmp_buf) - 1, len + 1);
+
+	/*
+	 * In current configuration the first byte in the fifo is the
+	 * packet len.
+	 */
+	tmp_buf[0] = tx_len - 1;
+	memcpy(&tmp_buf[1], buf, tx_len);
+
+	cc1101_write(CC1101_TXFIFO, tmp_buf, tx_len);
+
+	status = cc1101_strobe(CC1101_STX);
+	LOG_INFO("TxData: Rdy[%d] St[%d] TxAvail[%d] TxLen[%d]\n", UNPACK_STATUS(status), tx_len);
+
+	return tx_len;
+}
+
+int radio_recv(uint8_t *buf, size_t len)
+{
+
+	uint8_t status = cc1101_strobe(CC1101_SFRX);
+	LOG_INFO("FlushRx: Rdy[%d] St[%d] TxAvail[%d]\n", UNPACK_STATUS(status));
+
+	status = cc1101_strobe(CC1101_SRX);
+	LOG_INFO("RxData: Rdy[%d] St[%d] TxAvail[%d]\n", UNPACK_STATUS(status));
+
+	uint8_t rx_data[2];
+	// Waiting data from air..
+	WAIT_FIFO_AVAIL();
+
+	cc1101_read(CC1101_RXFIFO, rx_data, 2);
+
+	size_t rx_len = MIN((size_t)rx_data[1], len);
+	LOG_INFO("RxData: Rdy[%d] St[%d] TxAvail[%d] RxLen[%d]\n", UNPACK_STATUS(status), rx_len);
+	LOG_INFO("RSSI[%d] dBm\n", cc1101_rssidBm(rx_data[0], 74));
+
+	cc1101_read(CC1101_RXFIFO, buf, rx_len);
+
+	return rx_len;
+}

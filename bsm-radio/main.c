@@ -47,32 +47,12 @@
 #include <drv/timer.h>
 #include <drv/spi_bitbang.h>
 
-
-#define CC1101_REG_MARCSTATE    0x35
-
-#define CC1101_READ_BIT     0x1
-#define CC1101_WRITE_BIT    0x0
-#define CC1101_BURTS_BIT    0x2
-
-#define STATUS_RDY(status)               (((status) & 0x80) >> 7)
-#define STATUS_STATE(status)             (((status) & 0x70) >> 4)
-#define STATUS_FIFO_AVAIL(status)        ((status) & 0xF)
-
-#define UNPACK_STATUS(status) \
-	STATUS_RDY(status), \
-	STATUS_STATE(status), \
-	STATUS_FIFO_AVAIL(status)
-
-
-
 static void init(void)
 {
 	IRQ_ENABLE;
 	kdbg_init();
 	timer_init();
 	spi_init();
-
-	stm32_gpioPinConfig(GPIO_BASE, BV(11), GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ);
 
 	timer_delay(1);
 
@@ -83,56 +63,25 @@ uint8_t tmp[64];
 int main(void)
 {
 	init();
-	uint8_t status = 0;
+	
 	while (1)
 	{
 
 		#if 0
-		status = cc1101_strobe(CC1101_SNOP);
-		kprintf("N %d %d %d\n", UNPACK_STATUS(status));
+		
+		uint8_t a[]= {'c','a','f','e'};
+		radio_send(a, 4);
 
-		uint8_t a[]= {4, 'c','a','f','e'};
-		cc1101_write(CC1101_TXFIFO, a, 5);
-
-		kprintf("T %d %d %d\n", UNPACK_STATUS(status));
-
-		status = cc1101_strobe(CC1101_STX);
-		kprintf("T %d %d %d\n", UNPACK_STATUS(status));
-
-		status = cc1101_strobe(CC1101_SNOP);
-		kprintf("N %d %d %d\n", UNPACK_STATUS(status));
 		#else
-
-		status = cc1101_strobe(CC1101_SNOP);
-		kprintf("N %d %d %d\n", UNPACK_STATUS(status));
-
-		status = cc1101_strobe(CC1101_SFRX);
-		kprintf("F %d %d %d\n", UNPACK_STATUS(status));
-
-		status = cc1101_strobe(CC1101_SRX);
-		kprintf("R %d %d %d\n", UNPACK_STATUS(status));
-		while (!stm32_gpioPinRead(GPIO_BASE, BV(11)))
-			cpu_relax();
-
-		uint8_t rx_data[2];
-
-		cc1101_read(CC1101_RXFIFO, rx_data, 2);
-		uint8_t len = rx_data[1];
-		kprintf("len[%d] in rx_fifo\n", len);
-
-		int16_t rssi_dBm = cc1101_rssidBm(rx_data[0], 74);
-		kprintf("RSSI[%d] dBm\n",rssi_dBm);
-
-		cc1101_read(CC1101_RXFIFO, tmp, len);
+		radio_recv(tmp, 4);
 
 		kputs("[ ");
-		for (int i = 0; i < len; i++)
+		for (int i = 0; i < 4; i++)
 			kprintf("%c ", tmp[i]);
 		kputs(" ]\n");
 
 		#endif
-		timer_delay(500);
-
+		timer_delay(1000);
 	}
 
 	return 0;
