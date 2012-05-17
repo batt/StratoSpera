@@ -74,8 +74,17 @@ static void NORETURN hadarp_process(void)
 			continue;
 		}
 
-		int hadarp_raw = atoi(buf);
-		if (hadarp_raw > 10000 || hadarp_raw < 0)
+		if (buf[0] == '\0')
+		{
+			/* Discard empty strings */
+			continue;
+		}
+
+
+		char *endptr = buf;
+		int hadarp_raw = strtol(buf, &endptr, 10);
+
+		if (*endptr != '\0' || hadarp_raw > 10000 || hadarp_raw < 0)
 			hadarp_cnt = -1;
 		else
 		{
