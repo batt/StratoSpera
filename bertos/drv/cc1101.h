@@ -126,8 +126,6 @@
 #define CC1101_PATABLE      0x3E
 #define CC1101_TXFIFO       0x3F
 #define CC1101_RXFIFO       0x3F
-#define CC1101_TXFIFO       0x3F
-#define CC1101_RXFIFO       0x3F
 
 #define CC1101_STATUS_IDLE             0
 #define CC1101_STATUS_RX               1
@@ -153,7 +151,7 @@ uint8_t cc1101_strobe(uint8_t addr);
 void cc1101_readBurst(uint8_t addr, uint8_t* buf, size_t len);
 void cc1101_writeBurst(uint8_t addr, uint8_t* buf, size_t len);
 void cc1101_powerOnReset(void);
-void cc1101_setup(const Setting* settings);
+void cc1101_init(const Setting* settings);
 
 
 #endif /* DRV_CC1101_H */

@@ -130,50 +130,21 @@ void cc1101_powerOnReset(void)
 	timer_udelay(1);
 	SS_INACTIVE();
 	timer_udelay(40);
-	SS_ACTIVE();
 
-	WAIT_SO_LOW();
+	cc1101_strobe(CC1101_SRES);
 
-    spi_sendRecv(CC1101_SRES);
 
-	SS_INACTIVE();
-	/*
 	timer_udelay(1);
 	SS_ACTIVE();
 	WAIT_SO_LOW();
 	timer_udelay(50);
 	SS_INACTIVE();
-	*/
 }
 
-void cc1101_setup(const Setting* settings)
+void cc1101_init(const Setting* settings)
 {
-	uint8_t x = 0;
-
-	do
-	{
-		SS_ACTIVE();
-		WAIT_SO_LOW();
-
-		x = spi_sendRecv(CC1101_SNOP);
-
-		SS_INACTIVE();
-
-//		kprintf("%d\n", STATUS_RDY(x));
-
-	} while (STATUS_RDY(x));
+	cc1101_powerOnReset();
 
 	for (int i = 0; settings[i].addr != 0xFF && settings[i].data != 0xFF; i++)
-	{
-
-		SS_ACTIVE();
-		WAIT_SO_LOW();
-
-	    x = spi_sendRecv(settings[i].addr);
-		x = spi_sendRecv(settings[i].data);
-
-		SS_INACTIVE();
-
-		//kprintf("setup %d %d %d\n", UNPACK_STATUS(x));
-	}
+		cc1101_write(settings[i].addr, settings[i].data);
 }
