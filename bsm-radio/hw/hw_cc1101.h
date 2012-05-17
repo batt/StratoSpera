@@ -57,6 +57,9 @@ do { \
 				cpu_relax(); \
 } while (0)
 
+// PA8 = 1 MASTER, 0 SLAVE
+#define IS_RADIO_MASTER() stm32_gpioPinRead(GPIO_BASE, BV(8))
+
 int radio_send(const uint8_t *buf, size_t len);
 int radio_recv(uint8_t *buf, size_t len);
 
@@ -64,6 +67,7 @@ int radio_recv(uint8_t *buf, size_t len);
 #define CC1101_HW_INIT() \
 do { \
 	stm32_gpioPinConfig(GPIO_BASE, BV(11), GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ); \
+	stm32_gpioPinConfig(GPIO_BASE, BV(8), GPIO_MODE_IPU, GPIO_SPEED_50MHZ); \
 } while (0)
 
 #endif /* HW_CC1101_H */

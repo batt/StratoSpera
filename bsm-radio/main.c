@@ -63,25 +63,27 @@ uint8_t tmp[64];
 int main(void)
 {
 	init();
-	
+
+	uint8_t ping = 0;
+
 	while (1)
 	{
-
-		#if 0
-		
-		uint8_t a[]= {'c','a','f','e'};
-		radio_send(a, 4);
-
-		#else
-		radio_recv(tmp, 4);
-
-		kputs("[ ");
-		for (int i = 0; i < 4; i++)
-			kprintf("%c ", tmp[i]);
-		kputs(" ]\n");
-
-		#endif
-		timer_delay(1000);
+		if (IS_RADIO_MASTER())
+		{
+			radio_send(&ping, sizeof(ping));
+			kprintf("Ping tx %d\n", ping);
+			radio_recv(&ping, sizeof(ping));
+			kprintf("Ping rx %d\n", ping);
+			timer_delay(1000);
+		}
+		else
+		{
+			radio_recv(&ping, sizeof(ping));
+			kprintf("Ping rx %d\n", ping);
+			ping++;
+			radio_send(&ping, sizeof(ping));
+			kprintf("Ping tx %d\n", ping);
+		}
 	}
 
 	return 0;
