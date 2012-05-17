@@ -37,6 +37,7 @@
 
 #include "cc1101.h"
 
+#include "hw/hw_cc1101.h"
 #include "hw/hw_spi.h"
 
 #include <cpu/types.h>
@@ -45,22 +46,22 @@
 #include <drv/timer.h>
 #include <drv/spi_bitbang.h>
 
-#define STATUS_RDY(status)               (((status) & 0x80) >> 7)
-#define STATUS_STATE(status)             (((status) & 0x70) >> 4)
-#define STATUS_FIFO_AVAIL(status)        ((status) & 0xF)
-
-#define UNPACK_STATUS(status) \
-	STATUS_RDY(status), \
-	STATUS_STATE(status), \
-	STATUS_FIFO_AVAIL(status)
-
 #define WAIT_SO_LOW()  \
 	do { \
+		ticks_t start = timer_clock(); \
 		while(IS_MISO_HIGH()) \
+		{ \
+			if (timer_clock() - start > ms_to_ticks(CC1101_TIMEOUT_ERR)) \
+				break; \
 			cpu_relax(); \
+		} \
 	} while(0)
 
-
+/**
+ * Read data from chip at given address.
+ * If we read that more one byte we use the burst mode (see datasheet for more
+ * details).
+ */
 uint8_t cc1101_read(uint8_t addr, uint8_t *buf, size_t len)
 {
 	SS_ACTIVE();
@@ -82,6 +83,11 @@ uint8_t cc1101_read(uint8_t addr, uint8_t *buf, size_t len)
     return status;
 }
 
+/**
+ * Write data to chip at given address.
+ * If we write that more one byte we use the burst mode (see datasheet for more
+ * details).
+ */
 uint8_t cc1101_write(uint8_t addr, const uint8_t *buf, size_t len)
 {
 	SS_ACTIVE();
@@ -103,17 +109,26 @@ uint8_t cc1101_write(uint8_t addr, const uint8_t *buf, size_t len)
     return status;
 }
 
+/**
+ * Send the strobe command.
+ * These commands not have any data, the chip exec command
+ * by only writing to one strobe address command.
+ */
 uint8_t cc1101_strobe(uint8_t addr)
 {
 	SS_ACTIVE();
 	WAIT_SO_LOW();
 
-    uint8_t x = spi_sendRecv(addr);
+    uint8_t status = spi_sendRecv(addr);
 
 	SS_INACTIVE();
-    return x;
+    return status;
 }
 
+/**
+ * Manual chip reset, refer to datasheet for
+ * the procedure.
+ */
 void cc1101_powerOnReset(void)
 {
 	SCK_ACTIVE();
@@ -129,7 +144,6 @@ void cc1101_powerOnReset(void)
 
 	cc1101_strobe(CC1101_SRES);
 
-
 	timer_udelay(1);
 	SS_ACTIVE();
 	WAIT_SO_LOW();
@@ -137,8 +151,13 @@ void cc1101_powerOnReset(void)
 	SS_INACTIVE();
 }
 
+/**
+ * Reset the chip and apply the settings.
+ */
 void cc1101_init(const Setting  *settings)
 {
+	CC1101_HW_INIT();
+	
 	cc1101_powerOnReset();
 	
 	for (int i = 0; settings[i].addr != 0xFF && settings[i].data != 0xFF; i++)

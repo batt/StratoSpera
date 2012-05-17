@@ -136,16 +136,43 @@
 #define CC1101_STATUS_RX_FIFOUNFLOW    6
 #define CC1101_STATUS_TX_FIFOUNFLOW    7
 
+/*
+ * Timeout to wait the SO pin of CC1101 goes low, if not, the cc1101 clock
+ * does not run correctly
+ */
+#define CC1101_TIMEOUT_ERR            100
+
+
+/*
+ * Extract info from status bit that return on spi each time we send a strobe
+ * command.
+ */
+#define STATUS_RDY(status)               (((status) & 0x80) >> 7)
+#define STATUS_STATE(status)             (((status) & 0x70) >> 4)
+#define STATUS_FIFO_AVAIL(status)        ((status) & 0xF)
+
+/*
+ * Return a tuple of int of status info byte.
+ */
+#define UNPACK_STATUS(status) \
+	STATUS_RDY(status), \
+	STATUS_STATE(status), \
+	STATUS_FIFO_AVAIL(status)
+
 #include <cpu/types.h>
 
 
 typedef struct Setting
 {
-	uint8_t addr;
-	uint8_t data;
+	uint8_t addr; // Address of cc1101 registry setting.
+	uint8_t data; // Value of the register.
 } Setting;
 
 
+/*
+ * Convert to dBm the RSSI value that the chip measure while recieve a
+ * package.
+ */
 INLINE int16_t cc1101_rssidBm(uint8_t raw_rssi, uint16_t offset_rssi)
 {
 	int16_t rssi_dBm;
