@@ -49,6 +49,8 @@ class CmdInterpreter(cmd.Cmd):
 		sendMsg(s)
 		config_uplink.seq += 1
 
+	default = do_send
+
 	def do_seq(self, s):
 		if not s:
 			print "%d - 0x%x" % (config_uplink.seq, config_uplink.seq)

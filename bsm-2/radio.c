@@ -286,6 +286,7 @@ static bool radio_ping(long l)
 static bool cmd_radio_pause(long l)
 {
 	(void)l;
+	radio_printf("Pausing radio for 5min\n");
 	radio_pause_time = timer_clock();
 	hadarp_wakePolifemo();
 	return true;

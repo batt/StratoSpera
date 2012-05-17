@@ -269,7 +269,7 @@ void measures_init(void)
 	config_load(&measures);
 
 	/* Start current check process */
-	p = proc_new(curr_process, NULL, KERN_MINSTACKSIZE * 3, NULL);
+	p = proc_new(curr_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 	ASSERT(p);
 
 	uplink_registerCmd("curr_override", cmd_curr_override);
