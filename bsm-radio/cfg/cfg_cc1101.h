@@ -27,69 +27,32 @@
  * the GNU General Public License.
  *
  * Copyright 2012 Develer S.r.l. (http://www.develer.com/)
- * All Rights Reserved.
+ *
  * -->
  *
- * \brief BSM-RADIO main.
+ * \brief Configuration file for the CC1101 chip driver.
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#include "hw/hw_cc1101.h"
-#include "hw/hw_spi.h"
+#ifndef CFG_CC1101_H
+#define CFG_CC1101_H
 
-#include <cfg/debug.h>
+/**
+ * Module logging level.
+ *
+ * $WIZ$ type = "enum"
+ * $WIZ$ value_list = "log_level"
+ */
+#define CC1101_LOG_LEVEL      LOG_LVL_INFO
 
-#include <cpu/irq.h>
-#include <cpu/types.h>
-#include <cpu/power.h>
+/**
+ * Module logging format.
+ *
+ * $WIZ$ type = "enum"
+ * $WIZ$ value_list = "log_format"
+ */
+#define CC1101_LOG_FORMAT     LOG_FMT_TERSE
 
-#include <drv/timer.h>
-#include <drv/spi_bitbang.h>
 
-static void init(void)
-{
-	IRQ_ENABLE;
-	kdbg_init();
-	timer_init();
-	spi_init();
-
-	timer_delay(1);
-
-	cc1101_init(ping_low_baud_868);
-	kputs("cc1101 started!\n");
-}
-uint8_t tmp[64];
-int main(void)
-{
-	init();
-
-	uint8_t ping = 0;
-
-	while (1)
-	{
-		kprintf("ID[%d]\n", radio_id());
-
-		if (radio_id() == MASTER_RADIO)
-		{
-			radio_send(&ping, sizeof(ping));
-			kprintf("Ping tx %d\n", ping);
-
-			radio_recv(&ping, sizeof(ping));
-			kprintf("Ping rx %d\n", ping);
-		}
-		else
-		{
-			radio_recv(&ping, sizeof(ping));
-			kprintf("Ping rx %d\n", ping);
-			
-			ping++;
-			radio_send(&ping, sizeof(ping));
-			kprintf("Ping tx %d\n", ping);
-		}
-
-	}
-
-	return 0;
-}
-
+#endif /* CFG_CC1101_H */

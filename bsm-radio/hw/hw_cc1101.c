@@ -84,7 +84,7 @@ int radio_send(const uint8_t *buf, size_t len)
 	uint8_t status;
 	//Flush the data in the fifo
 	status = cc1101_strobe(CC1101_SFRX);
-	LOG_INFO("FlushTx: Rdy[%d] St[%d] TxAvail[%d]\n", UNPACK_STATUS(status));
+	LOG_INFO("FlushTx: Rdy[%d] St[%d] FifoAvail[%d]\n", UNPACK_STATUS(status));
 
 	memset(tmp_buf, 0, sizeof(tmp_buf));
 
@@ -100,7 +100,7 @@ int radio_send(const uint8_t *buf, size_t len)
 	cc1101_write(CC1101_TXFIFO, tmp_buf, tx_len);
 
 	status = cc1101_strobe(CC1101_STX);
-	LOG_INFO("TxData: Rdy[%d] St[%d] TxAvail[%d] TxLen[%d]\n", UNPACK_STATUS(status), tx_len);
+	LOG_INFO("TxData: Rdy[%d] St[%d] FifoAvail[%d] TxLen[%d]\n", UNPACK_STATUS(status), tx_len);
 
 	return tx_len;
 }
@@ -109,10 +109,10 @@ int radio_recv(uint8_t *buf, size_t len)
 {
 
 	uint8_t status = cc1101_strobe(CC1101_SFRX);
-	LOG_INFO("FlushRx: Rdy[%d] St[%d] TxAvail[%d]\n", UNPACK_STATUS(status));
+	LOG_INFO("FlushRx: Rdy[%d] St[%d] FifoAvail[%d]\n", UNPACK_STATUS(status));
 
 	status = cc1101_strobe(CC1101_SRX);
-	LOG_INFO("RxData: Rdy[%d] St[%d] TxAvail[%d]\n", UNPACK_STATUS(status));
+	LOG_INFO("RxData: Rdy[%d] St[%d] FifoAvail[%d]\n", UNPACK_STATUS(status));
 
 	uint8_t rx_data[2];
 	// Waiting data from air..
@@ -121,7 +121,7 @@ int radio_recv(uint8_t *buf, size_t len)
 	cc1101_read(CC1101_RXFIFO, rx_data, 2);
 
 	size_t rx_len = MIN((size_t)rx_data[1], len);
-	LOG_INFO("RxData: Rdy[%d] St[%d] TxAvail[%d] RxLen[%d]\n", UNPACK_STATUS(status), rx_len);
+	LOG_INFO("RxData: Rdy[%d] St[%d] FifoAvail[%d] RxLen[%d]\n", UNPACK_STATUS(status), rx_len);
 	LOG_INFO("RSSI[%d] dBm\n", cc1101_rssidBm(rx_data[0], 74));
 
 	cc1101_read(CC1101_RXFIFO, buf, rx_len);

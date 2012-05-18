@@ -47,18 +47,25 @@
 #include <drv/gpio_stm32.h>
 #include <drv/cc1101.h>
 
-#define GPIO_BASE       ((struct stm32_gpio *)GPIOA_BASE)
+#define GPIO_BASE_A       ((struct stm32_gpio *)GPIOA_BASE)
+#define GPIO_BASE_B       ((struct stm32_gpio *)GPIOB_BASE)
 
 extern const Setting ping_low_baud_868[];
 
 #define WAIT_FIFO_AVAIL() \
 do { \
-	while (!stm32_gpioPinRead(GPIO_BASE, BV(11))) \
+	while (!stm32_gpioPinRead(GPIO_BASE_A, BV(11))) \
 				cpu_relax(); \
 } while (0)
 
-// PA8 = 1 MASTER, 0 SLAVE
-#define IS_RADIO_MASTER() stm32_gpioPinRead(GPIO_BASE, BV(8))
+#define MASTER_RADIO    0
+/*
+ * Get the device id
+ */
+INLINE uint8_t radio_id(void)
+{
+	return stm32_gpioPinRead(GPIO_BASE_B, BV(5) | BV(6)) >> 5;
+}
 
 int radio_send(const uint8_t *buf, size_t len);
 int radio_recv(uint8_t *buf, size_t len);
@@ -66,8 +73,9 @@ int radio_recv(uint8_t *buf, size_t len);
 
 #define CC1101_HW_INIT() \
 do { \
+	RCC->APB2ENR |= RCC_APB2_GPIOB;			\
 	stm32_gpioPinConfig(GPIO_BASE, BV(11), GPIO_MODE_IN_FLOATING, GPIO_SPEED_50MHZ); \
-	stm32_gpioPinConfig(GPIO_BASE, BV(8), GPIO_MODE_IPU, GPIO_SPEED_50MHZ); \
+	stm32_gpioPinConfig(GPIO_BASE_B, BV(5) | BV(6), GPIO_MODE_IPU, GPIO_SPEED_50MHZ); \
 } while (0)
 
 #endif /* HW_CC1101_H */
