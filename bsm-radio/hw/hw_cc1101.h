@@ -52,13 +52,18 @@
 
 extern const Setting ping_low_baud_868[];
 
-#define WAIT_FIFO_AVAIL() \
-do { \
-	while (!stm32_gpioPinRead(GPIO_BASE_A, BV(11))) \
-				cpu_relax(); \
-} while (0)
+/*
+ * Radio ids table.
+ */
+#define RADIO_MASTER    0
 
-#define MASTER_RADIO    0
+/*
+ * Radio errors
+ */
+#define RADIO_TX_ERR        -1
+#define RADIO_RX_ERR        -2
+#define RADIO_RX_TIMEOUT    -3
+
 /*
  * Get the device id
  */
@@ -67,8 +72,9 @@ INLINE uint8_t radio_id(void)
 	return stm32_gpioPinRead(GPIO_BASE_B, BV(5) | BV(6)) >> 5;
 }
 
-int radio_send(const uint8_t *buf, size_t len);
-int radio_recv(uint8_t *buf, size_t len);
+int radio_send(const void *buf, size_t len);
+int radio_recv(void *buf, size_t len, mtime_t timeout);
+uint8_t radio_status(void);
 
 
 #define CC1101_HW_INIT() \
