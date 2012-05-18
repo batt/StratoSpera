@@ -64,28 +64,43 @@ int main(void)
 {
 	init();
 
-	uint8_t ping = 0;
-
+	uint32_t ping = 0;
+	uint32_t prev_ping = 0;
+	int ret;
+	int id = radio_id();
+	kprintf("%s [%d]\n", id == RADIO_MASTER ? "MASTER" : "SLAVE", id);
 	while (1)
 	{
-		kprintf("ID[%d]\n", radio_id());
 
-		if (radio_id() == MASTER_RADIO)
+		if (id == RADIO_MASTER)
 		{
 			radio_send(&ping, sizeof(ping));
-			kprintf("Ping tx %d\n", ping);
+			kprintf("Ping tx %ld\n", ping);
 
-			radio_recv(&ping, sizeof(ping));
-			kprintf("Ping rx %d\n", ping);
+			if ((ret = radio_recv(&ping, sizeof(ping), 1000)) < 0)
+			{
+				kprintf("Err whire recv[%d]..\n", ret);
+				continue;
+			}
+
+			kprintf("Ping rx %ld\n", ping);
+
+			timer_delay(60000);
 		}
 		else
 		{
-			radio_recv(&ping, sizeof(ping));
-			kprintf("Ping rx %d\n", ping);
+			if ((ret = radio_recv(&ping, sizeof(ping), -1)) < 0)
+			{
+				kprintf("Err whire recv[%d]..\n", ret);
+				continue;
+			}
 			
+			kprintf("Ping rx %ld\n", ping);
 			ping++;
+
 			radio_send(&ping, sizeof(ping));
-			kprintf("Ping tx %d\n", ping);
+			kprintf("Ping tx %ld\n", ping);
+			prev_ping = ping;
 		}
 
 	}
