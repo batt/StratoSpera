@@ -1460,7 +1460,9 @@
       <File Name="scripts/webserver/clear.cgi"/>
       <File Name="scripts/webserver/index.html"/>
       <File Name="scripts/webserver/deploy.sh"/>
+      <File Name="scripts/webserver/download.py"/>
     </VirtualDirectory>
+    <File Name="scripts/arc.sh"/>
   </VirtualDirectory>
   <VirtualDirectory Name="custom">
     <File Name="custom/custom.mk"/>
