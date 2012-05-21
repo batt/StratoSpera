@@ -37,6 +37,7 @@
 
 #include "hw/hw_cc1101.h"
 #include "hw/hw_spi.h"
+#include "hw/hw_adc.h"
 
 #include <cfg/debug.h>
 
@@ -45,6 +46,7 @@
 #include <cpu/power.h>
 
 #include <drv/timer.h>
+#include <drv/adc.h>
 #include <drv/spi_bitbang.h>
 
 #include <string.h>
@@ -53,6 +55,8 @@ struct Beacon
 {
 	uint32_t count;
 	uint32_t code;
+	uint16_t temp;
+	uint16_t vref;
 };
 static struct Beacon beacon;
 
@@ -62,11 +66,9 @@ static void init(void)
 	kdbg_init();
 	timer_init();
 	spi_init();
-
-	timer_delay(1);
+	adc_init();
 
 	cc1101_init(ping_low_baud_868);
-	kputs("cc1101 started!\n");
 }
 
 int main(void)
@@ -89,7 +91,9 @@ int main(void)
 			{
 				uint8_t lqi = radio_lqi();
 				if (lqi & BV(7))
-					kprintf("%0lx,%ld,%ddBm,%dlqi\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7));
+					kprintf("%0lx,%ld,%ddBm,%dlqi,%d.%d,%d.%d\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7),
+						 beacon.temp / 100, beacon.temp % 100,
+						 beacon.vref / 1000, beacon.vref % 1000);
 			}
 
 			rssi = 0;
@@ -97,6 +101,9 @@ int main(void)
 		}
 		else
 		{
+			beacon.temp = hw_readIntTemp();
+			beacon.vref = hw_readVrefint();
+			kprintf("%d,%d\n", beacon.vref, beacon.temp);
 			radio_send(&beacon, sizeof(beacon));
 
 			radio_sleep();
