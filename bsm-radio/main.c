@@ -47,6 +47,15 @@
 #include <drv/timer.h>
 #include <drv/spi_bitbang.h>
 
+#include <string.h>
+
+struct Beacon
+{
+	uint32_t count;
+	uint32_t code;
+};
+static struct Beacon beacon;
+
 static void init(void)
 {
 	IRQ_ENABLE;
@@ -59,50 +68,42 @@ static void init(void)
 	cc1101_init(ping_low_baud_868);
 	kputs("cc1101 started!\n");
 }
-uint8_t tmp[64];
+
 int main(void)
 {
 	init();
-
-	uint32_t ping = 0;
-	uint32_t prev_ping = 0;
 	int ret;
 	int id = radio_id();
+	int rssi;
+
+	beacon.code = 0xdbf1;
+	beacon.count = 0;
+
 	kprintf("%s [%d]\n", id == RADIO_MASTER ? "MASTER" : "SLAVE", id);
 	while (1)
 	{
 
 		if (id == RADIO_MASTER)
 		{
-			radio_send(&ping, sizeof(ping));
-			kprintf("Ping tx %ld\n", ping);
-
-			if ((ret = radio_recv(&ping, sizeof(ping), 1000)) < 0)
+			if ((ret = radio_recv(&beacon, sizeof(beacon), -1)) > 0)
 			{
-				kprintf("Err whire recv[%d]..\n", ret);
-				continue;
+				uint8_t lqi = radio_lqi();
+				if (lqi & BV(7))
+					kprintf("%0lx,%ld,%ddBm,%dlqi\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7));
 			}
 
-			kprintf("Ping rx %ld\n", ping);
-
-			timer_delay(60000);
+			rssi = 0;
+			memset(&beacon, 0, sizeof(struct Beacon));
 		}
 		else
 		{
-			if ((ret = radio_recv(&ping, sizeof(ping), -1)) < 0)
-			{
-				kprintf("Err whire recv[%d]..\n", ret);
-				continue;
-			}
-			
-			kprintf("Ping rx %ld\n", ping);
-			ping++;
+			radio_send(&beacon, sizeof(beacon));
 
-			radio_send(&ping, sizeof(ping));
-			kprintf("Ping tx %ld\n", ping);
-			prev_ping = ping;
+			radio_sleep();
+			beacon.count++;
+
+			timer_delay(5000);
 		}
-
 	}
 
 	return 0;
