@@ -50,20 +50,19 @@
 
 #include <string.h>
 
-#define CC1101_WAIT_IDLE_TIMEOUT   1000 // ms
+#define CC1101_WAIT_IDLE_TIMEOUT   5000 // ms
 
 const Setting ping_low_baud_868[] =
 {
-  {CC1101_IOCFG0,      0x06 /* GDO0 Output Pin Configuration */},
+  {CC1101_IOCFG0,      0x01 /* GDO0 Output Pin Configuration */},
   {CC1101_FIFOTHR,     0x47 /* RX FIFO and TX FIFO Thresholds */},
-  {CC1101_PKTLEN,      0x04 /* Packet Length */},
   {CC1101_PKTCTRL0,    0x05 /* Packet Automation Control */},
-  {CC1101_PKTCTRL1,    0x0C /* Packet automation control. */ },
+  {CC1101_PKTCTRL1,    0x00 /* Packet Automation Control */},
   {CC1101_FSCTRL1,     0x06 /* Frequency Synthesizer Control */},
   {CC1101_FREQ2,       0x21 /* Frequency Control Word, High Byte */},
   {CC1101_FREQ1,       0x62 /* Frequency Control Word, Middle Byte */},
   {CC1101_FREQ0,       0x76 /* Frequency Control Word, Low Byte */},
-  {CC1101_MDMCFG4,     0xF6 /* Modem Configuration */},
+  {CC1101_MDMCFG4,     0xF5 /* Modem Configuration */},
   {CC1101_MDMCFG3,     0x83 /* Modem Configuration */},
   {CC1101_MDMCFG2,     0x93 /* Modem Configuration */},
   {CC1101_DEVIATN,     0x15 /* Modem Deviation Setting */},
@@ -77,8 +76,11 @@ const Setting ping_low_baud_868[] =
   {CC1101_TEST2,       0x81 /* Various Test Settings */},
   {CC1101_TEST1,       0x35 /* Various Test Settings */},
   {CC1101_TEST0,       0x09 /* Various Test Settings */},
+
   { 0xff, 0xff },
 };
+
+
 
 static bool wait_fifo_avail(mtime_t timeout)
 {
@@ -144,6 +146,26 @@ uint8_t radio_status(void)
 	return status;
 }
 
+int radio_lqi(void)
+{
+	uint8_t lqi = 0;
+	cc1101_read(CC1101_LQI, &lqi, 1);
+
+	return lqi;
+}
+
+int radio_rssi(void)
+{
+	uint8_t rssi = 0;
+	cc1101_read(CC1101_RSSI, &rssi, 1);
+
+	return cc1101_rssidBm(rssi, 74);
+}
+
+void radio_sleep(void)
+{
+	LOG_INFO("Sleep: Rdy[%d] St[%d] FifoAvail[%d]\n", UNPACK_STATUS(cc1101_strobe(CC1101_SPWD)));
+}
 
 uint8_t tmp_buf[256];
 
@@ -164,6 +186,7 @@ int radio_send(const void *buf, size_t len)
 
 	memset(tmp_buf, 0, sizeof(tmp_buf));
 
+	// We reserve one byte for package len
 	size_t tx_len = MIN(sizeof(tmp_buf) - 1, len + 1);
 
 	/*
@@ -198,7 +221,6 @@ int radio_recv(void *buf, size_t len, mtime_t timeout)
 	status = cc1101_strobe(CC1101_SRX);
 	LOG_INFO("RxData: Rdy[%d] St[%d] FifoAvail[%d]\n", UNPACK_STATUS(status));
 
-	uint8_t rx_data[2];
 
 	// Waiting data from air..
 	if (!wait_fifo_avail(timeout))
@@ -208,11 +230,11 @@ int radio_recv(void *buf, size_t len, mtime_t timeout)
 		return RADIO_RX_TIMEOUT;
 	}
 
-	cc1101_read(CC1101_RXFIFO, rx_data, 2);
+	uint8_t rx_data[1];
+	cc1101_read(CC1101_RXFIFO, rx_data, 1);
 
-	size_t rx_len = MIN((size_t)rx_data[1], len);
+	size_t rx_len = MIN((size_t)rx_data[0], len);
 	LOG_INFO("RxData: Rdy[%d] St[%d] FifoAvail[%d] RxLen[%d]\n", UNPACK_STATUS(status), rx_len);
-	LOG_INFO("RSSI[%d] dBm\n", cc1101_rssidBm(rx_data[0], 74));
 
 	cc1101_read(CC1101_RXFIFO, buf, rx_len);
 

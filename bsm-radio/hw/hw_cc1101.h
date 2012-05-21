@@ -75,6 +75,9 @@ INLINE uint8_t radio_id(void)
 int radio_send(const void *buf, size_t len);
 int radio_recv(void *buf, size_t len, mtime_t timeout);
 uint8_t radio_status(void);
+void radio_sleep(void);
+int radio_rssi(void);
+int radio_lqi(void);
 
 
 #define CC1101_HW_INIT() \
