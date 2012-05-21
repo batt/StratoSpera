@@ -109,19 +109,19 @@
 #define CC1101_SWORRST      0x3C        // Reset real time clock.
 #define CC1101_SNOP         0x3D        // No operation. May be used to pad strobe commands to two
                                         // bytes for simpler software.
-// Status registers (read & burst)
-#define CC1101_PARTNUM      (0x30 | 0xc0)
-#define CC1101_VERSION      (0x31 | 0xc0)
-#define CC1101_FREQEST      (0x32 | 0xc0)
-#define CC1101_LQI          (0x33 | 0xc0)
-#define CC1101_RSSI         (0x34 | 0xc0)
-#define CC1101_MARCSTATE    (0x35 | 0xc0)
-#define CC1101_WORTIME1     (0x36 | 0xc0)
-#define CC1101_WORTIME0     (0x37 | 0xc0)
-#define CC1101_PKTSTATUS    (0x38 | 0xc0)
-#define CC1101_VCO_VC_DAC   (0x39 | 0xc0)
-#define CC1101_TXBYTES      (0x3A | 0xc0)
-#define CC1101_RXBYTES      (0x3B | 0xc0)
+// Status registers
+#define CC1101_PARTNUM      0x30
+#define CC1101_VERSION      0x31
+#define CC1101_FREQEST      0x32
+#define CC1101_LQI          0x33
+#define CC1101_RSSI         0x34
+#define CC1101_MARCSTATE    0x35
+#define CC1101_WORTIME1     0x36
+#define CC1101_WORTIME0     0x37
+#define CC1101_PKTSTATUS    0x38
+#define CC1101_VCO_VC_DAC   0x39
+#define CC1101_TXBYTES      0x3A
+#define CC1101_RXBYTES      0x3B
 
 #define CC1101_PATABLE      0x3E
 #define CC1101_TXFIFO       0x3F
