@@ -69,15 +69,8 @@ uint8_t cc1101_read(uint8_t addr, uint8_t *buf, size_t len)
 
 	uint8_t status = 0xFF;
 
-	if (len == 1)
-	{
-		buf[0] = spi_sendRecv(addr);
-	}
-	else
-	{
-		status = spi_sendRecv(addr | 0xc0);
-		spi_read(buf, len);
-	}
+	status = spi_sendRecv(addr | 0xc0);
+	spi_read(buf, len);
 
 	SS_INACTIVE();
     return status;
