@@ -26,93 +26,44 @@
  * invalidate any other reasons why the executable file might be covered by
  * the GNU General Public License.
  *
- * Copyright 2012 Develer S.r.l. (http://www.develer.com/)
+ * Copyright 2010 Develer S.r.l. (http://www.develer.com/)
  * All Rights Reserved.
  * -->
  *
- * \brief BSM-RADIO main.
+ * \brief Some ADC utilis.
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#include "hw/hw_cc1101.h"
-#include "hw/hw_spi.h"
-#include "hw/hw_adc.h"
+#ifndef HW_ADC_H
+#define HW_ADC_H
 
-#include <cfg/debug.h>
-
-#include <cpu/irq.h>
-#include <cpu/types.h>
-#include <cpu/power.h>
-
-#include <drv/timer.h>
 #include <drv/adc.h>
-#include <drv/spi_bitbang.h>
 
-#include <string.h>
+#include <io/stm32.h>
 
-struct Beacon
+/*
+ * Return the Vrefint voltage in mV.
+ */
+INLINE uint16_t hw_readVrefint(void)
 {
-	uint32_t count;
-	uint32_t code;
-	uint16_t temp;
-	uint16_t vref;
-};
-static struct Beacon beacon;
-
-static void init(void)
-{
-	IRQ_ENABLE;
-	kdbg_init();
-	timer_init();
-	spi_init();
-	adc_init();
-
-	cc1101_init(ping_low_baud_868);
+	return ADC_RANGECONV(adc_read(ADC_VREFINT_CH), 0, 3300);
 }
 
-int main(void)
+/*
+ * Return the cpu core temperature in degrees * 100.
+ */
+INLINE uint16_t hw_readIntTemp(void)
 {
-	init();
-	int ret;
-	int id = radio_id();
-	int rssi;
+	uint16_t vsens = ADC_RANGECONV(adc_read(ADC_TEMP_CH), 0, 3300);
 
-	beacon.code = 0xdbf1;
-	beacon.count = 0;
-
-	kprintf("%s [%d]\n", id == RADIO_MASTER ? "MASTER" : "SLAVE", id);
-	while (1)
-	{
-
-		if (id == RADIO_MASTER)
-		{
-			if ((ret = radio_recv(&beacon, sizeof(beacon), -1)) > 0)
-			{
-				uint8_t lqi = radio_lqi();
-				if (lqi & BV(7))
-					kprintf("%0lx,%ld,%d,%d,%d.%d,%d.%d\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7),
-						 beacon.temp / 100, beacon.temp % 100,
-						 beacon.vref / 1000, beacon.vref % 1000);
-			}
-
-			rssi = 0;
-			memset(&beacon, 0, sizeof(struct Beacon));
-		}
-		else
-		{
-			beacon.temp = hw_readIntTemp();
-			beacon.vref = hw_readVrefint();
-			kprintf("%d,%d\n", beacon.vref, beacon.temp);
-			radio_send(&beacon, sizeof(beacon));
-
-			radio_sleep();
-			beacon.count++;
-
-			timer_delay(5000);
-		}
-	}
-
-	return 0;
+	uint16_t temp = (((ADC_TEMP_V25 - vsens) * 1000)/ ADC_TEMP_SLOPE) + ADC_TEMP_CONST;
+	return (temp / 10);
 }
 
+INLINE uint16_t hw_readRawTemp(void)
+{
+	return (uint16_t)ADC_RANGECONV(adc_read(ADC_TEMP_CH), 0, 3300);
+}
+
+#endif /* HW_ADC_H */

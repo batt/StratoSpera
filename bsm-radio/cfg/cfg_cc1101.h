@@ -54,5 +54,7 @@
  */
 #define CC1101_LOG_FORMAT     LOG_FMT_TERSE
 
+#define CONFIG_RADIO_CURRENT_OPT 0
+
 
 #endif /* CFG_CC1101_H */
