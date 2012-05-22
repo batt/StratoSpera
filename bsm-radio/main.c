@@ -91,7 +91,7 @@ int main(void)
 			{
 				uint8_t lqi = radio_lqi();
 				if (lqi & BV(7))
-					kprintf("%0lx,%ld,%d,%d,%d.%d,%d.%d\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7),
+					kprintf("%0lx;%ld;%d;%d;%d.%d;%d.%d;\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7),
 						 beacon.temp / 100, beacon.temp % 100,
 						 beacon.vref / 1000, beacon.vref % 1000);
 			}
@@ -103,13 +103,12 @@ int main(void)
 		{
 			beacon.temp = hw_readIntTemp();
 			beacon.vref = hw_readVrefint();
-			kprintf("%d,%d\n", beacon.vref, beacon.temp);
 			radio_send(&beacon, sizeof(beacon));
 
 			radio_sleep();
 			beacon.count++;
 
-			timer_delay(5000);
+			timer_delay(30000);
 		}
 	}
 
