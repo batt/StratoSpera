@@ -91,7 +91,7 @@ int main(void)
 			{
 				uint8_t lqi = radio_lqi();
 				if (lqi & BV(7))
-					kprintf("%0lx,%ld,%ddBm,%dlqi,%d.%d,%d.%d\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7),
+					kprintf("%0lx,%ld,%d,%d,%d.%d,%d.%d\n", beacon.code, beacon.count, radio_rssi(), lqi & ~BV(7),
 						 beacon.temp / 100, beacon.temp % 100,
 						 beacon.vref / 1000, beacon.vref % 1000);
 			}

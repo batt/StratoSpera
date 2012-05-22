@@ -58,9 +58,9 @@ const Setting ping_low_baud_868[] =
   {CC1101_FIFOTHR,     0x47 /* RX FIFO and TX FIFO Thresholds */},
   {CC1101_PKTCTRL0,    0x05 /* Packet Automation Control */},
   {CC1101_PKTCTRL1,    0x00 /* Packet Automation Control */},
-  {CC1101_CHANNR,      0x07 /* Channel Number */},
+  {CC1101_CHANNR,      0x08 /* Channel Number */},
 
-  {CC1101_PATABLE,     0xC5 /* Various Test Settings */},
+  {CC1101_PATABLE,     0xC0 /* Various Test Settings */},
 
 #if CONFIG_RADIO_CURRENT_OPT
   {CC1101_FSCTRL1,     0x06 /* Frequency Synthesizer Control */},
