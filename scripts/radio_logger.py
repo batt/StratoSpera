@@ -27,3 +27,4 @@ if __name__ == "__main__":
 
     for line in s:
         sys.stdout.write("%s,%s" % (strftime("%d/%m/%Y,%H:%M:%S"), line))
+        sys.stdout.flush()
