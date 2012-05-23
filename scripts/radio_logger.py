@@ -17,6 +17,9 @@ if __name__ == "__main__":
     print "Open serial port %s at %d baudrate..\n" % (args.port, args.baudrate)
     print args
 
+    if type(args.port) == list:
+        args.port = args.port[0]
+
     try:
         s = serial.Serial(args.port, bytesize=8, parity='N', stopbits=1, baudrate=args.baudrate, timeout=args.timeout)
     except ValueError, e:
