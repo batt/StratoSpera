@@ -56,7 +56,7 @@ static MD5_Context md5;
  * [SIGN]:
  * Hex representation of the signature (hmac-md5). It is only 16 bits long,
  * the low byte is taken from byte 7 of the md5 digest, while the high part uses
- * byte 17.
+ * byte 13.
  * The signature is computed on all the bytes following the first '>' separator:
  * [SEQ], the second '>' separator and the [PAYLOAD].
  *
