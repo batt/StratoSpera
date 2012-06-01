@@ -134,7 +134,7 @@ void landing_buz_init(void)
 	config_load(&landing_buz);
 	landing_buz_reset();
 	#if !(ARCH & ARCH_UNITTEST)
-		MOD_CHECK(buzzer);
+		buz_init();
 		LOG_INFO("Starting landing buzzer control process:\n");
 		Process *p = proc_new(landing_buz_process, NULL, KERN_MINSTACKSIZE * 4, NULL);
 		ASSERT(p);

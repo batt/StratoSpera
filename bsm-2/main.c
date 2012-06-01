@@ -24,7 +24,6 @@
 #include <kern/monitor.h>
 
 #include <drv/timer.h>
-#include <drv/buzzer.h>
 #include <drv/ser.h>
 #include <drv/kbd.h>
 #include <drv/sd.h>
@@ -63,7 +62,6 @@ static void init(void)
 	kdbg_init();
 	kprintf("BSM-2, ver %s\n", vers_tag);
 	timer_init();
-	buz_init();
 	proc_init();
 
 	#if GPS_ENABLED
