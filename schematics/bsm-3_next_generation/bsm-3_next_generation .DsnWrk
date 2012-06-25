@@ -2,3 +2,5 @@
 Version=1.0
 [Project1]
 ProjectPath=BSM-3_next_generation.PrjPcb
+[Project2]
+ProjectPath=reference\reference.PrjPCB
