@@ -272,9 +272,9 @@ static void measures_reload(void)
 	curr_reset();
 	if (logging_checkPreviousPowerStatus() == true)
 	{
-		LOG_INFO("Powering auxliary devices...\n");
+		LOG_INFO("Powering auxiliary devices...\n");
 		power_enable(true);
-		LOG_INFO("Powering auxliary devices: OK!\n");
+		LOG_INFO("Powering auxiliary devices: OK!\n");
 	}
 	else
 	{
