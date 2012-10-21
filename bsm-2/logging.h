@@ -48,6 +48,8 @@ int logging_msg(const char *fmt, ...);
 int logging_acc(void *acc, size_t size);
 void logging_rotate(void);
 void logging_init(void);
+bool logging_checkPreviousPowerStatus(void);
+void logging_setPendingPowerFlag(bool pending);
 
 INLINE bool logging_running(void)
 {

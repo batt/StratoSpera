@@ -186,6 +186,21 @@ DECLARE_CONF(measures, measures_reload,
 	CONF_INT(curr_limit, 10, 5000, 500) //mA
 );
 
+static void power_enable(bool enable)
+{
+	if (enable)
+		logging_setPendingPowerFlag(true);
+
+	aux_out(enable);
+
+	if (enable)
+	{
+		timer_delay(1000);
+		/* ASSERT2(0, "Simulating power failure\n"); */
+		logging_setPendingPowerFlag(false);
+	}
+}
+
 static bool curr_logged;
 static bool curr_override;
 static void NORETURN curr_process(void)
@@ -194,7 +209,7 @@ static void NORETURN curr_process(void)
 	{
 		if (!curr_override && sensor_read(ADC_CURR) > curr_limit)
 		{
-			aux_out(false);
+			power_enable(false);
 			if (!curr_logged)
 			{
 				radio_printf("Current overrange!\n");
@@ -222,8 +237,15 @@ static void NORETURN curr_process(void)
 static bool cmd_curr_override(long cmd)
 {
 	curr_override = true;
-	aux_out(cmd);
+	power_enable(cmd);
 	return true;
+}
+
+static void curr_reset(void)
+{
+	LOG_INFO("Resetting current protection\n");
+	curr_override = false;
+	curr_logged = false;
 }
 
 /*
@@ -237,11 +259,9 @@ static bool cmd_curr_override(long cmd)
 static bool cmd_curr_reset(long l)
 {
 	(void)l;
-	LOG_INFO("Resetting current protection\n");
-	curr_override = false;
-	curr_logged = false;
+	curr_reset();
 	/* (Re)enable powerswitch for aux devices */
-	aux_out(true);
+	power_enable(true);
 	return true;
 }
 
@@ -249,9 +269,19 @@ static void measures_reload(void)
 {
 	LOG_INFO("Setting measures configuration\n");
 	LOG_INFO(" current limit: %d mA\n", curr_limit);
-	cmd_curr_reset(0);
+	curr_reset();
+	if (logging_checkPreviousPowerStatus() == true)
+	{
+		LOG_INFO("Powering auxliary devices...\n");
+		power_enable(true);
+		LOG_INFO("Powering auxliary devices: OK!\n");
+	}
+	else
+	{
+		LOG_ERR("Previuos power status was not clean! Going to override mode and disabling aux power\n");
+		cmd_curr_override(0);
+	}
 }
-
 
 void measures_init(void)
 {

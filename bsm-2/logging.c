@@ -53,6 +53,8 @@
 static FatFile logfile;
 static FatFile msgfile;
 static FatFile accfile;
+static FatFile powerfile;
+
 static Semaphore log_sem;
 static char logging_buf[16];
 
@@ -188,9 +190,66 @@ int logging_acc(void *acc, size_t size)
 	return len;
 }
 
+#define ABOUT_TO_TURN_ON_POWER "POWER FAIL"
+#define POWER_TURNED_ON_CORRECTLY "POWER OK"
+#define POWER_OK_SIZE (sizeof(POWER_TURNED_ON_CORRECTLY)-1)
+#define POWER_FAIL_SIZE (sizeof(ABOUT_TO_TURN_ON_POWER)-1)
+
+bool logging_checkPreviousPowerStatus(void)
+{
+	if (!logging_initialized)
+		return false;
+
+	char buf[POWER_OK_SIZE];
+
+	sem_obtain(&log_sem);
+	kfile_seek(&powerfile.fd, 0, KSM_SEEK_SET);
+	size_t len = kfile_read(&powerfile.fd, buf, POWER_OK_SIZE);
+	sem_release(&log_sem);
+
+	return (len == POWER_OK_SIZE
+		&& strncmp(buf, POWER_TURNED_ON_CORRECTLY, POWER_OK_SIZE) == 0);
+}
+
+void logging_setPendingPowerFlag(bool pending)
+{
+	if (!logging_initialized)
+		return;
+
+	const char *status = pending ? ABOUT_TO_TURN_ON_POWER : POWER_TURNED_ON_CORRECTLY;
+	size_t size = pending ? POWER_FAIL_SIZE : POWER_OK_SIZE;
+
+	sem_obtain(&log_sem);
+	kfile_seek(&powerfile.fd, 0, KSM_SEEK_SET);
+	kfile_write(&powerfile.fd, status, size);
+	f_truncate(&powerfile.fat_file);
+	kfile_flush(&powerfile.fd);
+	sem_release(&log_sem);
+}
+
+static void logging_initPower(void)
+{
+	#define PWR_FILE "pwr_stat.log"
+
+	if (fatfile_open(&powerfile, PWR_FILE, FA_OPEN_EXISTING | FA_READ | FA_WRITE) != FR_OK)
+	{
+		kprintf("Creating file %s\n", PWR_FILE);
+		if (fatfile_open(&powerfile, PWR_FILE, FA_OPEN_ALWAYS | FA_READ | FA_WRITE) != FR_OK)
+		{
+			kprintf("Error creating file %s!\n", PWR_FILE);
+			return;
+		}
+		logging_setPendingPowerFlag(false);
+	}
+}
+
 void logging_init(void)
 {
 	sem_init(&log_sem);
 	logging_initialized = true;
 	logging_rotate();
+
+	sem_obtain(&log_sem);
+	logging_initPower();
+	sem_release(&log_sem);
 }
