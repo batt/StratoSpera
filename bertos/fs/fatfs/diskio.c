@@ -44,9 +44,8 @@ DSTATUS disk_status (
 )
 {
 	KBlock *dev = devs[drv];
-	ASSERT(dev);
 
-	if (kblock_error(dev) != 0)
+	if (!dev || kblock_error(dev) != 0)
 		return STA_NOINIT;
 	else
 		return RES_OK;

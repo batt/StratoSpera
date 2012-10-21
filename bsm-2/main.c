@@ -80,10 +80,16 @@ static void init(void)
 	spi_dma_setclock(20000000L);
 	kbd_init();
 
-	ASSERT(sd_init(&sd, &spi_dma.fd, false));
-	ASSERT(f_mount(0, &fs) == FR_OK);
+	if (!sd_init(&sd, &spi_dma.fd, false))
+		LOG_ERR("SD init error!\n");
+
+	if (!f_mount(0, &fs) == FR_OK)
+		LOG_ERR("fs mount error!\n");
+
 	FatFile conf;
-	ASSERT(fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) == FR_OK);
+	if (fatfile_open(&conf, "conf.ini", FA_OPEN_EXISTING | FA_READ) != FR_OK)
+		LOG_ERR("Error opening config file!\n");
+
 	logging_init();
 
 	config_init(&conf.fd);

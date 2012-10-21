@@ -71,8 +71,11 @@ static void rotate_file(FatFile *f, const char *prefix, const char *ext)
 		if (fatfile_open(f, name, FA_OPEN_EXISTING | FA_WRITE) != FR_OK)
 		{
 			kprintf("Logging on file %s\n", name);
-			FRESULT ret = fatfile_open(f, name, FA_OPEN_ALWAYS | FA_WRITE);
-			ASSERT(ret == FR_OK);
+			if (fatfile_open(f, name, FA_OPEN_ALWAYS | FA_WRITE) != FR_OK)
+			{
+				kprintf("Error opening file!\n");
+				return;
+			}
 			break;
 		}
 		kfile_close(&f->fd);
@@ -117,7 +120,11 @@ void logging_rotate(void)
 int logging_vmsg(const char *fmt, va_list ap)
 {
 	if (!logging_initialized)
+	{
+		/* Fallback to serial logging */
+		kvprintf(fmt, ap);
 		return 0;
+	}
 
 	struct tm *t;
 	time_t tim;
@@ -146,9 +153,6 @@ int logging_vmsg(const char *fmt, va_list ap)
 
 int logging_msg(const char *fmt, ...)
 {
-	if (!logging_initialized)
-		return 0;
-
 	va_list ap;
 	va_start(ap, fmt);
 	int len = logging_vmsg(fmt, ap);
