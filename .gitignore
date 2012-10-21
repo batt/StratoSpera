@@ -14,3 +14,4 @@ openocd.tmp
 tags
 flash.log
 testout*
+bsm-2.bin
