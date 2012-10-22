@@ -7,7 +7,7 @@ import cgitb
 import hmac
 cgitb.enable()
 
-password = "stsp4"
+password = "stsp5"
 msg_dir='msg'
 
 def check_msg(msg):

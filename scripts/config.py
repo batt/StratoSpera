@@ -11,7 +11,7 @@ msg_url = base_url + "/msg/"
 add_cgi = "add.cgi"
 msg_index = "msg_index"
 #password used to sign messages sent to server
-password = "stsp4"
+password = "stsp5"
 #Timeout while sending message to server, if set to 0 will use system timeouts (looongs!)
 net_timeout = 20
 #Set to true in order to log even messages without timestamp; dangerous!
