@@ -312,13 +312,13 @@ Ext.onReady(function(){
 				xtype: 'tbtext',
 				text: '---'
 			}, '-',
-			'Horizontal speed:',
+			'Ground speed:',
 			{
 			    id: 'hspeed_label',
 				xtype: 'tbtext',
 				text: '---'
 			}, '-',
-			'Vertical speed:',
+			'Ascent speed:',
 			{
 			    id: 'vspeed_label',
 				xtype: 'tbtext',
