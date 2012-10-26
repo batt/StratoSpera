@@ -7,7 +7,7 @@ import cgitb
 import hmac
 cgitb.enable()
 
-password = "stsp4"
+password = "stsp5"
 
 print "Content-type: text/html\n"
 form = cgi.FieldStorage()
